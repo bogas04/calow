@@ -118,7 +118,6 @@ export function useStore(time?: number) {
   };
 }
 
-export const nutritionShortNames = {};
 export const nutritionColors = {
   carbohydrates: theme.colors.purple["500"],
   calories: theme.colors.green["500"],
@@ -126,7 +125,7 @@ export const nutritionColors = {
   fat: theme.colors.blue["500"],
 };
 
-export const shortNames = {
+export const nutritionShortNames = {
   fat: "fat",
   carbohydrates: "carbs",
   protein: "protein",

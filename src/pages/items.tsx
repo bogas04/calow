@@ -1,8 +1,13 @@
 import { Box, Heading, Input, Text } from "@chakra-ui/core";
 import Fuse from "fuse.js";
-import { useRouter } from "next/dist/client/router";
 import * as React from "react";
-import { nutritionColors, nutritionKeys, shortNames, useStore } from "../store";
+
+import {
+  nutritionColors,
+  nutritionKeys,
+  nutritionShortNames,
+  useStore,
+} from "../store";
 
 export default function ItemsPage() {
   const { items } = useStore();
@@ -63,7 +68,7 @@ export default function ItemsPage() {
                   color={nutritionColors[k]}
                 >
                   <Text>
-                    {l.nutrition[k]} {shortNames[k]}
+                    {l.nutrition[k]} {nutritionShortNames[k]}
                   </Text>
                 </Box>
                 {i !== nutritionKeys.length - 1 && (

@@ -6,7 +6,7 @@ import {
   ACTIONS,
   nutritionColors,
   nutritionKeys,
-  shortNames,
+  nutritionShortNames,
   useStore,
 } from "../store";
 import { getTimeDifference } from "../util/time";
@@ -54,7 +54,7 @@ export default function HomePage() {
                   color={nutritionColors[k]}
                 >
                   <Text>
-                    {l.nutrition[k]} {shortNames[k]}
+                    {l.nutrition[k]} {nutritionShortNames[k]}
                   </Text>
                 </Box>
                 {i !== nutritionKeys.length - 1 && (
@@ -78,9 +78,10 @@ export default function HomePage() {
         bottom={0}
         mx={4}
         my={16}
-        size="lg"
-        height="12"
-        width="12"
+        height="16"
+        fontSize={36}
+        fontWeight="100"
+        width="16"
         borderRadius="50%"
         bg="hotpink"
         color="white"

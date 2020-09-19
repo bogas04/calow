@@ -5,7 +5,7 @@ import {
   Nutrition,
   nutritionColors,
   nutritionKeys,
-  shortNames,
+  nutritionShortNames,
 } from "../store";
 
 export function Meter({
@@ -80,7 +80,7 @@ export function Meter({
             color={nutritionColors[k]}
           >
             <Text fontSize={12}>
-              {nutrition[k]} {shortNames[k]}
+              {nutrition[k]} {nutritionShortNames[k]}
             </Text>
             {i !== nutritionKeys.length - 1 && (
               <Box width="1px" backgroundColor="grey" flex="1" mx="2" />
