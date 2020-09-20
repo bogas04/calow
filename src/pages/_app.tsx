@@ -1,7 +1,7 @@
 import {
   ThemeProvider,
   CSSReset,
-  ColorModeProvider,
+  // ColorModeProvider,
   Box,
 } from "@chakra-ui/core";
 import { Global } from "@emotion/core";
@@ -27,52 +27,52 @@ function App({
   return (
     <ThemeProvider theme={theme}>
       <StoreContext.Provider value={value}>
-        <ColorModeProvider>
-          <Global styles={globalStyles} />
-          <CSSReset />
-          <Head>
-            <title>{Component.pageTitle}</title>
-          </Head>
-          <Box d="flex" flexDirection="column" height="100%">
-            <Box as="main" flex="1" overflow="auto">
-              <Component {...pageProps} />
-            </Box>
-            <Box
-              as="footer"
-              id="footer"
-              p="4"
-              color="white"
-              borderRadius={["8px 8px 0 0"]}
-              backgroundColor="gray.600"
-            >
-              <Box as="nav">
-                <Box
-                  as="ul"
-                  d="flex"
-                  listStyleType="none"
-                  px="6"
-                  justifyContent="space-between"
-                >
-                  <li>
-                    <Link href="/">
-                      <a>📔 Log</a>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/items">
-                      <a>🍎 Items</a>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/settings">
-                      <a>⚙️ Settings</a>
-                    </Link>
-                  </li>
-                </Box>
+        {/* <ColorModeProvider> */}
+        <Global styles={globalStyles} />
+        <CSSReset />
+        <Head>
+          <title>{Component.pageTitle}</title>
+        </Head>
+        <Box d="flex" flexDirection="column" height="100%">
+          <Box as="main" flex="1" overflow="auto">
+            <Component {...pageProps} />
+          </Box>
+          <Box
+            as="footer"
+            id="footer"
+            p="4"
+            color="white"
+            borderRadius={["8px 8px 0 0"]}
+            backgroundColor="gray.600"
+          >
+            <Box as="nav">
+              <Box
+                as="ul"
+                d="flex"
+                listStyleType="none"
+                px="6"
+                justifyContent="space-between"
+              >
+                <li>
+                  <Link href="/">
+                    <a>📔 Log</a>
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/items">
+                    <a>🍎 Items</a>
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/settings">
+                    <a>⚙️ Settings</a>
+                  </Link>
+                </li>
               </Box>
             </Box>
           </Box>
-        </ColorModeProvider>
+        </Box>
+        {/* </ColorModeProvider> */}
       </StoreContext.Provider>
     </ThemeProvider>
   );
