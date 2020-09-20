@@ -24,8 +24,8 @@ function App({
 }: AppProps & { Component: AppProps["Component"] & { pageTitle?: string } }) {
   const value = useStoreReducer();
   const { pageTitle } = Component;
-  const title = pageTitle ? `${pageTitle} | Calorie App` : "Calorie App";
-  const pageUrl = "https://bogas04.github.io/calorie-app/";
+  const title = pageTitle ? `${pageTitle} | Calow` : "Calow";
+  const pageUrl = "https://bogas04.github.io/calow/";
   const description = "Intuitive minimalist calorie logging web app";
   const image = pageUrl + "favicon.ico";
 
