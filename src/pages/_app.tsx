@@ -36,9 +36,9 @@ function App({
             key="description"
             content="Intuitive minimalist calorie logging web app."
           />
-          <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico" />
-          <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico" />
-          <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico" />
+          <link rel="apple-touch-icon" sizes="180x180" href="favicon.ico" />
+          <link rel="icon" type="image/png" sizes="32x32" href="favicon.ico" />
+          <link rel="icon" type="image/png" sizes="16x16" href="favicon.ico" />
         </Head>
         <Box d="flex" flexDirection="column" height="100%">
           <Box as="main" flex="1" overflow="auto">
