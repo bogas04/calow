@@ -23,6 +23,11 @@ function App({
   pageProps,
 }: AppProps & { Component: AppProps["Component"] & { pageTitle?: string } }) {
   const value = useStoreReducer();
+  const { pageTitle } = Component;
+  const title = pageTitle ? `${pageTitle} | Calorie App` : "Calorie App";
+  const pageUrl = "https://bogas04.github.io/calorie-app/";
+  const description = "Intuitive minimalist calorie logging web app";
+  const image = pageUrl + "favicon.ico";
 
   return (
     <ThemeProvider theme={theme}>
@@ -31,15 +36,26 @@ function App({
         <Global styles={globalStyles} />
         <CSSReset />
         <Head>
-          <title>{Component.pageTitle} | Calorie App</title>
-          <meta
-            name="description"
-            content="Intuitive minimalist calorie logging web app."
-          />
+          <title>{title}</title>
+          <meta name="title" content={title} />
+          <meta name="description" content={description} />
           <link rel="apple-touch-icon" sizes="180x180" href="favicon.ico" />
           <link rel="icon" type="image/png" sizes="32x32" href="favicon.ico" />
           <link rel="icon" type="image/png" sizes="16x16" href="favicon.ico" />
+
+          <meta property="og:type" content="website" />
+          <meta property="og:url" content={pageUrl} />
+          <meta property="og:title" content={title} />
+          <meta property="og:description" content={description} />
+          <meta property="og:image" content={image} />
+
+          <meta property="twitter:card" content="summary_large_image" />
+          <meta property="twitter:url" content={pageUrl} />
+          <meta property="twitter:title" content={title} />
+          <meta property="twitter:description" content={description} />
+          <meta property="twitter:image" content={image} />
         </Head>
+
         <Box d="flex" flexDirection="column" height="100%">
           <Box as="main" flex="1" overflow="auto">
             <Component {...pageProps} />
