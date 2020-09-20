@@ -5,6 +5,7 @@ export interface LogEntry {
   name: string;
   icon?: string;
   nutrition: Nutrition;
+  weight?: number;
   timestamp: number;
 }
 
@@ -28,7 +29,7 @@ const defaultState = {
 };
 
 export enum ACTIONS {
-  ADD_LOG_ITEM,
+  ADD_LOG_ENTRY,
   SET_GOAL,
 }
 
@@ -38,10 +39,9 @@ export type Action =
       payload: Partial<Nutrition>;
     }
   | {
-      type: ACTIONS.ADD_LOG_ITEM;
+      type: ACTIONS.ADD_LOG_ENTRY;
       payload: {
-        entry: LogEntry;
-        date?: number;
+        entry: LogEntry | LogEntry[];
       };
     };
 const getDateKey = (time: number) => {
@@ -59,8 +59,10 @@ const reducer: Reducer<typeof defaultState, Action> = (
     case ACTIONS.SET_GOAL: {
       return { ...state, goal: { ...state.goal, ...action.payload } };
     }
-    case ACTIONS.ADD_LOG_ITEM: {
-      const time = action.payload.date || Date.now();
+    case ACTIONS.ADD_LOG_ENTRY: {
+      const time = Array.isArray(action.payload.entry)
+        ? action.payload.entry[0].timestamp
+        : action.payload.entry.timestamp || Date.now();
       const dateKey = getDateKey(time);
       const logs = state.logs[dateKey] || [];
 
@@ -136,6 +138,7 @@ export const items: LogEntry[] = [
   {
     name: "Rice",
     icon: "🍚",
+    weight: 100,
     nutrition: {
       calories: 100,
       protein: 8,
@@ -147,6 +150,7 @@ export const items: LogEntry[] = [
   {
     name: "Egg",
     icon: "🥚",
+    weight: 100,
     nutrition: {
       calories: 50,
       protein: 9,
@@ -158,6 +162,7 @@ export const items: LogEntry[] = [
   {
     name: "Whole Wheat",
     icon: "🌾",
+    weight: 100,
     nutrition: {
       calories: 120,
       protein: 9,
@@ -169,6 +174,7 @@ export const items: LogEntry[] = [
   {
     name: "Sugar",
     icon: "🍭",
+    weight: 100,
     nutrition: {
       calories: 400,
       protein: 2,
@@ -180,6 +186,7 @@ export const items: LogEntry[] = [
   {
     name: "Milk",
     icon: "🥛",
+    weight: 100,
     nutrition: {
       calories: 20,
       protein: 8,
@@ -190,6 +197,7 @@ export const items: LogEntry[] = [
   },
   {
     name: "Chickpea",
+    weight: 100,
     nutrition: {
       calories: 25,
       protein: 8,
@@ -201,6 +209,7 @@ export const items: LogEntry[] = [
   {
     name: "Tomato",
     icon: "🍅",
+    weight: 100,
     nutrition: {
       calories: 25,
       protein: 8,

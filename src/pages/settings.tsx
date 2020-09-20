@@ -17,12 +17,16 @@ export default function SettingsPage() {
     return handler;
   };
   return (
-    <Box p="6">
-      <Heading>Your Goal</Heading>
+    <Box py="2" px="4">
+      <Heading my="6">Your Goal</Heading>
       {nutritionKeys.map((k) => (
         <Box>
           <Text textTransform="capitalize">{k}</Text>{" "}
-          <Input value={goal[k]} onChange={getChangeHandler(k)} />
+          <Input
+            inputMode="numeric"
+            value={goal[k]}
+            onChange={getChangeHandler(k)}
+          />
         </Box>
       ))}
     </Box>

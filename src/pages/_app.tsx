@@ -38,6 +38,7 @@ function MyApp({
             </Box>
             <Box
               as="footer"
+              id="footer"
               p="4"
               color="white"
               borderRadius={["8px 8px 0 0"]}

@@ -1,6 +1,7 @@
 import { Box, Heading, Input, Text } from "@chakra-ui/core";
 import Fuse from "fuse.js";
 import * as React from "react";
+import LogEntries from "../components/LogEntries";
 
 import {
   nutritionColors,
@@ -41,50 +42,7 @@ export default function ItemsPage() {
         type="search"
         onChange={handleSearch}
       />
-      {filteredItems.map((l, i) => (
-        <Box
-          key={i}
-          borderWidth="1px"
-          borderStyle="solid"
-          borderColor="gray.200"
-          borderRadius={8}
-          my="5"
-          p="2"
-        >
-          <Box mb="2" d="flex" justifyContent="space-between">
-            <Heading size="md">
-              <Box as="span" mx="2">
-                {l.icon}
-              </Box>{" "}
-              {l.name}
-            </Heading>
-          </Box>
-          <Box d="flex" justifyContent="space-around">
-            {nutritionKeys.map((k, i) => (
-              <React.Fragment key={i}>
-                <Box
-                  d="flex"
-                  textTransform="capitalize"
-                  color={nutritionColors[k]}
-                >
-                  <Text>
-                    {l.nutrition[k]} {nutritionShortNames[k]}
-                  </Text>
-                </Box>
-                {i !== nutritionKeys.length - 1 && (
-                  <Box
-                    backgroundColor="grey"
-                    flex="1"
-                    mx="2"
-                    minWidth="1px"
-                    maxWidth="1px"
-                  />
-                )}
-              </React.Fragment>
-            ))}
-          </Box>
-        </Box>
-      ))}
+      <LogEntries entries={filteredItems} showTimestamp={false} />
     </Box>
   );
 }

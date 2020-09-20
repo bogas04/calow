@@ -7,6 +7,7 @@ import {
   nutritionKeys,
   nutritionShortNames,
 } from "../store";
+import NutritionBar from "./NutritionBar";
 
 export function Meter({
   nutrition,
@@ -71,23 +72,7 @@ export function Meter({
           </text>
         )}
       </svg>
-      <Box d="flex" boxShadow="2px 2px 10px -4px grey" borderRadius={50} p="4">
-        {nutritionKeys.map((k, i) => (
-          <Box
-            d="flex"
-            key={i}
-            textTransform="capitalize"
-            color={nutritionColors[k]}
-          >
-            <Text fontSize={12}>
-              {nutrition[k]} {nutritionShortNames[k]}
-            </Text>
-            {i !== nutritionKeys.length - 1 && (
-              <Box width="1px" backgroundColor="grey" flex="1" mx="2" />
-            )}
-          </Box>
-        ))}
-      </Box>
+      <NutritionBar nutrition={nutrition} />
     </Box>
   );
 }
