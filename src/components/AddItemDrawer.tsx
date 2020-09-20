@@ -113,7 +113,10 @@ function AddItemDrawer({ isOpen, onClose, onAdd }: AddItemDrawerProps) {
   const portionNutrition = nutritionKeys.reduce(
     (allKeys, key) => ({
       ...allKeys,
-      [key]: Math.ceil(entryNutrition[key] * (portionWeight / totalWeight)),
+      [key]:
+        entryNutrition[key] === 0
+          ? 0
+          : Math.ceil(entryNutrition[key] * (portionWeight / totalWeight)),
     }),
     entryNutrition
   );
