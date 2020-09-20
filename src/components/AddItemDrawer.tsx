@@ -203,7 +203,7 @@ function AddItemDrawer({ isOpen, onClose, onAdd }: AddItemDrawerProps) {
                     >
                       <Input
                         inputMode="numeric"
-                        width={50}
+                        width={60}
                         value={item.weight}
                         placeholder="Weight"
                         size="sm"

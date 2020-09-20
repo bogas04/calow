@@ -119,12 +119,11 @@ export function useStore(time?: number) {
     log: store.logs[getDateKey(time || Date.now())] || [],
   };
 }
-
 export const nutritionColors = {
-  carbohydrates: theme.colors.purple["500"],
-  calories: theme.colors.green["500"],
-  protein: theme.colors.red["500"],
-  fat: theme.colors.blue["500"],
+  carbohydrates: theme.colors.purple["400"],
+  calories: theme.colors.green["400"],
+  protein: theme.colors.red["400"],
+  fat: theme.colors.blue["400"],
 };
 
 export const nutritionShortNames = {

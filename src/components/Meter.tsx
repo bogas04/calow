@@ -1,12 +1,7 @@
-import { Box, Text } from "@chakra-ui/core";
+import { Box, Text, theme } from "@chakra-ui/core";
 import * as React from "react";
 
-import {
-  Nutrition,
-  nutritionColors,
-  nutritionKeys,
-  nutritionShortNames,
-} from "../store";
+import { Nutrition, nutritionColors, nutritionKeys } from "../store";
 import NutritionBar from "./NutritionBar";
 
 export function Meter({
@@ -62,12 +57,25 @@ export function Meter({
             key={k}
             {...common}
             r={radius[k]}
+            strokeDasharray={1}
+            stroke={theme.colors.gray["200"]}
+          />
+        ))}
+        {nutritionKeys.map((k) => (
+          <circle
+            key={k}
+            {...common}
+            r={radius[k]}
             strokeDasharray={strokeDashArray[k]}
             stroke={nutritionColors[k]}
           />
         ))}
         {hasGoalBeenMet && (
-          <text x={common.cx - 7.5} y={common.cy + 5} fontSize={15}>
+          <text
+            x={common.cx - 7.5}
+            y={common.cy + 5}
+            fontSize={theme.fontSizes.sm}
+          >
             🤚
           </text>
         )}

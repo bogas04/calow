@@ -27,7 +27,7 @@ function NutritionBar({ nutrition, border = true }: NutritionBarProps) {
           textTransform="capitalize"
           color={nutritionColors[k]}
         >
-          <Text fontSize={12}>
+          <Text fontSize="xs">
             {nutrition[k]} {nutritionShortNames[k]}
           </Text>
           {i !== nutritionKeys.length - 1 && (

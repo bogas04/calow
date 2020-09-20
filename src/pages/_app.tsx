@@ -17,7 +17,8 @@ const globalStyles = {
   html: { height: "100%" },
   "#__next": { height: "100%" },
 };
-function MyApp({
+
+function App({
   Component,
   pageProps,
 }: AppProps & { Component: AppProps["Component"] & { pageTitle?: string } }) {
@@ -49,6 +50,7 @@ function MyApp({
                   as="ul"
                   d="flex"
                   listStyleType="none"
+                  px="6"
                   justifyContent="space-between"
                 >
                   <li>
@@ -76,4 +78,4 @@ function MyApp({
   );
 }
 
-export default MyApp;
+export default App;
