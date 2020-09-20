@@ -33,7 +33,7 @@ function App({
         <Head>
           <title>{Component.pageTitle} | Calorie App</title>
           <meta
-            key="description"
+            name="description"
             content="Intuitive minimalist calorie logging web app."
           />
           <link rel="apple-touch-icon" sizes="180x180" href="favicon.ico" />
