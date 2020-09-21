@@ -113,6 +113,7 @@ export function useStore(time?: number) {
       }),
       { calories: 0, carbohydrates: 0, fat: 0, protein: 0 } as Nutrition
     ),
+    items,
     log: store.logs[getDateKey(time || Date.now())] || [],
   };
 }
@@ -131,3 +132,82 @@ export const shortNames = {
   protein: "protein",
   calories: "kCals",
 };
+
+export const items: LogEntry[] = [
+  {
+    name: "Rice",
+    icon: "🍚",
+    nutrition: {
+      calories: 100,
+      protein: 8,
+      carbohydrates: 5,
+      fat: 2,
+    },
+    timestamp: Date.now() - 1000,
+  },
+  {
+    name: "Egg",
+    icon: "🥚",
+    nutrition: {
+      calories: 50,
+      protein: 9,
+      carbohydrates: 5,
+      fat: 2,
+    },
+    timestamp: Date.now() - 1000 * 60 * 20,
+  },
+  {
+    name: "Whole Wheat",
+    icon: "🌾",
+    nutrition: {
+      calories: 120,
+      protein: 9,
+      carbohydrates: 10,
+      fat: 2,
+    },
+    timestamp: Date.now() - 1000 * 60 * 60,
+  },
+  {
+    name: "Sugar",
+    icon: "🍭",
+    nutrition: {
+      calories: 400,
+      protein: 2,
+      carbohydrates: 13,
+      fat: 5,
+    },
+    timestamp: Date.now() - 1000 * 60 * 60 * 2,
+  },
+  {
+    name: "Milk",
+    icon: "🥛",
+    nutrition: {
+      calories: 20,
+      protein: 8,
+      carbohydrates: 1,
+      fat: 5,
+    },
+    timestamp: Date.now() - 1000 * 60 * 60 * 4.5,
+  },
+  {
+    name: "Chickpea",
+    nutrition: {
+      calories: 25,
+      protein: 8,
+      carbohydrates: 5,
+      fat: 2,
+    },
+    timestamp: Date.now() - 1000 * 60 * 60 * 7,
+  },
+  {
+    name: "Tomato",
+    icon: "🍅",
+    nutrition: {
+      calories: 25,
+      protein: 8,
+      carbohydrates: 5,
+      fat: 2,
+    },
+    timestamp: Date.now() - 1000 * 60 * 60 * 12,
+  },
+];

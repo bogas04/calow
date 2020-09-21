@@ -41,7 +41,7 @@ function MyApp({
               p="4"
               color="white"
               borderRadius={["8px 8px 0 0"]}
-              backgroundColor="gray.500"
+              backgroundColor="gray.600"
             >
               <Box as="nav">
                 <Box
