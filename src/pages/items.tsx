@@ -1,14 +1,9 @@
 import { Box, Heading, Input, Text } from "@chakra-ui/core";
 import Fuse from "fuse.js";
 import * as React from "react";
-import LogEntries from "../components/LogEntries";
+import ItemEntries from "../components/ItemEntries";
 
-import {
-  nutritionColors,
-  nutritionKeys,
-  nutritionShortNames,
-  useStore,
-} from "../store";
+import { useStore } from "../store";
 
 export default function ItemsPage() {
   const { items } = useStore();
@@ -42,7 +37,7 @@ export default function ItemsPage() {
         type="search"
         onChange={handleSearch}
       />
-      <LogEntries entries={filteredItems} showTimestamp={false} />
+      <ItemEntries items={filteredItems} />
     </Box>
   );
 }

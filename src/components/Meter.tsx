@@ -1,4 +1,4 @@
-import { Box, Text, theme } from "@chakra-ui/core";
+import { Box, theme } from "@chakra-ui/core";
 import * as React from "react";
 
 import { Nutrition, nutritionColors, nutritionKeys } from "../store";
@@ -80,7 +80,9 @@ export function Meter({
           </text>
         )}
       </svg>
-      <NutritionBar nutrition={nutrition} />
+      <Box fontWeight="bold">
+        <NutritionBar nutrition={nutrition} />
+      </Box>
     </Box>
   );
 }

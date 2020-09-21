@@ -4,7 +4,7 @@ import * as React from "react";
 import { Meter } from "../components/Meter";
 import { ACTIONS, useStore } from "../store";
 import AddItemDrawer from "../components/AddItemDrawer";
-import LogEntries from "../components/LogEntries";
+import MealEntries from "../components/MealEntries";
 import EmptyArt from "../svg/EmptyArt";
 
 export default function HomePage() {
@@ -18,7 +18,7 @@ export default function HomePage() {
 
         <Box py="1" pb="20%">
           {log.length === 0 && <EmptyArt />}
-          <LogEntries entries={log} />
+          <MealEntries entries={log} />
         </Box>
 
         <Button
@@ -48,7 +48,7 @@ export default function HomePage() {
         onClose={() => setShowAddItem(false)}
         onAdd={(entry) => {
           dispatch({
-            type: ACTIONS.ADD_LOG_ENTRY,
+            type: ACTIONS.ADD_MEAL_ENTRY,
             payload: { entry },
           });
           setShowAddItem(false);

@@ -14,18 +14,19 @@ import {
   FormControl,
   Text,
 } from "@chakra-ui/core";
-import { items, LogEntry, Nutrition, nutritionKeys } from "../store";
+import { items, ItemEntry, inititalNutrition, MealEntry } from "../store";
 import NutritionBar from "./NutritionBar";
-import { computeWeightedNutrition } from "../util/nutrition";
+import { computeWeightedNutrition, mapNutrition } from "../util/nutrition";
+import { getMealName } from "../util/meal";
 
 export interface AddItemDrawerProps {
   isOpen: IDrawer["isOpen"];
   onClose: IDrawer["onClose"];
-  items: LogEntry[];
-  onAdd: (entries: LogEntry[]) => void;
+  items: ItemEntry[];
+  onAdd: (entry: MealEntry) => void;
 }
 function AddItemDrawer({ isOpen, onClose, onAdd }: AddItemDrawerProps) {
-  const [addedItems, setAddedItems] = React.useState<LogEntry[]>([]);
+  const [addedItems, setAddedItems] = React.useState<ItemEntry[]>([]);
   const [totalWeight, setTotalWeight] = React.useState(0);
   const [portionWeight, setPortionWeight] = React.useState(0);
 
@@ -100,25 +101,16 @@ function AddItemDrawer({ isOpen, onClose, onAdd }: AddItemDrawerProps) {
 
   const entryNutrition = addedItems.reduce(
     (entryNutrition, item) =>
-      nutritionKeys.reduce(
-        (allKeys, key) => ({
-          ...allKeys,
-          [key]: Math.ceil(item.nutrition[key] + entryNutrition[key]),
-        }),
-        {} as Nutrition
+      mapNutrition(item.nutrition, (key, value) =>
+        Math.ceil(value + entryNutrition[key])
       ),
-    { calories: 0, protein: 0, fat: 0, carbohydrates: 0 } as Nutrition
+    inititalNutrition
   );
 
-  const portionNutrition = nutritionKeys.reduce(
-    (allKeys, key) => ({
-      ...allKeys,
-      [key]:
-        entryNutrition[key] === 0
-          ? 0
-          : Math.ceil(entryNutrition[key] * (portionWeight / totalWeight)),
-    }),
-    entryNutrition
+  const portionNutrition = mapNutrition(entryNutrition, (key, value) =>
+    value === 0
+      ? 0
+      : Math.ceil((entryNutrition[key] * portionWeight) / totalWeight)
   );
 
   return (
@@ -154,7 +146,9 @@ function AddItemDrawer({ isOpen, onClose, onAdd }: AddItemDrawerProps) {
                 />
                 <datalist id="items">
                   {items.map((i) => (
-                    <option value={i.name}>{i.name}</option>
+                    <option key={i.name} value={i.name}>
+                      {i.name}
+                    </option>
                   ))}
                 </datalist>
               </FormControl>
@@ -262,9 +256,17 @@ function AddItemDrawer({ isOpen, onClose, onAdd }: AddItemDrawerProps) {
               <Button
                 flex="0.2"
                 onClick={() => {
+                  const now = new Date();
+                  onAdd({
+                    nutrition: portionNutrition,
+                    items: addedItems,
+                    timestamp: now.getTime(),
+                    name: getMealName(now),
+                    portionWeight,
+                    totalWeight,
+                  });
+
                   setAddedItems([]);
-                  // TODO: Pass portion and total weight as well
-                  onAdd(addedItems);
                 }}
               >
                 Add

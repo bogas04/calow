@@ -1,7 +1,17 @@
 import { createContext, Reducer, useContext, useReducer } from "react";
 import theme from "./theme";
+import { addNutrition, mapNutrition } from "./util/nutrition";
 
-export interface LogEntry {
+export interface MealEntry {
+  name: string;
+  timestamp: number;
+  items: ItemEntry[];
+  totalWeight: number;
+  portionWeight: number;
+  nutrition: Nutrition;
+}
+
+export interface ItemEntry {
   name: string;
   icon?: string;
   nutrition: Nutrition;
@@ -25,11 +35,11 @@ const defaultState = {
     protein: 80,
   } as Nutrition,
   /** logs of all days */
-  logs: {} as { [dateKey: string]: LogEntry[] },
+  logs: {} as { [dateKey: string]: MealEntry[] },
 };
 
 export enum ACTIONS {
-  ADD_LOG_ENTRY,
+  ADD_MEAL_ENTRY,
   SET_GOAL,
 }
 
@@ -39,9 +49,9 @@ export type Action =
       payload: Partial<Nutrition>;
     }
   | {
-      type: ACTIONS.ADD_LOG_ENTRY;
+      type: ACTIONS.ADD_MEAL_ENTRY;
       payload: {
-        entry: LogEntry | LogEntry[];
+        entry: MealEntry;
       };
     };
 const getDateKey = (time: number) => {
@@ -59,10 +69,9 @@ const reducer: Reducer<typeof defaultState, Action> = (
     case ACTIONS.SET_GOAL: {
       return { ...state, goal: { ...state.goal, ...action.payload } };
     }
-    case ACTIONS.ADD_LOG_ENTRY: {
-      const time = Array.isArray(action.payload.entry)
-        ? action.payload.entry[0].timestamp
-        : action.payload.entry.timestamp || Date.now();
+    case ACTIONS.ADD_MEAL_ENTRY: {
+      const time = action.payload.entry.timestamp || Date.now();
+
       const dateKey = getDateKey(time);
       const logs = state.logs[dateKey] || [];
 
@@ -106,15 +115,20 @@ export function useStore(time?: number) {
 
   return {
     ...store,
-    nutrition: log.reduce<Nutrition>(
-      (n, l) => ({
-        calories: n.calories + l.nutrition.calories,
-        carbohydrates: n.carbohydrates + l.nutrition.carbohydrates,
-        fat: n.fat + l.nutrition.fat,
-        protein: n.protein + l.nutrition.protein,
-      }),
-      { calories: 0, carbohydrates: 0, fat: 0, protein: 0 } as Nutrition
-    ),
+    nutrition: log.reduce((totalNutrition, meal) => {
+      const totalMealNutrition = meal.items.reduce(
+        (mealNutrition, item) => addNutrition(mealNutrition, item.nutrition),
+        inititalNutrition
+      );
+
+      const portionNutrition = mapNutrition(
+        totalMealNutrition,
+        (key) =>
+          (totalMealNutrition[key] * meal.portionWeight) / meal.totalWeight
+      );
+
+      return addNutrition(portionNutrition, totalNutrition);
+    }, inititalNutrition),
     items,
     log: store.logs[getDateKey(time || Date.now())] || [],
   };
@@ -130,10 +144,10 @@ export const nutritionShortNames = {
   fat: "fat",
   carbohydrates: "carbs",
   protein: "protein",
-  calories: "kCals",
+  calories: "kCal",
 };
 
-export const items: LogEntry[] = [
+export const items: ItemEntry[] = [
   {
     name: "Rice",
     icon: "🍚",
@@ -218,3 +232,10 @@ export const items: LogEntry[] = [
     timestamp: Date.now() - 1000 * 60 * 60 * 12,
   },
 ];
+
+export const inititalNutrition = {
+  calories: 0,
+  carbohydrates: 0,
+  fat: 0,
+  protein: 0,
+} as Nutrition;
