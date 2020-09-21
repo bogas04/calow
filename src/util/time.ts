@@ -22,3 +22,10 @@ export function getTimeDifference(from: number, to: number = Date.now()) {
 
   return unit === "seconds" ? "now" : rtf.format(Math.floor(difference), unit);
 }
+
+export const getDateKey = (time: number) => {
+  const d = new Date(time);
+  return `${String(d.getDate()).padStart(2, "0")}/${String(
+    d.getMonth() + 1
+  ).padStart(2, "0")}/${d.getFullYear()}`;
+};
