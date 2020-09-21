@@ -11,7 +11,6 @@ export const items: ItemEntry[] = [
       carbohydrates: 5,
       fat: 2,
     },
-    timestamp: Date.now() - 1000,
   },
   {
     name: "Egg",
@@ -23,7 +22,6 @@ export const items: ItemEntry[] = [
       carbohydrates: 5,
       fat: 2,
     },
-    timestamp: Date.now() - 1000 * 60 * 20,
   },
   {
     name: "Whole Wheat",
@@ -35,7 +33,6 @@ export const items: ItemEntry[] = [
       carbohydrates: 10,
       fat: 2,
     },
-    timestamp: Date.now() - 1000 * 60 * 60,
   },
   {
     name: "Sugar",
@@ -47,7 +44,6 @@ export const items: ItemEntry[] = [
       carbohydrates: 13,
       fat: 5,
     },
-    timestamp: Date.now() - 1000 * 60 * 60 * 2,
   },
   {
     name: "Milk",
@@ -59,7 +55,6 @@ export const items: ItemEntry[] = [
       carbohydrates: 1,
       fat: 5,
     },
-    timestamp: Date.now() - 1000 * 60 * 60 * 4.5,
   },
   {
     name: "Chickpea",
@@ -70,7 +65,6 @@ export const items: ItemEntry[] = [
       carbohydrates: 5,
       fat: 2,
     },
-    timestamp: Date.now() - 1000 * 60 * 60 * 7,
   },
   {
     name: "Tomato",
@@ -82,6 +76,5 @@ export const items: ItemEntry[] = [
       carbohydrates: 5,
       fat: 2,
     },
-    timestamp: Date.now() - 1000 * 60 * 60 * 12,
   },
 ];

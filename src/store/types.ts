@@ -11,8 +11,7 @@ export interface ItemEntry {
   name: string;
   icon?: string;
   nutrition: Nutrition;
-  weight?: number;
-  timestamp: number;
+  weight: number;
 }
 
 export interface Nutrition {
