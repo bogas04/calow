@@ -13,6 +13,7 @@ import {
   Heading,
   FormControl,
   Text,
+  FormLabel,
 } from "@chakra-ui/core";
 import { items, ItemEntry, inititalNutrition, MealEntry } from "../store";
 import NutritionBar from "./NutritionBar";
@@ -49,7 +50,10 @@ function AddItemDrawer({ isOpen, onClose, onAdd }: AddItemDrawerProps) {
   function onAddItem(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = e.currentTarget;
-    const selectedItemName = form.item.value;
+    const {
+      item: { value: selectedItemName },
+      weight: { value: weight },
+    } = form;
 
     const item =
       items.find((i) => i.name === selectedItemName) ||
@@ -57,18 +61,17 @@ function AddItemDrawer({ isOpen, onClose, onAdd }: AddItemDrawerProps) {
       (selectedItemName && {
         name: selectedItemName,
         icon: "❓",
-        weight: 100,
+        weight: Number(weight),
         nutrition: {
           fat: 0,
           calories: 0,
           protein: 0,
           carbohydrates: 0,
         },
-        timestamp: Date.now(),
       });
 
     if (item) {
-      setAddedItems((i) => [item, ...i]);
+      setAddedItems((i) => [{ ...item, weight: Number(weight) }, ...i]);
     }
 
     form.reset();
@@ -133,22 +136,37 @@ function AddItemDrawer({ isOpen, onClose, onAdd }: AddItemDrawerProps) {
             justifyContent="space-between"
           >
             <Box as="form" onSubmit={onAddItem} mb="2">
-              <FormControl>
-                <Input
-                  type="search"
-                  list="items"
-                  name="item"
-                  size="sm"
-                  placeholder="Enter item name"
-                />
-                <datalist id="items">
-                  {items.map((i) => (
-                    <option key={i.name} value={i.name}>
-                      {i.name}
-                    </option>
-                  ))}
-                </datalist>
-              </FormControl>
+              <Box d="flex" alignItems="center" justifyContent="space-between">
+                <FormControl mr="1">
+                  <FormLabel htmlFor="items">Item</FormLabel>
+                  <Input
+                    type="search"
+                    list="items-list"
+                    name="item"
+                    size="sm"
+                    placeholder="Enter item name"
+                  />
+                  <datalist id="items-list">
+                    {items.map((i) => (
+                      <option key={i.name} value={i.name}>
+                        {i.name}
+                      </option>
+                    ))}
+                  </datalist>
+                </FormControl>
+                <FormControl my="1">
+                  <FormLabel htmlFor="items">Weight</FormLabel>
+                  <Input
+                    inputMode="numeric"
+                    name="weight"
+                    size="sm"
+                    placeholder="Enter item weight"
+                  />
+                </FormControl>
+              </Box>
+              <Box mt="2">
+                <Button type="submit">Add</Button>
+              </Box>
             </Box>
 
             <Box overflowY="auto" overflowX="hidden" pb="10%" maxH="35vh">
