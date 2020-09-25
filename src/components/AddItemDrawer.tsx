@@ -186,7 +186,7 @@ function AddItemDrawer({ isOpen, onClose, onAdd }: AddItemDrawerProps) {
                     mb="2"
                   >
                     <Text>
-                      {item.icon} {item.name}
+                      {item.icon || "🍛"} {item.name}
                     </Text>
                     <Box
                       minW="100px"

@@ -33,7 +33,7 @@ function ItemEntries({ items, size = "lg" }: ItemEntriesProps) {
           >
             <Heading size={size === "sm" ? "sm" : "md"}>
               <Box as="span" mx={size === "sm" ? 0 : 2}>
-                {l.icon}
+                {l.icon || "🍛"}
               </Box>{" "}
               <Link href={`/items?search=${l.name}`}>
                 <a>{l.name}</a>
