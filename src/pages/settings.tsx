@@ -131,7 +131,7 @@ export default function SettingsPage() {
               <Input
                 w="40%"
                 inputMode="numeric"
-                defaultValue={caloricNeeds.calories}
+                defaultValue={goal.calories}
                 name="calories"
                 size="sm"
               />
