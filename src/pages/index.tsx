@@ -18,7 +18,11 @@ export default function HomePage() {
         <Meter nutrition={nutrition} goal={goal} />
 
         <Box py={["1", "10"]} pb="40%">
-          {log.length === 0 && <EmptyArt />}
+          {log.length === 0 && (
+            <Box h={["auto", "30vh"]}>
+              <EmptyArt />
+            </Box>
+          )}
           <MealEntries entries={log} />
         </Box>
 

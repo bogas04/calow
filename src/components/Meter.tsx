@@ -45,11 +45,12 @@ export function Meter({
       mt="2"
       mb="6"
       flexDirection="column"
+      h={["auto", "30vh"]}
     >
       <svg
         viewBox="0 0 100 100"
         width="100%"
-        height="300"
+        height="100%"
         style={{ margin: "-50px 0" }}
       >
         {nutritionKeys.map((k) => (
