@@ -1,33 +1,32 @@
-import { Box, Button } from "@chakra-ui/core";
-
+import { Box, Link as ChakraLink } from "@chakra-ui/core";
+import Link from "next/link";
 import * as React from "react";
+
 import { Meter } from "../components/Meter";
-import { ACTIONS, useStore } from "../store";
-import AddItemDrawer from "../components/AddItemDrawer";
+import { useStore } from "../store";
 import MealEntries from "../components/MealEntries";
 import EmptyArt from "../svg/EmptyArt";
 import { Page } from "../components/layouts";
 
 export default function HomePage() {
-  const { goal, nutrition, log, items, dispatch } = useStore();
-  const [showAddItem, setShowAddItem] = React.useState(false);
+  const { goal, nutrition, log } = useStore();
 
   return (
-    <>
-      <Page>
-        <Meter nutrition={nutrition} goal={goal} />
+    <Page>
+      <Meter nutrition={nutrition} goal={goal} />
 
-        <Box py={["1", "10"]} pb="40%">
-          {log.length === 0 && (
-            <Box h={["auto", "30vh"]}>
-              <EmptyArt />
-            </Box>
-          )}
-          <MealEntries entries={log} />
-        </Box>
+      <Box py={["1", "10"]} pb="40%">
+        {log.length === 0 && (
+          <Box h={["auto", "30vh"]}>
+            <EmptyArt />
+          </Box>
+        )}
+        <MealEntries entries={log} />
+      </Box>
 
-        <Button
-          onClick={() => setShowAddItem(true)}
+      <Link href="/meal-entry">
+        <ChakraLink
+          href="/meal-entry"
           position="fixed"
           right={0}
           bottom={0}
@@ -37,29 +36,18 @@ export default function HomePage() {
           fontSize="3xl"
           fontWeight="100"
           width="16"
+          d="flex"
+          _hover={{ textDecoration: "none", boxShadow: "lg" }}
+          alignItems="center"
+          justifyContent="center"
           borderRadius="50%"
           bg="green.400"
           color="white"
-          _active={{ bg: "pink", transform: "translate(1px, 1px)" }}
-          _hover={{ boxShadow: "0 2px 2px -2px black" }}
         >
           +
-        </Button>
-      </Page>
-
-      <AddItemDrawer
-        items={items}
-        isOpen={showAddItem}
-        onClose={() => setShowAddItem(false)}
-        onAdd={(entry) => {
-          dispatch({
-            type: ACTIONS.ADD_MEAL_ENTRY,
-            payload: { entry },
-          });
-          setShowAddItem(false);
-        }}
-      />
-    </>
+        </ChakraLink>
+      </Link>
+    </Page>
   );
 }
 
