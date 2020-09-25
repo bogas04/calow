@@ -1,7 +1,9 @@
 export function getMealName(date: Date) {
   const hours = date.getHours();
   const name =
-    hours < 10
+    hours < 6
+      ? "Guilty Pleasure Snacks"
+      : hours < 10
       ? "Breakfast"
       : hours < 12
       ? "Brunch"
