@@ -18,14 +18,25 @@ export const defaultState = {
   logs: {} as { [dateKey: string]: MealEntry[] },
 };
 
+export interface Store extends Required<typeof defaultState> {}
+
 export enum ACTIONS {
   ADD_MEAL_ENTRY,
+  RESET,
+  SET,
   SET_GOAL,
   SET_GOAL_FROM_CALORIES,
   SET_BODY,
 }
 
 export type Action =
+  | {
+      type: ACTIONS.RESET;
+    }
+  | {
+      type: ACTIONS.SET;
+      payload: Store;
+    }
   | {
       type: ACTIONS.SET_GOAL_FROM_CALORIES;
       payload: number;
@@ -45,11 +56,14 @@ export type Action =
       payload: BodyMetrics;
     };
 
-export const reducer: Reducer<typeof defaultState, Action> = (
-  state,
-  action
-): typeof defaultState => {
+export const reducer: Reducer<Store, Action> = (state, action) => {
   switch (action.type) {
+    case ACTIONS.RESET: {
+      return defaultState;
+    }
+    case ACTIONS.SET: {
+      return action.payload;
+    }
     case ACTIONS.SET_BODY: {
       return { ...state, body: { ...state.body, ...action.payload } };
     }

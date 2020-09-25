@@ -20,8 +20,9 @@ import { ACTIONS, BodyMetrics, useStore } from "../store";
 import { computeCaloricNeeds } from "../util/nutrition";
 
 export default function SettingsPage() {
-  const { body, goal, dispatch } = useStore();
+  const { body, goal, logs, dispatch } = useStore();
   const [expand, setExpand] = React.useState(false);
+  const daysOfData = Object.keys(logs).length;
 
   const caloricNeeds = computeCaloricNeeds(body);
   const hasComputedCaloricNeeds =
@@ -79,7 +80,7 @@ export default function SettingsPage() {
         )}
       </Box>
       {hasComputedCaloricNeeds && (
-        <Box as="section">
+        <Box mb="6" as="section">
           <Heading
             size="lg"
             my="2"
@@ -87,7 +88,7 @@ export default function SettingsPage() {
             alignItems="center"
             d="flex"
           >
-            Goal
+            Your Goal
             <Tag
               size="sm"
               textTransform="uppercase"
@@ -133,6 +134,29 @@ export default function SettingsPage() {
           </Box>
         </Box>
       )}
+      <Box as="section">
+        <Heading size="lg">Your Data</Heading>
+        <FormHelperText mb="6">
+          All your data is stored locally on your device.
+        </FormHelperText>
+        <Button
+          variant="solid"
+          variantColor="red"
+          onClick={() => {
+            if (
+              window.confirm(
+                `Are you sure? You'll lose data of ${daysOfData} day${
+                  daysOfData === 1 ? "" : "s"
+                }.`
+              )
+            ) {
+              dispatch({ type: ACTIONS.RESET });
+            }
+          }}
+        >
+          Delete My Data
+        </Button>
+      </Box>
     </Page>
   );
 }
