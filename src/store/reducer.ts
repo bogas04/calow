@@ -13,12 +13,7 @@ export const defaultState = {
     gender: "female",
   } as BodyMetrics,
   /** goal */
-  goal: {
-    fat: 100,
-    calories: 1600,
-    carbohydrates: 400,
-    protein: 80,
-  } as Nutrition,
+  goal: computeMacroFromCalories(1800),
   /** logs of all days */
   logs: {} as { [dateKey: string]: MealEntry[] },
 };

@@ -11,22 +11,13 @@ import {
   Radio,
   RadioGroup,
   Select,
+  Tag,
 } from "@chakra-ui/core";
 import * as React from "react";
 import { Page } from "../components/layouts";
-import { Meter } from "../components/Meter";
 import NutritionBar from "../components/NutritionBar";
-import {
-  ACTIONS,
-  BodyMetrics,
-  Nutrition,
-  nutritionKeys,
-  useStore,
-} from "../store";
-import {
-  computeCaloricNeeds,
-  computeMacroFromCalories,
-} from "../util/nutrition";
+import { ACTIONS, BodyMetrics, useStore } from "../store";
+import { computeCaloricNeeds } from "../util/nutrition";
 
 export default function SettingsPage() {
   const { body, goal, dispatch } = useStore();
@@ -45,27 +36,15 @@ export default function SettingsPage() {
 
   return (
     <Page heading="Settings">
-      <Collapse isOpen={expand || !hasComputedCaloricNeeds}>
-        <BodyMetricForm
-          metrics={body}
-          onChange={(payload) => dispatch({ type: ACTIONS.SET_BODY, payload })}
-        />
-      </Collapse>
-      {hasComputedCaloricNeeds && (
-        <Box mb="6">
-          <Heading size="lg" mb="6">
-            Your Daily Needs
-          </Heading>
-          <Box
-            d="flex"
-            justifyContent="center"
-            alignItems="center"
-            fontWeight="bold"
-          >
-            <NutritionBar nutrition={caloricNeeds} />
-          </Box>
-          <FormHelperText onClick={() => setExpand(!expand)}>
-            Based on your body metrics.
+      <Box mb="6" as="section">
+        <Heading
+          size="lg"
+          d="flex"
+          justifyContent="space-between"
+          alignItems="center"
+        >
+          Maintenance Needs
+          {hasComputedCaloricNeeds && (
             <IconButton
               isRound
               variant="ghost"
@@ -73,25 +52,85 @@ export default function SettingsPage() {
               onClick={() => setExpand(!expand)}
               icon={expand ? "chevron-up" : "chevron-down"}
             />
-          </FormHelperText>
-        </Box>
-      )}
+          )}
+        </Heading>
+        <FormHelperText>
+          These are your daily caloric needs in order to maintain your body
+          weight, based on your body metrics.
+        </FormHelperText>
+
+        <Collapse isOpen={expand || !hasComputedCaloricNeeds}>
+          <BodyMetricForm
+            metrics={body}
+            onChange={(payload) =>
+              dispatch({ type: ACTIONS.SET_BODY, payload })
+            }
+          />
+        </Collapse>
+        {hasComputedCaloricNeeds && (
+          <Box
+            mt="6"
+            d="flex"
+            alignItems="center"
+            justifyContent={["center", "flex-start"]}
+          >
+            <NutritionBar nutrition={caloricNeeds} />
+          </Box>
+        )}
+      </Box>
       {hasComputedCaloricNeeds && (
         <Box as="section">
-          <Heading size="lg" my="2">
-            Your Goal
+          <Heading
+            size="lg"
+            my="2"
+            justifyContent="space-between"
+            alignItems="center"
+            d="flex"
+          >
+            Goal
+            <Tag
+              size="sm"
+              textTransform="uppercase"
+              color={
+                goal.calories < caloricNeeds.calories ? "red.500" : "green.500"
+              }
+            >
+              {goal.calories < caloricNeeds.calories ? "deficit" : "surplus"}
+            </Tag>
           </Heading>
-          <FormControl pb="3">
-            <FormLabel textTransform="capitalize">Calories</FormLabel>
+          <FormHelperText>
+            {goal.calories < caloricNeeds.calories
+              ? "You've set a goal lower than your maintenance needs. You would lose weight if you continue to stay calorie deficit"
+              : "You've set a goal higher than your maintenance needs. You would gain weight if you continue to stay calorie surplus."}
+          </FormHelperText>
+
+          <FormControl
+            py="3"
+            d="flex"
+            alignItems="center"
+            justifyContent="space-between"
+          >
+            <FormLabel fontSize="sm" textTransform="capitalize">
+              Calories (kCal)
+            </FormLabel>
             <Input
+              w="40%"
               inputMode="numeric"
+              size="sm"
               value={goal.calories}
               onChange={(e: React.FormEvent<HTMLInputElement>) =>
                 setGoalFromCalories(Number(e.currentTarget.value))
               }
             />
           </FormControl>
-          <Meter goal={caloricNeeds} nutrition={goal} />
+          <Box
+            mt="6"
+            d="flex"
+            justifyContent={["center", "flex-start"]}
+            alignItems="center"
+          >
+            <NutritionBar nutrition={caloricNeeds} />
+          </Box>
         </Box>
       )}
     </Page>
@@ -122,85 +161,78 @@ function BodyMetricForm({
   }
 
   return (
-    <Box as="section" mb="10%">
-      <Heading size="lg" my="2">
-        Your Caloric Needs
-      </Heading>
-      <form onSubmit={onSubmit}>
-        <FormControl
+    <form onSubmit={onSubmit}>
+      <FormControl
+        d="flex"
+        flexDirection="column"
+        justifyContent="space-between"
+        my="2"
+      >
+        <FormLabel>Gender</FormLabel>
+        <RadioGroup
           d="flex"
-          flexDirection="column"
           justifyContent="space-between"
-          my="2"
+          name="gender"
+          defaultValue={metrics.gender}
         >
-          <FormLabel>Gender</FormLabel>
-          <RadioGroup
-            d="flex"
-            justifyContent="space-between"
-            name="gender"
-            defaultValue={metrics.gender}
-          >
-            <Radio value="female">🙍‍♀️ Female</Radio>
-            <Radio mr="2" value="male">
-              🙍‍♂️ Male
-            </Radio>
-          </RadioGroup>
-        </FormControl>
-        <FormControl my="2">
-          <FormLabel>Age</FormLabel>
+          <Radio value="female">🙍‍♀️ Female</Radio>
+          <Radio mr="2" value="male">
+            🙍‍♂️ Male
+          </Radio>
+        </RadioGroup>
+      </FormControl>
+      <FormControl my="2">
+        <FormLabel>Age</FormLabel>
+        <Input
+          inputMode="numeric"
+          defaultValue={metrics.age || undefined}
+          placeholder="Age in years"
+          name="age"
+          isRequired
+        />
+      </FormControl>
+      <Box d="flex" justifyContent="space-between" alignItems="center" my="2">
+        <FormControl mr="1">
+          <FormLabel>Height</FormLabel>
           <Input
+            defaultValue={metrics.height || undefined}
             inputMode="numeric"
-            defaultValue={metrics.age || undefined}
-            placeholder="Age in years"
-            name="age"
+            placeholder="Height in centimeters"
             isRequired
+            name="height"
           />
         </FormControl>
-        <Box d="flex" justifyContent="space-between" alignItems="center" my="2">
-          <FormControl>
-            <FormLabel>Height</FormLabel>
-            <Input
-              w="95%"
-              defaultValue={metrics.height || undefined}
-              inputMode="numeric"
-              placeholder="Height in centimeters"
-              isRequired
-              name="height"
-            />
-          </FormControl>
-          <FormControl>
-            <FormLabel>Weight</FormLabel>
-            <Input
-              w="95%"
-              inputMode="numeric"
-              defaultValue={metrics.weight || undefined}
-              placeholder="Weight in kilograms"
-              isRequired
-              name="weight"
-            />
-          </FormControl>
-        </Box>
-        <FormControl my="2">
-          <FormLabel>Activity</FormLabel>
-          <Select
-            name="activity"
+        <FormControl ml="1">
+          <FormLabel>Weight</FormLabel>
+          <Input
+            inputMode="numeric"
+            defaultValue={metrics.weight || undefined}
+            placeholder="Weight in kilograms"
             isRequired
-            defaultValue={metrics.activity || undefined}
-            placeholder="Select your daily activity"
-          >
-            <option value="1.2">Little to no exercise</option>
-            <option value="1.375">Light exercise (1-3 days per week)</option>
-            <option value="1.55">Moderate exercise (3-5 days per week)</option>
-            <option value="1.725">Heavy exercise (6-7 days per week)</option>
-            <option value="1.9">
-              Very heavy exercise (twice per day, extra heavy workouts)
-            </option>
-          </Select>
+            name="weight"
+          />
         </FormControl>
-        <Button mt="6" type="submit">
-          Calculate
-        </Button>
-      </form>
-    </Box>
+      </Box>
+      <FormControl my="2">
+        <FormLabel>Activity</FormLabel>
+        <Select
+          name="activity"
+          isRequired
+          defaultValue={metrics.activity || undefined}
+          placeholder="Select your daily activity"
+        >
+          <option value="1.2">Little to no exercise</option>
+          <option value="1.375">Light exercise (1-3 days per week)</option>
+          <option value="1.55">Moderate exercise (3-5 days per week)</option>
+          <option value="1.725">Heavy exercise (6-7 days per week)</option>
+          <option value="1.9">
+            Very heavy exercise (twice per day, extra heavy workouts)
+          </option>
+        </Select>
+      </FormControl>
+      <Button mt="6" type="submit">
+        Calculate
+      </Button>
+    </form>
   );
 }
