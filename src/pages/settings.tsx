@@ -107,32 +107,46 @@ export default function SettingsPage() {
               : "You've set a goal higher than your maintenance needs. You would gain weight if you continue to stay calorie surplus."}
           </FormHelperText>
 
-          <FormControl
-            py="3"
-            d="flex"
-            alignItems="center"
-            justifyContent="space-between"
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+
+              const form = e.currentTarget;
+              const {
+                calories: { value: calories },
+              } = form;
+
+              setGoalFromCalories(Number(calories));
+            }}
           >
-            <FormLabel fontSize="sm" textTransform="capitalize">
-              Calories (kCal)
-            </FormLabel>
-            <Input
-              w="40%"
-              inputMode="numeric"
-              size="sm"
-              value={goal.calories}
-              onChange={(e: React.FormEvent<HTMLInputElement>) =>
-                setGoalFromCalories(Number(e.currentTarget.value))
-              }
-            />
-          </FormControl>
+            <FormControl
+              py="3"
+              d="flex"
+              alignItems="center"
+              justifyContent="space-between"
+            >
+              <FormLabel fontSize="sm" textTransform="capitalize">
+                Calories (kCal)
+              </FormLabel>
+              <Input
+                w="40%"
+                inputMode="numeric"
+                defaultValue={caloricNeeds.calories}
+                name="calories"
+                size="sm"
+              />
+              <Button size="sm" type="submit">
+                Save
+              </Button>
+            </FormControl>
+          </form>
           <Box
             mt="6"
             d="flex"
             justifyContent={["center", "flex-start"]}
             alignItems="center"
           >
-            <NutritionBar nutrition={caloricNeeds} />
+            <NutritionBar nutrition={goal} />
           </Box>
         </Box>
       )}
