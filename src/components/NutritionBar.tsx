@@ -16,9 +16,7 @@ function NutritionBar({ nutrition, border = true }: NutritionBarProps) {
   return (
     <Box
       d="flex"
-      {...(border
-        ? { boxShadow: "2px 2px 10px -4px grey", borderRadius: 50, p: 4 }
-        : {})}
+      {...(border ? { boxShadow: "sm", borderRadius: 50, p: 4 } : {})}
     >
       {nutritionKeys.map((k, i) => {
         const value = nutrition[k];
