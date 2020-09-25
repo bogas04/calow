@@ -20,21 +20,25 @@ function NutritionBar({ nutrition, border = true }: NutritionBarProps) {
         ? { boxShadow: "2px 2px 10px -4px grey", borderRadius: 50, p: 4 }
         : {})}
     >
-      {nutritionKeys.map((k, i) => (
-        <Box
-          d="flex"
-          key={i}
-          textTransform="capitalize"
-          color={nutritionColors[k]}
-        >
-          <Text fontSize="xs">
-            {nutrition[k]} {nutritionShortNames[k]}
-          </Text>
-          {i !== nutritionKeys.length - 1 && (
-            <Box width="1px" backgroundColor="grey" flex="1" mx="2" />
-          )}
-        </Box>
-      ))}
+      {nutritionKeys.map((k, i) => {
+        const value = nutrition[k];
+        return (
+          <Box
+            d="flex"
+            key={i}
+            textTransform="capitalize"
+            color={nutritionColors[k]}
+          >
+            <Text fontSize="xs">
+              {Number.isInteger(value) ? value : value.toFixed(2)}{" "}
+              {nutritionShortNames[k]}
+            </Text>
+            {i !== nutritionKeys.length - 1 && (
+              <Box width="1px" backgroundColor="grey" flex="1" mx="2" />
+            )}
+          </Box>
+        );
+      })}
     </Box>
   );
 }
