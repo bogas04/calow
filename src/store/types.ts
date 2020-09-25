@@ -20,3 +20,11 @@ export interface Nutrition {
   protein: number;
   fat: number;
 }
+
+export interface BodyMetrics {
+  height: number;
+  weight: number;
+  gender: "male" | "female";
+  age: number;
+  activity: number;
+}
