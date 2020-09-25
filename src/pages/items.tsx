@@ -1,7 +1,8 @@
-import { Box, Heading, Input, Text } from "@chakra-ui/core";
+import { FormControl, FormLabel, Input } from "@chakra-ui/core";
 import Fuse from "fuse.js";
 import * as React from "react";
 import ItemEntries from "../components/ItemEntries";
+import { Page } from "../components/layouts";
 
 import { useStore } from "../store";
 
@@ -29,16 +30,19 @@ export default function ItemsPage() {
   }, [query, items]);
 
   return (
-    <Box py="2" px="4">
-      <Heading my="6">Your items</Heading>
-      <Input
-        value={query}
-        placeholder="Search"
-        type="search"
-        onChange={handleSearch}
-      />
+    <Page heading="Your Items">
+      <FormControl>
+        <FormLabel htmlFor="search">Search for items</FormLabel>
+        <Input
+          id="search"
+          value={query}
+          placeholder="Search"
+          type="search"
+          onChange={handleSearch}
+        />
+      </FormControl>
       <ItemEntries items={filteredItems} />
-    </Box>
+    </Page>
   );
 }
 

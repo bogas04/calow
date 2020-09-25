@@ -1,5 +1,6 @@
-import { Box, Heading, Input, Text } from "@chakra-ui/core";
+import { Box, FormControl, FormLabel, Heading, Input } from "@chakra-ui/core";
 import * as React from "react";
+import { Page } from "../components/layouts";
 import { ACTIONS, Nutrition, nutritionKeys, useStore } from "../store";
 
 export default function SettingsPage() {
@@ -17,19 +18,23 @@ export default function SettingsPage() {
     return handler;
   };
   return (
-    <Box py="2" px="4">
-      <Heading my="6">Your Goal</Heading>
-      {nutritionKeys.map((k) => (
-        <Box>
-          <Text textTransform="capitalize">{k}</Text>{" "}
-          <Input
-            inputMode="numeric"
-            value={goal[k]}
-            onChange={getChangeHandler(k)}
-          />
-        </Box>
-      ))}
-    </Box>
+    <Page heading="Settings">
+      <Box as="section">
+        <Heading size="lg" my="2">
+          Your Goal
+        </Heading>
+        {nutritionKeys.map((k) => (
+          <FormControl pb="3">
+            <FormLabel textTransform="capitalize">{k}</FormLabel>
+            <Input
+              inputMode="numeric"
+              value={goal[k]}
+              onChange={getChangeHandler(k)}
+            />
+          </FormControl>
+        ))}
+      </Box>
+    </Page>
   );
 }
 

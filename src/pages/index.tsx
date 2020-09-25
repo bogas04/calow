@@ -6,6 +6,7 @@ import { ACTIONS, useStore } from "../store";
 import AddItemDrawer from "../components/AddItemDrawer";
 import MealEntries from "../components/MealEntries";
 import EmptyArt from "../svg/EmptyArt";
+import { Page } from "../components/layouts";
 
 export default function HomePage() {
   const { goal, nutrition, log, items, dispatch } = useStore();
@@ -13,10 +14,10 @@ export default function HomePage() {
 
   return (
     <>
-      <Box py="2" px="4">
+      <Page>
         <Meter nutrition={nutrition} goal={goal} />
 
-        <Box py="1" pb="20%">
+        <Box py={["1", "10"]} pb="20%">
           {log.length === 0 && <EmptyArt />}
           <MealEntries entries={log} />
         </Box>
@@ -40,7 +41,7 @@ export default function HomePage() {
         >
           +
         </Button>
-      </Box>
+      </Page>
 
       <AddItemDrawer
         items={items}
