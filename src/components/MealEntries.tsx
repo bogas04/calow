@@ -27,12 +27,8 @@ function Meal({ meal }: { meal: MealEntry }) {
   const handleToggle = () => setShow(!show);
   return (
     <Box>
-      <Heading d="flex" justifyContent="space-between" alignItems="center">
-        <Box>{meal.name}</Box>
-        <Box fontWeight="normal">
-          <NutritionBar nutrition={meal.nutrition} border={false} />
-        </Box>
-      </Heading>
+      <Heading mb="2">{meal.name}</Heading>
+      <NutritionBar nutrition={meal.nutrition} border={false} />
       <Box my="2" d="flex" justifyContent="space-between" alignItems="center">
         <Box d="flex" alignItems="center" flex="1">
           <Text fontSize="xs" color="gray.600" fontWeight="300">

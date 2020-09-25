@@ -120,12 +120,8 @@ function AddItemDrawer({ isOpen, onClose, onAdd }: AddItemDrawerProps) {
         borderRadius="16px 16px 0 0"
         boxShadow="0 0 10px -4px black"
       >
-        <DrawerHeader
-          d="flex"
-          justifyContent="space-between"
-          alignItems="center"
-        >
-          Add Entry
+        <DrawerHeader>
+          <Text mb="1">Add Entry</Text>
           <NutritionBar nutrition={portionNutrition} border={false} />
         </DrawerHeader>
 
@@ -136,12 +132,13 @@ function AddItemDrawer({ isOpen, onClose, onAdd }: AddItemDrawerProps) {
             flexDirection="column"
             justifyContent="space-between"
           >
-            <Box as="form" onSubmit={onAddItem} my="4">
+            <Box as="form" onSubmit={onAddItem} mb="2">
               <FormControl>
                 <Input
                   type="search"
                   list="items"
                   name="item"
+                  size="sm"
                   placeholder="Enter item name"
                 />
                 <datalist id="items">
@@ -161,8 +158,8 @@ function AddItemDrawer({ isOpen, onClose, onAdd }: AddItemDrawerProps) {
                   flexDirection="column"
                   bg="blue.50"
                   p="2"
-                  mb="4"
-                  borderRadius={8}
+                  my="4"
+                  rounded="md"
                 >
                   <Heading
                     d="flex"
@@ -177,12 +174,12 @@ function AddItemDrawer({ isOpen, onClose, onAdd }: AddItemDrawerProps) {
                 </Box>
               )}
               {addedItems.map((item, i) => (
-                <Box key={i} d="flex" flexDirection="column" p="2" mb="4">
+                <Box key={i} d="flex" flexDirection="column" p="2" mb="1">
                   <Heading
                     d="flex"
                     justifyContent="space-between"
                     alignItems="center"
-                    size="md"
+                    size="sm"
                     mb="2"
                   >
                     <Text>
@@ -193,7 +190,7 @@ function AddItemDrawer({ isOpen, onClose, onAdd }: AddItemDrawerProps) {
                       maxW="100px"
                       d="flex"
                       alignItems="center"
-                      justifyContent="space-evenly"
+                      justifyContent="flex-end"
                     >
                       <Input
                         inputMode="numeric"
@@ -203,7 +200,7 @@ function AddItemDrawer({ isOpen, onClose, onAdd }: AddItemDrawerProps) {
                         size="sm"
                         data-item-index={i}
                         onChange={handleItemWeightChange}
-                        mr="1"
+                        mr="2"
                       />
                       <Box fontWeight="100">g</Box>
                     </Box>
@@ -255,6 +252,8 @@ function AddItemDrawer({ isOpen, onClose, onAdd }: AddItemDrawerProps) {
               </Box>
               <Button
                 flex="0.2"
+                variantColor="green"
+                variant="solid"
                 onClick={() => {
                   const now = new Date();
                   onAdd({
@@ -269,7 +268,7 @@ function AddItemDrawer({ isOpen, onClose, onAdd }: AddItemDrawerProps) {
                   setAddedItems([]);
                 }}
               >
-                Add
+                Done
               </Button>
             </Box>
           )}

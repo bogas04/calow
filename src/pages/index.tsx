@@ -17,7 +17,7 @@ export default function HomePage() {
       <Page>
         <Meter nutrition={nutrition} goal={goal} />
 
-        <Box py={["1", "10"]} pb="20%">
+        <Box py={["1", "10"]} pb="40%">
           {log.length === 0 && <EmptyArt />}
           <MealEntries entries={log} />
         </Box>

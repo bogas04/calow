@@ -65,7 +65,8 @@ function App({
             id="footer"
             p="4"
             color="white"
-            borderRadius={["8px 8px 0 0"]}
+            roundedTop="lg"
+            roundedRight="lg"
             backgroundColor="gray.600"
           >
             <Box as="nav">
