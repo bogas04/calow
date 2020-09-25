@@ -68,7 +68,7 @@ function AddItemDrawer({ isOpen, onClose, onAdd }: AddItemDrawerProps) {
       });
 
     if (item) {
-      setAddedItems((i) => i.concat(item));
+      setAddedItems((i) => [item, ...i]);
     }
 
     form.reset();
