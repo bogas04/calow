@@ -20,8 +20,10 @@ import { ACTIONS, BodyMetrics, useStore } from "../store";
 import { computeCaloricNeeds } from "../util/nutrition";
 
 export default function SettingsPage() {
-  const { body, goal, logs, dispatch } = useStore();
+  const { dispatch, ...store } = useStore();
   const [expand, setExpand] = React.useState(false);
+
+  const { body, goal, logs } = store;
   const daysOfData = Object.keys(logs).length;
 
   const caloricNeeds = computeCaloricNeeds(body);
@@ -139,23 +141,43 @@ export default function SettingsPage() {
         <FormHelperText mb="6">
           All your data is stored locally on your device.
         </FormHelperText>
-        <Button
-          variant="solid"
-          variantColor="red"
-          onClick={() => {
-            if (
-              window.confirm(
-                `Are you sure? You'll lose data of ${daysOfData} day${
-                  daysOfData === 1 ? "" : "s"
-                }.`
-              )
-            ) {
-              dispatch({ type: ACTIONS.RESET });
-            }
-          }}
-        >
-          Delete My Data
-        </Button>
+        <Box d="flex" flexDirection={["column", "row"]}>
+          <Button
+            my="2"
+            variantColor="blue"
+            mr={[0, "2"]}
+            onClick={() => {
+              window.open(
+                URL.createObjectURL(
+                  new Blob([JSON.stringify(store)], {
+                    type: "application/json",
+                  })
+                )
+              );
+            }}
+          >
+            Export My Data
+          </Button>
+          <Button
+            my="2"
+            ml={[0, "2"]}
+            variant="solid"
+            variantColor="red"
+            onClick={() => {
+              if (
+                window.confirm(
+                  `Are you sure? You'll lose data of ${daysOfData} day${
+                    daysOfData === 1 ? "" : "s"
+                  }.`
+                )
+              ) {
+                dispatch({ type: ACTIONS.RESET });
+              }
+            }}
+          >
+            Delete My Data
+          </Button>
+        </Box>
       </Box>
     </Page>
   );
