@@ -15,7 +15,7 @@ import { ACTIONS, inititalNutrition, ItemEntry, useStore } from "../store";
 import { getMealName } from "../util/meal";
 import { computeWeightedNutrition, mapNutrition } from "../util/nutrition";
 
-export default function SettingsPage() {
+export default function MealEntryPage() {
   const { dispatch, items } = useStore();
   const router = useRouter();
 
@@ -298,4 +298,4 @@ export default function SettingsPage() {
   );
 }
 
-SettingsPage.pageTitle = "Add Entry";
+MealEntryPage.pageTitle = "Add Entry";
