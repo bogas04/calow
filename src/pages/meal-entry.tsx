@@ -5,14 +5,29 @@ import {
   FormHelperText,
   FormLabel,
   Heading,
+  IconButton,
+  IModal,
   Input,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Text,
 } from "@chakra-ui/core";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import React, { FormEvent, useEffect, useState } from "react";
 import { Page } from "../components/layouts";
 import NutritionBar from "../components/NutritionBar";
-import { ACTIONS, inititalNutrition, ItemEntry, useStore } from "../store";
+import {
+  ACTIONS,
+  inititalNutrition,
+  ItemEntry,
+  nutritionKeys,
+  nutritionUnits,
+  useStore,
+} from "../store";
 import DinnerArt from "../svg/DinnerArt";
 import { getMealName } from "../util/meal";
 import { computeWeightedNutrition, mapNutrition } from "../util/nutrition";
@@ -24,6 +39,11 @@ export default function MealEntryPage() {
   const [addedItems, setAddedItems] = useState<ItemEntry[]>([]);
   const [totalWeight, setTotalWeight] = useState(0);
   const [portionWeight, setPortionWeight] = useState(0);
+  const [showCustomItemModal, setShowCustomItemModal] = useState(false);
+  const [customItemDetails, setCustomItemDetails] = useState({
+    name: "",
+    weight: 0,
+  });
 
   // Compute total weight each time a new item is added
   useEffect(() => {
@@ -52,37 +72,32 @@ export default function MealEntryPage() {
       : Math.ceil((value * portionWeight) / totalWeight);
   });
 
-  function hanldeAddItem(e: React.FormEvent<HTMLFormElement>) {
+  function handleAddItem(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = e.currentTarget;
-    const selectedItemName = form.item.value;
+    const name = form.item.value;
     const weight = Number(form.weight.value);
 
-    const item =
-      items.find((i) => i.name === selectedItemName) ||
-      // TODO: Handle custom item addition
-      (selectedItemName && {
-        name: selectedItemName,
-        icon: "❓",
-        weight: weight,
-        nutrition: {
-          fat: 0,
-          calories: 0,
-          protein: 0,
-          carbohydrates: 0,
-        },
+    const item = items.find((i) => i.name === name);
+    if (!item) {
+      setCustomItemDetails({
+        name,
+        weight,
       });
 
-    if (item) {
-      const weightedItem = {
-        ...item,
-        weight,
-        nutrition: computeWeightedNutrition(item.nutrition, weight),
-      };
-
-      setAddedItems((i) => [weightedItem, ...i]);
+      setShowCustomItemModal(true);
+      form.querySelector("input")?.focus();
+      form.reset();
+      return;
     }
 
+    const weightedItem = {
+      ...item,
+      weight,
+      nutrition: computeWeightedNutrition(item.nutrition, weight),
+    };
+
+    setAddedItems((i) => [weightedItem, ...i]);
     form.querySelector("input")?.focus();
     form.reset();
   }
@@ -90,26 +105,19 @@ export default function MealEntryPage() {
   function handleItemWeightChange(e: React.FormEvent<HTMLInputElement>) {
     const el = e.currentTarget;
     const index = Number(el.dataset.itemIndex);
-    const weight = Number(el.value);
+    const weight = Number(el.value) || 1;
 
-    const itemDetails = items.find((i) => i.name === addedItems[index].name);
+    const currentDetails = addedItems[index];
+    const newDetails: ItemEntry = {
+      ...currentDetails,
+      weight,
+      nutrition: mapNutrition(
+        currentDetails.nutrition,
+        (_, value) => (weight * value) / currentDetails.weight
+      ),
+    };
 
-    if (itemDetails) {
-      setAddedItems((xs) =>
-        xs.map((x, i) =>
-          i === index
-            ? {
-                ...x,
-                weight,
-                nutrition: computeWeightedNutrition(
-                  itemDetails.nutrition,
-                  weight
-                ),
-              }
-            : x
-        )
-      );
-    }
+    setAddedItems((xs) => xs.map((x, i) => (i === index ? newDetails : x)));
   }
 
   function handleDone() {
@@ -139,8 +147,12 @@ export default function MealEntryPage() {
         size="md"
         mb="2"
       >
-        🍛 Total
+        🍛 Meal Nutrition
       </Heading>
+      <FormHelperText mb="2">
+        You're having {portionWeight} grams of total meal of {totalWeight}{" "}
+        grams. This is the total nutritional value of the meal.
+      </FormHelperText>
       <NutritionBar border={false} nutrition={mealNutrition} />
     </Box>
   );
@@ -186,7 +198,7 @@ export default function MealEntryPage() {
   const form = (
     <Box
       as="form"
-      onSubmit={hanldeAddItem}
+      onSubmit={handleAddItem}
       d="flex"
       justifyContent="space-between"
       flex="1"
@@ -222,9 +234,14 @@ export default function MealEntryPage() {
         />
       </FormControl>
       <FormControl>
-        <Button size="sm" type="submit">
-          +
-        </Button>
+        <IconButton
+          aria-label="Add item"
+          size="sm"
+          type="submit"
+          icon="add"
+          variant="outline"
+          variantColor="green"
+        />
       </FormControl>
     </Box>
   );
@@ -305,24 +322,15 @@ export default function MealEntryPage() {
   return (
     <Box h="100%" d="flex" flexDirection="column">
       <Page
-        heading={
-          <Box
-            mt="2"
-            d="flex"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Heading>Add</Heading>
-            <Box d="flex" justifyContent="center" mb="2">
-              <NutritionBar nutrition={portionNutrition} />
-            </Box>
-          </Box>
-        }
+        heading="Add Entry"
         d="flex"
         flex="1"
         flexDirection="column"
         overflow="auto"
       >
+        <Box d="flex" justifyContent="center">
+          <NutritionBar nutrition={portionNutrition} />
+        </Box>
         <Box
           d="flex"
           flex="1"
@@ -355,8 +363,92 @@ export default function MealEntryPage() {
           </Box>
         )}
       </Box>
+      <CustomItemModal
+        isOpen={showCustomItemModal}
+        onClose={() => setShowCustomItemModal(false)}
+        name={customItemDetails.name}
+        onAdd={(item) => {
+          const { weight } = customItemDetails;
+          const weightedItem = {
+            ...item,
+            weight,
+            nutrition: computeWeightedNutrition(item.nutrition, weight),
+          };
+
+          setAddedItems((i) => [weightedItem, ...i]);
+          setCustomItemDetails({ name: "", weight: 0 });
+          setShowCustomItemModal(false);
+        }}
+      />
     </Box>
   );
 }
 
 MealEntryPage.pageTitle = "Add Entry";
+
+function CustomItemModal({
+  name,
+  isOpen,
+  onClose,
+  onAdd,
+}: {
+  name: string;
+  isOpen: boolean;
+  onAdd: (item: ItemEntry) => void;
+  onClose: IModal["onClose"];
+}) {
+  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const calories = Number(form.calories.value);
+    const protein = Number(form.protein.value);
+    const fat = Number(form.fat.value);
+    const carbohydrates = Number(form.carbohydrates.value);
+
+    onAdd({
+      name,
+      weight: 100,
+      nutrition: {
+        calories,
+        protein,
+        fat,
+        carbohydrates,
+      },
+    });
+  }
+
+  return (
+    <Modal isOpen={isOpen} onClose={onClose} size="full">
+      <ModalOverlay />
+      <Box as="form" onSubmit={handleSubmit}>
+        <ModalContent>
+          <ModalHeader>
+            Add details for{" "}
+            <Text d="inline" textDecoration="underline">
+              {name}
+            </Text>
+          </ModalHeader>
+          <ModalBody>
+            <FormHelperText>
+              Enter nutritional details of the item per 100 grams.
+            </FormHelperText>
+            {nutritionKeys.map((k) => (
+              <FormControl key={k} my="2">
+                <FormLabel textTransform="capitalize">{k}</FormLabel>
+                <Input
+                  name={k}
+                  textTransform="capitalize"
+                  placeholder={`${k} in ${nutritionUnits[k]}`}
+                  inputMode="numeric"
+                />
+              </FormControl>
+            ))}
+          </ModalBody>
+          <ModalFooter>
+            <Button type="submit">Add</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Box>
+    </Modal>
+  );
+}

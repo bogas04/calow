@@ -8,6 +8,13 @@ export const nutritionColors = {
   fat: theme.colors.blue["400"],
 };
 
+export const nutritionUnits = {
+  fat: "grams",
+  carbohydrates: "grams",
+  protein: "grams",
+  calories: "kCal",
+};
+
 export const nutritionShortNames = {
   fat: "fat",
   carbohydrates: "carbs",
