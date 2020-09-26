@@ -29,3 +29,22 @@ export const getDateKey = (time: number) => {
     d.getMonth() + 1
   ).padStart(2, "0")}/${d.getFullYear()}`;
 };
+
+const months = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
+
+export function formatShortDate(date: Date) {
+  return `${date.getDate()}, ${months[date.getMonth()]}`;
+}

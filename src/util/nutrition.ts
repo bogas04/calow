@@ -1,4 +1,10 @@
-import { BodyMetrics, Nutrition, nutritionKeys } from "../store";
+import {
+  BodyMetrics,
+  inititalNutrition,
+  MealEntry,
+  Nutrition,
+  nutritionKeys,
+} from "../store";
 
 export function mapNutrition(
   nutrition: Nutrition,
@@ -53,4 +59,20 @@ export function computeMacroFromCalories(calories: number): Nutrition {
     protein: Math.ceil((0.1 * calories) / 4),
     fat: Math.ceil((0.35 * calories) / 9),
   };
+}
+
+export function computeNutritionFromLog(entries: MealEntry[]) {
+  return entries.reduce((totalNutrition, meal) => {
+    const totalMealNutrition = meal.items.reduce(
+      (mealNutrition, item) => addNutrition(mealNutrition, item.nutrition),
+      inititalNutrition
+    );
+
+    const portionNutrition = mapNutrition(
+      totalMealNutrition,
+      (key) => (totalMealNutrition[key] * meal.portionWeight) / meal.totalWeight
+    );
+
+    return addNutrition(portionNutrition, totalNutrition);
+  }, inititalNutrition);
 }

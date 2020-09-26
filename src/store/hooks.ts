@@ -1,10 +1,9 @@
 import { createContext, useContext, useEffect, useReducer } from "react";
 
-import { inititalNutrition } from "./constants";
 import { ACTIONS, Action, defaultState, reducer } from "./reducer";
 import { items } from "./seed";
 
-import { addNutrition, mapNutrition } from "../util/nutrition";
+import { computeNutritionFromLog } from "../util/nutrition";
 import { getDateKey } from "../util/time";
 
 export function useStoreReducer() {
@@ -45,21 +44,8 @@ export function useStore(time?: number) {
 
   return {
     ...store,
-    nutrition: log.reduce((totalNutrition, meal) => {
-      const totalMealNutrition = meal.items.reduce(
-        (mealNutrition, item) => addNutrition(mealNutrition, item.nutrition),
-        inititalNutrition
-      );
-
-      const portionNutrition = mapNutrition(
-        totalMealNutrition,
-        (key) =>
-          (totalMealNutrition[key] * meal.portionWeight) / meal.totalWeight
-      );
-
-      return addNutrition(portionNutrition, totalNutrition);
-    }, inititalNutrition),
+    nutrition: computeNutritionFromLog(log),
     items,
-    log: store.logs[getDateKey(time || Date.now())] || [],
+    log,
   };
 }
