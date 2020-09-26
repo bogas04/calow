@@ -31,13 +31,15 @@ export default function HomePage() {
           variant="ghost"
           onClick={() => setDate(date - DAY)}
           flex="1"
+          mr="1"
         >
           {formatShortDate(new Date(date - DAY))}
         </Button>
-        <Button size="sm" variant="solid" flex="1">
+        <Button size="sm" variant="solid" flex="1" mx="1">
           {formatShortDate(new Date(date))}
         </Button>
         <Button
+          ml="1"
           flex="1"
           size="sm"
           variant="ghost"
