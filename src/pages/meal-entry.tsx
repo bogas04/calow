@@ -50,13 +50,11 @@ export default function MealEntryPage() {
       : Math.ceil((value * portionWeight) / totalWeight);
   });
 
-  function onFormSubmit(e: React.FormEvent<HTMLFormElement>) {
+  function hanldeAddItem(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = e.currentTarget;
-    const {
-      item: { value: selectedItemName },
-      weight: { value: weight },
-    } = form;
+    const selectedItemName = form.item.value;
+    const weight = Number(form.weight.value);
 
     const item =
       items.find((i) => i.name === selectedItemName) ||
@@ -64,7 +62,7 @@ export default function MealEntryPage() {
       (selectedItemName && {
         name: selectedItemName,
         icon: "❓",
-        weight: Number(weight),
+        weight: weight,
         nutrition: {
           fat: 0,
           calories: 0,
@@ -74,7 +72,13 @@ export default function MealEntryPage() {
       });
 
     if (item) {
-      setAddedItems((i) => [{ ...item, weight: Number(weight) }, ...i]);
+      const weightedItem = {
+        ...item,
+        weight,
+        nutrition: computeWeightedNutrition(item.nutrition, weight),
+      };
+
+      setAddedItems((i) => [weightedItem, ...i]);
     }
 
     form.querySelector("input")?.focus();
@@ -106,7 +110,7 @@ export default function MealEntryPage() {
     }
   }
 
-  function onDone() {
+  function handleDone() {
     const now = new Date();
     const entry = {
       nutrition: portionNutrition,
@@ -178,7 +182,7 @@ export default function MealEntryPage() {
   const form = (
     <Box
       as="form"
-      onSubmit={onFormSubmit}
+      onSubmit={hanldeAddItem}
       mt="4"
       mb="2"
       d="flex"
@@ -270,7 +274,7 @@ export default function MealEntryPage() {
             flex="0.2"
             variantColor="green"
             variant="solid"
-            onClick={onDone}
+            onClick={handleDone}
           >
             Done
           </Button>
