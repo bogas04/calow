@@ -22,6 +22,7 @@ import { computeCaloricNeeds } from "../util/nutrition";
 export default function SettingsPage() {
   const { dispatch, ...store } = useStore();
   const [expand, setExpand] = useState(false);
+  const [showDataOptions, setShowDataOptions] = useState(false);
 
   const { body, goal, logs } = store;
   const daysOfData = Object.keys(logs).length;
@@ -151,47 +152,58 @@ export default function SettingsPage() {
         </Box>
       )}
       <Box as="section">
-        <Heading size="lg">Your Data</Heading>
+        <Heading size="lg">
+          Your Data
+          <IconButton
+            isRound
+            variant="ghost"
+            aria-label={showDataOptions ? "Collapse" : "Expand"}
+            onClick={() => setShowDataOptions(!showDataOptions)}
+            icon={showDataOptions ? "chevron-up" : "chevron-down"}
+          />
+        </Heading>
         <FormHelperText mb="6">
           All your data is stored locally on your device.
         </FormHelperText>
-        <Box d="flex" flexDirection={["column", "row"]}>
-          <Button
-            my="2"
-            variantColor="blue"
-            mr={[0, "2"]}
-            onClick={() => {
-              window.open(
-                URL.createObjectURL(
-                  new Blob([JSON.stringify(store)], {
-                    type: "application/json",
-                  })
-                )
-              );
-            }}
-          >
-            Export My Data
-          </Button>
-          <Button
-            my="2"
-            ml={[0, "2"]}
-            variant="solid"
-            variantColor="red"
-            onClick={() => {
-              if (
-                window.confirm(
-                  `Are you sure? You'll lose data of ${daysOfData} day${
-                    daysOfData === 1 ? "" : "s"
-                  }.`
-                )
-              ) {
-                dispatch({ type: ACTIONS.RESET });
-              }
-            }}
-          >
-            Delete My Data
-          </Button>
-        </Box>
+        <Collapse isOpen={showDataOptions}>
+          <Box d="flex" flexDirection={["column", "row"]}>
+            <Button
+              my="2"
+              variantColor="blue"
+              mr={[0, "2"]}
+              onClick={() => {
+                window.open(
+                  URL.createObjectURL(
+                    new Blob([JSON.stringify(store)], {
+                      type: "application/json",
+                    })
+                  )
+                );
+              }}
+            >
+              Export My Data
+            </Button>
+            <Button
+              my="2"
+              ml={[0, "2"]}
+              variant="solid"
+              variantColor="red"
+              onClick={() => {
+                if (
+                  window.confirm(
+                    `Are you sure? You'll lose data of ${daysOfData} day${
+                      daysOfData === 1 ? "" : "s"
+                    }.`
+                  )
+                ) {
+                  dispatch({ type: ACTIONS.RESET });
+                }
+              }}
+            >
+              Delete My Data
+            </Button>
+          </Box>
+        </Collapse>
       </Box>
     </Page>
   );
