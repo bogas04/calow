@@ -1,6 +1,6 @@
 import { Box, Link as ChakraLink } from "@chakra-ui/core";
 import Link from "next/link";
-import * as React from "react";
+import React from "react";
 
 import { Meter } from "../components/Meter";
 import { useStore } from "../store";

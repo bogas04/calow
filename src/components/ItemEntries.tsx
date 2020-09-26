@@ -1,6 +1,6 @@
 import { Box, Heading } from "@chakra-ui/core";
 import Link from "next/link";
-import * as React from "react";
+import React from "react";
 import { ItemEntry } from "../store";
 import NutritionBar from "./NutritionBar";
 

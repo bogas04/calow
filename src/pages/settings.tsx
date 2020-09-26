@@ -13,7 +13,7 @@ import {
   Select,
   Tag,
 } from "@chakra-ui/core";
-import * as React from "react";
+import React, { useState } from "react";
 import { Page } from "../components/layouts";
 import NutritionBar from "../components/NutritionBar";
 import { ACTIONS, BodyMetrics, useStore } from "../store";
@@ -21,7 +21,7 @@ import { computeCaloricNeeds } from "../util/nutrition";
 
 export default function SettingsPage() {
   const { dispatch, ...store } = useStore();
-  const [expand, setExpand] = React.useState(false);
+  const [expand, setExpand] = useState(false);
 
   const { body, goal, logs } = store;
   const daysOfData = Object.keys(logs).length;

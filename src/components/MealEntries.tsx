@@ -1,5 +1,5 @@
 import { Box, Collapse, Heading, IconButton, Text } from "@chakra-ui/core";
-import * as React from "react";
+import React, { memo, useState } from "react";
 import { MealEntry } from "../store";
 import { getTimeDifference } from "../util/time";
 import ItemEntries from "./ItemEntries";
@@ -19,10 +19,10 @@ function MealEntries({ entries }: MealEntriesProps) {
   );
 }
 
-export default React.memo(MealEntries);
+export default memo(MealEntries);
 
 function Meal({ meal }: { meal: MealEntry }) {
-  const [show, setShow] = React.useState(false);
+  const [show, setShow] = useState(false);
 
   const handleToggle = () => setShow(!show);
   return (

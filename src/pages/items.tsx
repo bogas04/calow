@@ -1,6 +1,6 @@
 import { FormControl, FormLabel, Input } from "@chakra-ui/core";
 import Fuse from "fuse.js";
-import * as React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import ItemEntries from "../components/ItemEntries";
 import { Page } from "../components/layouts";
 
@@ -8,20 +8,20 @@ import { useStore } from "../store";
 
 export default function ItemsPage() {
   const { items } = useStore();
-  const [query, setQuery] = React.useState("");
+  const [query, setQuery] = useState("");
 
   const handleSearch: React.FormEventHandler<HTMLInputElement> = (e) => {
     setQuery(e.currentTarget.value);
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     const locationQuery = new URLSearchParams(location.search).get("search");
     if (locationQuery) {
       setQuery(locationQuery);
     }
   }, []);
 
-  const filteredItems = React.useMemo(() => {
+  const filteredItems = useMemo(() => {
     if (!query) {
       return items;
     }
