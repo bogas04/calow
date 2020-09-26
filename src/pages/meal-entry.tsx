@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   FormControl,
+  FormHelperText,
   FormLabel,
   Heading,
   Input,
@@ -12,6 +13,7 @@ import React, { useEffect, useState } from "react";
 import { Page } from "../components/layouts";
 import NutritionBar from "../components/NutritionBar";
 import { ACTIONS, inititalNutrition, ItemEntry, useStore } from "../store";
+import DinnerArt from "../svg/DinnerArt";
 import { getMealName } from "../util/meal";
 import { computeWeightedNutrition, mapNutrition } from "../util/nutrition";
 
@@ -165,6 +167,8 @@ export default function MealEntryPage() {
           <Input
             inputMode="numeric"
             width={60}
+            variant="flushed"
+            textAlign="center"
             value={item.weight}
             placeholder="Weight"
             size="sm"
@@ -183,124 +187,174 @@ export default function MealEntryPage() {
     <Box
       as="form"
       onSubmit={hanldeAddItem}
-      mt="4"
-      mb="2"
       d="flex"
-      flexDirection="column"
-      alignItems="flex-end"
+      justifyContent="space-between"
+      flex="1"
     >
-      <Box d="flex" alignItems="center" justifyContent="space-between">
-        <FormControl mr="1">
-          <FormLabel htmlFor="items">Item</FormLabel>
-          <Input
-            isRequired
-            type="search"
-            list="items-list"
-            name="item"
-            size="sm"
-            placeholder="Enter item name"
-          />
-          <datalist id="items-list">
-            {items.map((i) => (
-              <option key={i.name} value={i.name}>
-                {i.name}
-              </option>
-            ))}
-          </datalist>
-        </FormControl>
-        <FormControl my="1">
-          <FormLabel htmlFor="items">Weight</FormLabel>
-          <Input
-            isRequired
-            inputMode="numeric"
-            name="weight"
-            size="sm"
-            placeholder="Enter item weight"
-          />
-        </FormControl>
-      </Box>
-      <Box mt="2">
-        <Button type="submit">Add</Button>
-      </Box>
+      <FormControl mr="1">
+        <Input
+          isRequired
+          autoFocus
+          type="search"
+          list="items-list"
+          variant="filled"
+          name="item"
+          size="sm"
+          placeholder="Search item"
+        />
+        <datalist id="items-list">
+          {items.map((i) => (
+            <option key={i.name} value={i.name}>
+              {i.name}
+            </option>
+          ))}
+        </datalist>
+      </FormControl>
+      <FormControl mx="1">
+        <Input
+          type="search"
+          isRequired
+          inputMode="numeric"
+          name="weight"
+          variant="filled"
+          size="sm"
+          placeholder="Weight in kgs"
+        />
+      </FormControl>
+      <FormControl>
+        <Button size="sm" type="submit">
+          +
+        </Button>
+      </FormControl>
     </Box>
   );
 
   const footer = (
-    <Box
-      as="footer"
-      p="4"
-      borderTop={addedItems.length !== 0 ? "1px solid #cacaca" : undefined}
-    >
-      {addedItems.length !== 0 && (
-        <Box
-          d="flex"
-          alignItems="center"
-          justifyContent="space-between"
-          flex="1"
-        >
-          <Box flex="0.8" d="flex" alignItems="center">
-            <Box flex="0.3">
-              <Input
-                inputMode="numeric"
-                value={portionWeight}
-                onChange={(e: React.FormEvent<HTMLInputElement>) =>
-                  setPortionWeight(Number(e.currentTarget.value))
-                }
-                placeholder="Weight"
-                size="sm"
-                mr="1"
-              />
-            </Box>
-            <Box flex="0.2" fontWeight="100" textAlign="center">
-              g of
-            </Box>
-            <Box flex="0.3">
-              <Input
-                inputMode="numeric"
-                value={totalWeight}
-                onChange={(e: React.FormEvent<HTMLInputElement>) =>
-                  setTotalWeight(Number(e.currentTarget.value))
-                }
-                placeholder="Weight"
-                size="sm"
-                mr="1"
-              />
-            </Box>
-            <Box flex="0.2" fontWeight="100" textAlign="center">
-              g
-            </Box>
-          </Box>
-          <Button
-            flex="0.2"
-            variantColor="green"
-            variant="solid"
-            onClick={handleDone}
-          >
-            Done
-          </Button>
+    <Box d="flex" alignItems="center" justifyContent="space-between">
+      <Box d="flex" alignItems="center">
+        <Box d="flex" alignItems="center">
+          <Input
+            variant="flushed"
+            w="30%"
+            fontSize="xs"
+            inputMode="numeric"
+            textAlign="center"
+            value={portionWeight}
+            onChange={(e: React.FormEvent<HTMLInputElement>) =>
+              setPortionWeight(Number(e.currentTarget.value))
+            }
+            placeholder="Weight"
+            size="sm"
+            mr="1"
+          />
+          <Text fontWeight="100" textAlign="center" fontSize="xs">
+            g portion of
+          </Text>
         </Box>
-      )}
+        <Box d="flex" alignItems="center">
+          <Input
+            w="30%"
+            fontSize="xs"
+            textAlign="center"
+            variant="flushed"
+            inputMode="numeric"
+            value={totalWeight}
+            onChange={(e: React.FormEvent<HTMLInputElement>) =>
+              setTotalWeight(Number(e.currentTarget.value))
+            }
+            placeholder="Weight"
+            size="sm"
+            mr="1"
+          />
+          <Text fontWeight="100" textAlign="center" fontSize="xs">
+            g total weight
+          </Text>
+        </Box>
+      </Box>
+      <Box d="flex" flex="1" justifyContent="flex-end">
+        <Button
+          size="sm"
+          variantColor="green"
+          variant="solid"
+          onClick={handleDone}
+        >
+          Done
+        </Button>
+      </Box>
+    </Box>
+  );
+
+  const emptyArt = (
+    <Box
+      d="flex"
+      p="6"
+      flex="1"
+      flexDirection="column"
+      justifyContent="center"
+      alignItems="center"
+    >
+      <FormHelperText>
+        Add Items of your meal by using the form below.
+      </FormHelperText>
+      <Box my="6" h={["100%", "20vh"]}>
+        <DinnerArt />
+      </Box>
     </Box>
   );
 
   return (
     <Box h="100%" d="flex" flexDirection="column">
-      <Page heading="Add Entry" flex="1" overflow="auto">
-        <Box d="flex" justifyContent="center" mb="2">
-          <NutritionBar nutrition={portionNutrition} />
-        </Box>
+      <Page
+        heading={
+          <Box
+            mt="2"
+            d="flex"
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            <Heading>Add</Heading>
+            <Box d="flex" justifyContent="center" mb="2">
+              <NutritionBar nutrition={portionNutrition} />
+            </Box>
+          </Box>
+        }
+        d="flex"
+        flex="1"
+        flexDirection="column"
+        overflow="auto"
+      >
         <Box
           d="flex"
           flex="1"
           flexDirection="column"
           justifyContent="space-between"
         >
-          {total}
-          {list}
-          {form}
+          {addedItems.length === 0 && emptyArt}
+          <Box d="flex" flexDirection="column">
+            {total}
+            {list}
+          </Box>
         </Box>
       </Page>
-      {footer}
+
+      <Box
+        as="footer"
+        d="flex"
+        flexDirection={["column", "row"]}
+        alignItems="center"
+        justifyContent="space-between"
+        borderTop={"1px solid"}
+        borderTopColor="gray.200"
+      >
+        <Box my="3" w="100%" px="4">
+          {form}
+        </Box>
+        {addedItems.length !== 0 && (
+          <Box bg="gray.100" px="4" py="2">
+            {footer}
+          </Box>
+        )}
+      </Box>
     </Box>
   );
 }
