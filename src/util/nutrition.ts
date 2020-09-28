@@ -19,6 +19,12 @@ export function mapNutrition(
   );
 }
 
+export function createNutrition(
+  fn: (nutritionKey: keyof Nutrition, nutritionValue: number) => number
+) {
+  return mapNutrition(inititalNutrition, fn);
+}
+
 export function computeWeightedNutrition(
   nutritionPer100Grams: Nutrition,
   newWeight: number
