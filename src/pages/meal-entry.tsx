@@ -228,7 +228,7 @@ export default function MealEntryPage() {
           name="weight"
           variant="filled"
           size="sm"
-          placeholder="Weight in kgs"
+          placeholder="Weight in grams"
         />
       </FormControl>
       <FormControl>
