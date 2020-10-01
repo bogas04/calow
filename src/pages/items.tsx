@@ -9,6 +9,7 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
+  Skeleton,
   Text,
 } from "@chakra-ui/core";
 import Fuse from "fuse.js";
@@ -19,7 +20,7 @@ import { Page } from "../components/layouts";
 import { useItems } from "../store";
 
 export default function ItemsPage() {
-  const { items } = useItems();
+  const { items, isLoading } = useItems();
   const [sortBy, setSortBy] = useState<keyof typeof sortByTitles>("name");
   const [query, setQuery] = useState("");
 
@@ -115,10 +116,45 @@ export default function ItemsPage() {
           </MenuList>
         </Menu>
       </Box>
-      {filteredItems.length !== 0 && (
-        <Text mt="4">Sorted by {sortByTitles[sortBy]}</Text>
+      {isLoading ? (
+        <Box mt="4">
+          <Skeleton h="2" mt="4" w="30%" />
+          {[...new Array(4)].map((_, i) => (
+            <Box
+              key={i}
+              borderWidth="1px"
+              borderStyle="solid"
+              borderColor="gray.200"
+              borderRadius={8}
+              my={5}
+              p={5}
+            >
+              <Box d="flex" flexDirection="row" mb="6">
+                <Skeleton w="30px" h="30px" rounded="50%" mr="4" />
+                <Skeleton flex="0.5" h="4" rounded="md" />
+              </Box>
+              <Box
+                d="flex"
+                alignItems="center"
+                justifyContent="space-between"
+                my="3"
+              >
+                <Skeleton w="10" h="2" />
+                <Skeleton w="10" h="2" />
+                <Skeleton w="10" h="2" />
+                <Skeleton w="10" h="2" />
+              </Box>
+            </Box>
+          ))}
+        </Box>
+      ) : (
+        <>
+          {filteredItems.length !== 0 && (
+            <Text mt="4">Sorted by {sortByTitles[sortBy]}</Text>
+          )}
+          <ItemEntries items={filteredItems} />
+        </>
       )}
-      <ItemEntries items={filteredItems} />
     </Page>
   );
 }

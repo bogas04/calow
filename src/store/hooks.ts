@@ -109,7 +109,7 @@ export function useItems() {
 
   return {
     items,
-    isLoading: !error && !items,
+    isLoading: !error && !data,
     error,
   };
 }
