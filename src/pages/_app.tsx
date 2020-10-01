@@ -77,7 +77,7 @@ function App({
               >
                 <li>
                   <Link href="/">
-                    <a>📔 Log</a>
+                    <a>📔 Home</a>
                   </Link>
                 </li>
                 <li>
