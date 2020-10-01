@@ -2,41 +2,51 @@ import {
   Box,
   Button,
   Collapse,
-  FormControl,
   FormHelperText,
   FormLabel,
   Heading,
   IconButton,
-  Input,
-  Radio,
-  RadioGroup,
-  Select,
+  Slider,
+  SliderFilledTrack,
+  SliderThumb,
+  SliderTrack,
   Tag,
 } from "@chakra-ui/core";
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import BodyMetricsForm from "../components/BodyMetricsForm";
 import { Page } from "../components/layouts";
 import NutritionBar from "../components/NutritionBar";
-import { ACTIONS, BodyMetrics, useStore } from "../store";
+import { ACTIONS, useStore } from "../store";
 import { computeCaloricNeeds } from "../util/nutrition";
 
 export default function SettingsPage() {
   const { dispatch, ...store } = useStore();
   const [expand, setExpand] = useState(false);
   const [showDataOptions, setShowDataOptions] = useState(false);
+  const [goalCalories, setGoalCalories] = useState<number>();
 
   const { body, goal, logs } = store;
+  const { bmr, caloricNeeds } = useMemo(() => computeCaloricNeeds(body), [
+    body,
+  ]);
   const daysOfData = Object.keys(logs).length;
 
-  const caloricNeeds = computeCaloricNeeds(body);
+  useEffect(() => {
+    if (goalCalories) {
+      dispatch({
+        type: ACTIONS.SET_GOAL_FROM_CALORIES,
+        payload: goalCalories,
+      });
+    }
+  }, [goalCalories]);
+
+  const goalInfo = getGoalInfo(
+    goal.calories || caloricNeeds.calories,
+    caloricNeeds.calories
+  );
+
   const hasComputedCaloricNeeds =
     caloricNeeds.calories !== 0 || !!body.height || !!body.weight;
-
-  function setGoalFromCalories(calories: number) {
-    dispatch({
-      type: ACTIONS.SET_GOAL_FROM_CALORIES,
-      payload: calories,
-    });
-  }
 
   return (
     <Page heading="Settings">
@@ -64,7 +74,7 @@ export default function SettingsPage() {
         </FormHelperText>
 
         <Collapse isOpen={expand || !hasComputedCaloricNeeds}>
-          <BodyMetricForm
+          <BodyMetricsForm
             metrics={body}
             onChange={(payload) =>
               dispatch({ type: ACTIONS.SET_BODY, payload })
@@ -82,6 +92,7 @@ export default function SettingsPage() {
           </Box>
         )}
       </Box>
+
       {hasComputedCaloricNeeds && (
         <Box mb="6" as="section">
           <Heading
@@ -92,55 +103,26 @@ export default function SettingsPage() {
             d="flex"
           >
             Your Goal
-            <Tag
-              size="sm"
-              textTransform="uppercase"
-              color={
-                goal.calories < caloricNeeds.calories ? "red.500" : "green.500"
-              }
-            >
-              {goal.calories < caloricNeeds.calories ? "deficit" : "surplus"}
+            <Tag size="sm" textTransform="uppercase" color={goalInfo.color}>
+              {goalInfo.text}
             </Tag>
           </Heading>
-          <FormHelperText>
-            {goal.calories < caloricNeeds.calories
-              ? "You've set a goal lower than your maintenance needs. You would lose weight if you continue to stay calorie deficit"
-              : "You've set a goal higher than your maintenance needs. You would gain weight if you continue to stay calorie surplus."}
-          </FormHelperText>
-
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-
-              const form = e.currentTarget;
-              const {
-                calories: { value: calories },
-              } = form;
-
-              setGoalFromCalories(Number(calories));
-            }}
+          <FormHelperText>{goalInfo.description}</FormHelperText>
+          <FormLabel fontSize="sm" textTransform="capitalize">
+            Calories {goal.calories || caloricNeeds.calories}kCal
+          </FormLabel>
+          <Slider
+            step={1}
+            defaultValue={goal.calories || caloricNeeds.calories}
+            value={goalCalories}
+            onChange={setGoalCalories}
+            min={bmr}
+            max={bmr * 1.9}
           >
-            <FormControl
-              py="3"
-              d="flex"
-              alignItems="center"
-              justifyContent="space-between"
-            >
-              <FormLabel fontSize="sm" textTransform="capitalize">
-                Calories (kCal)
-              </FormLabel>
-              <Input
-                w="40%"
-                inputMode="numeric"
-                defaultValue={goal.calories}
-                name="calories"
-                size="sm"
-              />
-              <Button size="sm" type="submit">
-                Save
-              </Button>
-            </FormControl>
-          </form>
+            <SliderTrack />
+            <SliderFilledTrack bg={goalInfo.color} />
+            <SliderThumb />
+          </Slider>
           <Box
             mt="6"
             d="flex"
@@ -221,100 +203,24 @@ export default function SettingsPage() {
 
 SettingsPage.pageTitle = "Settings";
 
-function BodyMetricForm({
-  metrics,
-  onChange,
-}: {
-  metrics: BodyMetrics;
-  onChange: (n: BodyMetrics) => void;
-}) {
-  function onSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
+function getGoalInfo(goal: number, needs: number) {
+  let description =
+    "You've set a goal within the limits of your maintenance needs. You would continue to have same weight if you maintain your lifestyle.";
+  let color = "gray.500";
+  let text = "maintenance";
+  const range = 50;
 
-    const {
-      activity: { value: activity },
-      gender: { value: gender },
-      age: { value: age },
-      weight: { value: weight },
-      height: { value: height },
-    } = e.currentTarget;
-
-    onChange({ activity, gender, age, weight, height });
+  if (goal < needs - range) {
+    description =
+      "You've set a goal lower than your maintenance needs. You would lose weight if you continue to stay calorie deficit.";
+    color = "red.500";
+    text = "deficit";
+  } else if (goal > needs + range) {
+    description =
+      "You've set a goal higher than your maintenance needs. You would gain weight if you continue to stay calorie surplus.";
+    color = "green.500";
+    text = "surplus";
   }
 
-  return (
-    <form onSubmit={onSubmit}>
-      <FormControl
-        d="flex"
-        flexDirection="column"
-        justifyContent="space-between"
-        my="2"
-      >
-        <FormLabel>Gender</FormLabel>
-        <RadioGroup
-          d="flex"
-          justifyContent="space-between"
-          name="gender"
-          defaultValue={metrics.gender}
-        >
-          <Radio value="female">🙍‍♀️ Female</Radio>
-          <Radio mr="2" value="male">
-            🙍‍♂️ Male
-          </Radio>
-        </RadioGroup>
-      </FormControl>
-      <FormControl my="2">
-        <FormLabel>Age</FormLabel>
-        <Input
-          inputMode="numeric"
-          defaultValue={metrics.age || undefined}
-          placeholder="Age in years"
-          name="age"
-          isRequired
-        />
-      </FormControl>
-      <Box d="flex" justifyContent="space-between" alignItems="center" my="2">
-        <FormControl mr="1">
-          <FormLabel>Height</FormLabel>
-          <Input
-            defaultValue={metrics.height || undefined}
-            inputMode="numeric"
-            placeholder="Height in centimeters"
-            isRequired
-            name="height"
-          />
-        </FormControl>
-        <FormControl ml="1">
-          <FormLabel>Weight</FormLabel>
-          <Input
-            inputMode="numeric"
-            defaultValue={metrics.weight || undefined}
-            placeholder="Weight in kilograms"
-            isRequired
-            name="weight"
-          />
-        </FormControl>
-      </Box>
-      <FormControl my="2">
-        <FormLabel>Activity</FormLabel>
-        <Select
-          name="activity"
-          isRequired
-          defaultValue={metrics.activity || undefined}
-          placeholder="Select your daily activity"
-        >
-          <option value="1.2">Little to no exercise</option>
-          <option value="1.375">Light exercise (1-3 days per week)</option>
-          <option value="1.55">Moderate exercise (3-5 days per week)</option>
-          <option value="1.725">Heavy exercise (6-7 days per week)</option>
-          <option value="1.9">
-            Very heavy exercise (twice per day, extra heavy workouts)
-          </option>
-        </Select>
-      </FormControl>
-      <Button mt="6" type="submit">
-        Calculate
-      </Button>
-    </form>
-  );
+  return { description, color, text };
 }

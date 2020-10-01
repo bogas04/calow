@@ -45,7 +45,7 @@ export function computeCaloricNeeds({
   gender,
   age,
   activity,
-}: BodyMetrics): Nutrition {
+}: BodyMetrics): { bmr: number; caloricNeeds: Nutrition } {
   // Harris–Benedict BMR 1990: https://en.wikipedia.org/wiki/Harris%E2%80%93Benedict_equation
   const bmr =
     10 * Number(weight) +
@@ -55,7 +55,7 @@ export function computeCaloricNeeds({
 
   const calories = Math.ceil(bmr * activity);
 
-  return computeMacroFromCalories(calories);
+  return { bmr, caloricNeeds: computeMacroFromCalories(calories) };
 }
 
 export function computeMacroFromCalories(calories: number): Nutrition {
