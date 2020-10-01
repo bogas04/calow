@@ -152,7 +152,12 @@ export default function SettingsPage() {
         </Box>
       )}
       <Box as="section">
-        <Heading size="lg">
+        <Heading
+          size="lg"
+          d="flex"
+          justifyContent="space-between"
+          alignItems="center"
+        >
           Your Data
           <IconButton
             isRound
@@ -172,13 +177,18 @@ export default function SettingsPage() {
               variantColor="blue"
               mr={[0, "2"]}
               onClick={() => {
-                window.open(
-                  URL.createObjectURL(
-                    new Blob([JSON.stringify(store)], {
-                      type: "application/json",
-                    })
-                  )
+                const downloadLink = URL.createObjectURL(
+                  new Blob([JSON.stringify(store)], {
+                    type: "application/json",
+                  })
                 );
+                const $a = document.createElement("a");
+                $a.href = downloadLink;
+                $a.download = "my-calow-data.json";
+                document.body.appendChild($a);
+                $a.click();
+                document.body.removeChild($a);
+                window.URL.revokeObjectURL(downloadLink);
               }}
             >
               Export My Data
