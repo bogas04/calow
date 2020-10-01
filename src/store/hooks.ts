@@ -14,7 +14,7 @@ export function useStoreReducer() {
     if (localStorage.getItem("store")) {
       try {
         const payload = JSON.parse(localStorage.getItem("store")!);
-        if (Object.keys(payload).every((k) => k in defaultState)) {
+        if (Object.keys(defaultState).every((k) => k in payload)) {
           dispatch({ type: ACTIONS.SET, payload });
         }
       } catch (err) {
