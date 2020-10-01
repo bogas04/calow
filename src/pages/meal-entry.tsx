@@ -26,6 +26,7 @@ import {
   ItemEntry,
   nutritionKeys,
   nutritionUnits,
+  useItems,
   useStore,
 } from "../store";
 import DinnerArt from "../svg/DinnerArt";
@@ -33,7 +34,8 @@ import { getMealName } from "../util/meal";
 import { computeWeightedNutrition, mapNutrition } from "../util/nutrition";
 
 export default function MealEntryPage() {
-  const { dispatch, items } = useStore();
+  const { dispatch } = useStore();
+  const { items } = useItems();
   const router = useRouter();
 
   const [addedItems, setAddedItems] = useState<ItemEntry[]>([]);

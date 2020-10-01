@@ -40,14 +40,12 @@ export const StoreContext = createContext({
 
 export function useStore(time?: number) {
   const store = useContext(StoreContext);
-  const { items } = useItems();
 
   const log = store.logs[getDateKey(time || Date.now())] || [];
 
   return {
     ...store,
     nutrition: computeNutritionFromLog(log),
-    items,
     log,
   };
 }
@@ -55,7 +53,7 @@ export function useStore(time?: number) {
 const fetcher = (info: RequestInfo, options?: RequestInit) =>
   fetch(info, options).then((res) => res.json());
 
-function useItems() {
+export function useItems() {
   const key = "AIzaSyAumEHcudhBHlcCASiBmUrjTjBsV75KQDs";
   const sheet = "1n1HOEej_1-jXzm9t7LfyEptFpIBKJbsIQ5EZRd4a_Tg";
 

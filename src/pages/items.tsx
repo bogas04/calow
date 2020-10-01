@@ -16,10 +16,10 @@ import React, { useEffect, useMemo, useState } from "react";
 import ItemEntries from "../components/ItemEntries";
 import { Page } from "../components/layouts";
 
-import { useStore } from "../store";
+import { useItems } from "../store";
 
 export default function ItemsPage() {
-  const { items } = useStore();
+  const { items } = useItems();
   const [sortBy, setSortBy] = useState<keyof typeof sortByTitles>("name");
   const [query, setQuery] = useState("");
 
