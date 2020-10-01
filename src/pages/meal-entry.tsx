@@ -61,17 +61,13 @@ export default function MealEntryPage() {
   // Compute total nutrition of current meal
   const mealNutrition = addedItems.reduce(
     (itemNutrition, item) =>
-      mapNutrition(item.nutrition, (key, value) =>
-        Math.ceil(value + itemNutrition[key])
-      ),
+      mapNutrition(item.nutrition, (key, value) => value + itemNutrition[key]),
     inititalNutrition
   );
 
   // Compute portion nutrition of current meal
   const portionNutrition = mapNutrition(mealNutrition, (_, value) => {
-    return portionWeight === 0
-      ? 0
-      : Math.ceil((value * portionWeight) / totalWeight);
+    return portionWeight === 0 ? 0 : (value * portionWeight) / totalWeight;
   });
 
   function handleAddItem(e: React.FormEvent<HTMLFormElement>) {
