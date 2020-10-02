@@ -3,29 +3,20 @@ import {
   Button,
   FormControl,
   FormHelperText,
-  FormLabel,
   Heading,
   IconButton,
-  IModal,
   Input,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
   Text,
 } from "@chakra-ui/core";
 import { useRouter } from "next/router";
-import React, { FormEvent, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import CustomItemEntry from "../components/CustomItemEntry";
 import { Page } from "../components/layouts";
 import NutritionBar from "../components/NutritionBar";
 import {
   ACTIONS,
   inititalNutrition,
   ItemEntry,
-  nutritionKeys,
-  nutritionUnits,
   useItems,
   useStore,
 } from "../store";
@@ -95,7 +86,7 @@ export default function MealEntryPage() {
       nutrition: computeWeightedNutrition(item.nutrition, weight),
     };
 
-    setAddedItems((i) => [weightedItem, ...i]);
+    setAddedItems((i) => i.concat(weightedItem));
     form.querySelector("input")?.focus();
     form.reset();
   }
@@ -361,7 +352,7 @@ export default function MealEntryPage() {
           </Box>
         )}
       </Box>
-      <CustomItemModal
+      <CustomItemEntry
         isOpen={showCustomItemModal}
         onClose={() => setShowCustomItemModal(false)}
         name={customItemDetails.name}
@@ -373,7 +364,7 @@ export default function MealEntryPage() {
             nutrition: computeWeightedNutrition(item.nutrition, weight),
           };
 
-          setAddedItems((i) => [weightedItem, ...i]);
+          setAddedItems((i) => i.concat(weightedItem));
           setCustomItemDetails({ name: "", weight: 0 });
           setShowCustomItemModal(false);
         }}
@@ -383,70 +374,3 @@ export default function MealEntryPage() {
 }
 
 MealEntryPage.pageTitle = "Add Entry";
-
-function CustomItemModal({
-  name,
-  isOpen,
-  onClose,
-  onAdd,
-}: {
-  name: string;
-  isOpen: boolean;
-  onAdd: (item: ItemEntry) => void;
-  onClose: IModal["onClose"];
-}) {
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const form = e.currentTarget;
-    const calories = Number(form.calories.value);
-    const protein = Number(form.protein.value);
-    const fat = Number(form.fat.value);
-    const carbohydrates = Number(form.carbohydrates.value);
-
-    onAdd({
-      name,
-      weight: 100,
-      nutrition: {
-        calories,
-        protein,
-        fat,
-        carbohydrates,
-      },
-    });
-  }
-
-  return (
-    <Modal isOpen={isOpen} onClose={onClose} size="full">
-      <ModalOverlay />
-      <Box as="form" onSubmit={handleSubmit}>
-        <ModalContent>
-          <ModalHeader>
-            Add details for{" "}
-            <Text d="inline" textDecoration="underline">
-              {name}
-            </Text>
-          </ModalHeader>
-          <ModalBody>
-            <FormHelperText>
-              Enter nutritional details of the item per 100 grams.
-            </FormHelperText>
-            {nutritionKeys.map((k) => (
-              <FormControl key={k} my="2">
-                <FormLabel textTransform="capitalize">{k}</FormLabel>
-                <Input
-                  name={k}
-                  textTransform="capitalize"
-                  placeholder={`${k} in ${nutritionUnits[k]}`}
-                  inputMode="numeric"
-                />
-              </FormControl>
-            ))}
-          </ModalBody>
-          <ModalFooter>
-            <Button type="submit">Add</Button>
-          </ModalFooter>
-        </ModalContent>
-      </Box>
-    </Modal>
-  );
-}
