@@ -27,18 +27,14 @@ function Meal({ meal }: { meal: MealEntry }) {
   const handleToggle = () => setShow(!show);
   return (
     <Box>
-      <Heading mb="2">{meal.name}</Heading>
-      <NutritionBar nutrition={meal.nutrition} border={false} />
-      <Box my="2" d="flex" justifyContent="space-between" alignItems="center">
-        <Box d="flex" alignItems="center" flex="1">
-          <Text fontSize="xs" color="gray.600" fontWeight="300">
-            {meal.portionWeight}g / {meal.totalWeight}g
-          </Text>
-          <Box w="1px" h="20px" bg="gray.500" mx="2" />
-          <Text fontSize="xs" color="gray.600" fontWeight="300">
-            {getTimeDifference(meal.timestamp)}
-          </Text>
-        </Box>
+      <Heading
+        mb="2"
+        d="flex"
+        justifyContent="space-between"
+        alignItems="center"
+      >
+        {meal.name}
+
         <IconButton
           isRound
           variant="ghost"
@@ -46,6 +42,16 @@ function Meal({ meal }: { meal: MealEntry }) {
           onClick={handleToggle}
           icon={show ? "chevron-up" : "chevron-down"}
         />
+      </Heading>
+      <NutritionBar nutrition={meal.nutrition} border={false} />
+      <Box d="flex" alignItems="center" flex="1" my="2">
+        <Text fontSize="xs" color="gray.600" fontWeight="300">
+          {meal.portionWeight}g / {meal.totalWeight}g
+        </Text>
+        <Box w="1px" h="20px" bg="gray.500" mx="2" />
+        <Text fontSize="xs" color="gray.600" fontWeight="300">
+          {getTimeDifference(meal.timestamp)}
+        </Text>
       </Box>
       <Collapse isOpen={show} duration={0}>
         <Box pl="4">
