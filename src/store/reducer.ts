@@ -22,6 +22,7 @@ export interface Store extends Required<typeof defaultState> {}
 
 export enum ACTIONS {
   ADD_MEAL_ENTRY,
+  DELETE_MEAL_ENTRY,
   RESET,
   SET,
   SET_GOAL,
@@ -44,6 +45,13 @@ export type Action =
   | {
       type: ACTIONS.SET_GOAL;
       payload: Partial<Nutrition>;
+    }
+  | {
+      type: ACTIONS.DELETE_MEAL_ENTRY;
+      payload: {
+        timestamp?: number;
+        index: number;
+      };
     }
   | {
       type: ACTIONS.ADD_MEAL_ENTRY;
@@ -75,6 +83,21 @@ export const reducer: Reducer<Store, Action> = (state, action) => {
     }
     case ACTIONS.SET_GOAL: {
       return { ...state, goal: { ...state.goal, ...action.payload } };
+    }
+    case ACTIONS.DELETE_MEAL_ENTRY: {
+      const { timestamp = Date.now(), index } = action.payload;
+
+      const dateKey = getDateKey(timestamp);
+      const logs = state.logs[dateKey] || [];
+      const newLogs = logs.filter((_, i) => i !== index);
+
+      return {
+        ...state,
+        logs: {
+          ...state.logs,
+          [dateKey]: newLogs,
+        },
+      };
     }
     case ACTIONS.ADD_MEAL_ENTRY: {
       const time = action.payload.entry.timestamp || Date.now();

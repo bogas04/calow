@@ -8,8 +8,8 @@ import Link from "next/link";
 import React, { useState } from "react";
 
 import { Meter } from "../components/Meter";
-import { useStore } from "../store";
-import MealEntries from "../components/MealEntries";
+import { ACTIONS, useStore } from "../store";
+import MealEntries, { MealEntriesProps } from "../components/MealEntries";
 import EmptyArt from "../svg/EmptyArt";
 import { Page } from "../components/layouts";
 import { formatShortDate } from "../util/time";
@@ -19,7 +19,26 @@ const TODAY = Date.now();
 
 export default function HomePage() {
   const [date, setDate] = useState(TODAY);
-  const { goal, nutrition, log } = useStore(date);
+  const { dispatch, goal, nutrition, log } = useStore(date);
+
+  const handleDelete: MealEntriesProps["onDelete"] = (meal, index) => {
+    if (
+      window.confirm(
+        `Are you sure you want to delete "${meal.name}" with ${
+          meal.items.length
+        } item${meal.items.length === 1 ? "" : "s"} and ${
+          meal.nutrition.calories
+        } kCal?`
+      )
+    ) {
+      dispatch({
+        type: ACTIONS.DELETE_MEAL_ENTRY,
+        payload: {
+          index,
+        },
+      });
+    }
+  };
 
   return (
     <Page>
@@ -59,7 +78,7 @@ export default function HomePage() {
             <EmptyArt />
           </Box>
         )}
-        <MealEntries entries={log} />
+        <MealEntries entries={log} onDelete={handleDelete} />
       </Box>
 
       {date > TODAY - DAY && (
