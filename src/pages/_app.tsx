@@ -8,6 +8,7 @@ import { Global } from "@emotion/core";
 import { AppProps } from "next/app";
 import Head from "next/head";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { StoreContext, useStoreReducer } from "../store";
 
 import theme from "../theme";
@@ -23,11 +24,18 @@ function App({
   pageProps,
 }: AppProps & { Component: AppProps["Component"] & { pageTitle?: string } }) {
   const value = useStoreReducer();
+  const router = useRouter();
   const { pageTitle } = Component;
   const title = pageTitle ? `${pageTitle} | Calow` : "Calow";
   const pageUrl = "https://bogas04.github.io/calow/";
   const description = "Intuitive minimalist calorie logging web app";
   const image = pageUrl + "favicon.ico";
+
+  const footerClickHandler = (pathname: string) => {
+    if (router.pathname === pathname) {
+      document.querySelector("main")?.scrollTo(0, 0);
+    }
+  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -77,17 +85,19 @@ function App({
               >
                 <li>
                   <Link href="/">
-                    <a>📔 Home</a>
+                    <a onClick={() => footerClickHandler("/")}>📔 Home</a>
                   </Link>
                 </li>
                 <li>
                   <Link href="/items">
-                    <a>🍎 Items</a>
+                    <a onClick={() => footerClickHandler("/items")}>🍎 Items</a>
                   </Link>
                 </li>
                 <li>
                   <Link href="/settings">
-                    <a>⚙️ Settings</a>
+                    <a onClick={() => footerClickHandler("/settings")}>
+                      ⚙️ Settings
+                    </a>
                   </Link>
                 </li>
               </Box>
