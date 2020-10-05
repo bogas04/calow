@@ -21,11 +21,12 @@ function MealEntries({ entries, onDelete }: MealEntriesProps) {
   return (
     <>
       {entries.map((meal, i) => (
-        <Meal
-          key={i}
-          meal={meal}
-          onDelete={onDelete ? () => onDelete(meal, i) : undefined}
-        />
+        <Box key={i} mb="4">
+          <Meal
+            meal={meal}
+            onDelete={onDelete ? () => onDelete(meal, i) : undefined}
+          />
+        </Box>
       ))}
     </>
   );
@@ -44,7 +45,7 @@ function Meal({
 
   const handleToggle = () => setShow(!show);
   return (
-    <Box>
+    <>
       <Heading
         mb="2"
         d="flex"
@@ -91,6 +92,6 @@ function Meal({
           <ItemEntries items={meal.items} size="sm" />
         </Box>
       </Collapse>
-    </Box>
+    </>
   );
 }
