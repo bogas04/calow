@@ -1,6 +1,7 @@
 export function getTimeDifference(from: number, to: number = Date.now()) {
   const rtf = new Intl.RelativeTimeFormat("en", { style: "narrow" });
-  let difference = (from - to) / 1000;
+  let difference = Math.abs(from - to) / 1000;
+
   const unit =
     difference > 60
       ? difference > 60 * 60
@@ -20,7 +21,9 @@ export function getTimeDifference(from: number, to: number = Date.now()) {
     difference /= 60 * 60 * 24;
   }
 
-  return unit === "seconds" ? "now" : rtf.format(Math.floor(difference), unit);
+  return unit === "seconds"
+    ? "now"
+    : rtf.format((from < to ? -1 : 1) * Math.floor(difference), unit);
 }
 
 export const getDateKey = (time: number) => {
