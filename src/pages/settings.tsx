@@ -112,12 +112,12 @@ export default function SettingsPage() {
             Calories {goal.calories || caloricNeeds.calories}kCal
           </FormLabel>
           <Slider
-            step={1}
+            step={10}
             defaultValue={goal.calories || caloricNeeds.calories}
             value={goalCalories}
             onChange={setGoalCalories}
             min={bmr}
-            max={bmr * 1.9}
+            max={2 * caloricNeeds.calories - bmr}
           >
             <SliderTrack />
             <SliderFilledTrack bg={goalInfo.color} />
