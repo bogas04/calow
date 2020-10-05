@@ -32,7 +32,14 @@ function NutritionBar({ nutrition, border = true }: NutritionBarProps) {
               {nutritionShortNames[k]}
             </Text>
             {i !== nutritionKeys.length - 1 && (
-              <Box width="1px" backgroundColor="grey" flex="1" mx="2" />
+              <Box
+                minW="1px"
+                maxW="1px"
+                width="1px"
+                backgroundColor="grey"
+                flex="1"
+                mx="2"
+              />
             )}
           </Box>
         );
