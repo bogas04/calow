@@ -1,8 +1,32 @@
 import { Box, theme } from "@chakra-ui/core";
 import React from "react";
 
-import { Nutrition, nutritionColors, nutritionKeys } from "../store";
+import {
+  Nutrition,
+  nutritionColors,
+  nutritionColorsRaw,
+  nutritionKeys,
+} from "../store";
+import { mapNutrition } from "../util/nutrition";
 import NutritionBar from "./NutritionBar";
+
+const start = 10;
+const diff = 7.5;
+const radius = {
+  fat: start + diff * 0,
+  carbohydrates: start + diff * 1,
+  protein: start + diff * 2,
+  calories: start + diff * 3,
+};
+
+const common = {
+  cx: 50,
+  cy: 50,
+  fill: "transparent",
+  strokeLinecap: "round",
+  strokeWidth: 2,
+  style: { transition: "all ease-in-out 0.5s" },
+} as const;
 
 export function Meter({
   nutrition,
@@ -11,31 +35,24 @@ export function Meter({
   nutrition: Nutrition;
   goal: Nutrition;
 }) {
-  const radius = {
-    fat: 10,
-    carbohydrates: 15,
-    protein: 20,
-    calories: 25,
-  };
+  const circlePoint = mapNutrition(nutrition, (key, value) => {
+    const degree = 360 * Number(Number(value / goal[key]).toFixed(2));
+    const theta = Number(Number((Math.PI * degree) / 180).toFixed(2));
+    return {
+      theta,
+      degree,
+      x: common.cx + radius[key] * Math.cos(theta),
+      y: common.cy + radius[key] * Math.sin(theta),
+    };
+  });
 
-  const common = {
-    cx: 50,
-    cy: 50,
-    fill: "transparent",
-    strokeLinecap: "round",
-    strokeWidth: 2,
-    style: { transition: "all ease-in-out 0.5s" },
-  } as const;
-
-  const strokeDashArray: Nutrition = nutritionKeys.reduce(
-    (o, k) => ({
-      ...o,
-      [k]: (nutrition[k] / goal[k]) * 2 * Math.PI * radius[k] + " 999",
-    }),
-    {} as Nutrition
-  );
-
-  const hasGoalBeenMet = nutritionKeys.every((k) => nutrition[k] >= goal[k]);
+  const strokeDashArray = mapNutrition(nutrition, (key, value) => {
+    const multiplier = 2 * Math.PI * radius[key];
+    return {
+      pending: (value / goal[key]) * multiplier + " 999",
+      completed: ((value - goal[key]) / goal[key]) * multiplier + " 999",
+    };
+  });
 
   return (
     <Box
@@ -53,33 +70,66 @@ export function Meter({
         height="100%"
         style={{ margin: "-50px 0" }}
       >
-        {nutritionKeys.map((k) => (
-          <circle
-            key={k}
-            {...common}
-            r={radius[k]}
-            strokeDasharray={1}
-            stroke={theme.colors.gray["200"]}
-          />
-        ))}
-        {nutritionKeys.map((k) => (
-          <circle
-            key={k}
-            {...common}
-            r={radius[k]}
-            strokeDasharray={strokeDashArray[k]}
-            stroke={nutritionColors[k]}
-          />
-        ))}
-        {hasGoalBeenMet && (
-          <text
-            x={common.cx - 7.5}
-            y={common.cy + 5}
-            fontSize={theme.fontSizes.sm}
-          >
-            🤚
-          </text>
-        )}
+        {nutritionKeys.map((k) => {
+          const goalMet = nutrition[k] > goal[k];
+
+          return (
+            <React.Fragment key={k}>
+              <circle
+                // this is a gray curve shown behind completed line
+                {...common}
+                r={radius[k]}
+                strokeDasharray={1}
+                stroke={theme.colors.gray["200"]}
+              />
+              <circle
+                // This is the completed line, with a color
+                {...common}
+                r={radius[k]}
+                strokeDasharray={strokeDashArray[k].pending}
+                stroke={nutritionColors[k]}
+              />
+              {goalMet && (
+                <>
+                  <circle
+                    // This is a darker line shown on top of completed line
+                    {...common}
+                    r={radius[k]}
+                    strokeDasharray={strokeDashArray[k].completed}
+                    stroke={nutritionColorsRaw[k]["600"]}
+                  />
+                  <circle
+                    // This is a circle shown at the end of the line
+                    {...common}
+                    cx={circlePoint[k].x}
+                    cy={circlePoint[k].y}
+                    r={1.5}
+                    strokeWidth={3}
+                    stroke={nutritionColorsRaw[k]["500"]}
+                  />
+                  <path
+                    // This is a tick mark contained within the circle shown at end of the line
+                    d={`M ${circlePoint[k].x - 0.5},${
+                      circlePoint[k].y + 0.8
+                    } l -0.8,-0.8 m 0.8,0.8 l 1.8,-1.5`}
+                    stroke="white"
+                    strokeLinejoin="round"
+                    strokeLinecap="round"
+                    strokeWidth={0.5}
+                  />
+                </>
+              )}
+            </React.Fragment>
+          );
+        })}
+        <text
+          x={common.cx - 6}
+          y={common.cy + 5}
+          fontSize={theme.fontSizes.xs}
+          style={{ opacity: Math.min(nutrition.calories / goal.calories, 0.1) }}
+        >
+          ❤️
+        </text>
       </svg>
       <Box fontWeight="bold">
         <NutritionBar nutrition={nutrition} />

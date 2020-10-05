@@ -6,16 +6,16 @@ import {
   nutritionKeys,
 } from "../store";
 
-export function mapNutrition(
+export function mapNutrition<T = number>(
   nutrition: Nutrition,
-  fn: (nutritionKey: keyof Nutrition, nutritionValue: number) => number
-) {
-  return nutritionKeys.reduce(
+  fn: (nutritionKey: keyof Nutrition, nutritionValue: number) => T
+): Nutrition<T> {
+  return nutritionKeys.reduce<Nutrition<T>>(
     (newNutrition, key) => ({
       ...newNutrition,
       [key]: fn(key, nutrition[key]),
     }),
-    nutrition
+    (nutrition as unknown) as Nutrition<T>
   );
 }
 

@@ -14,11 +14,11 @@ export interface ItemEntry {
   weight: number;
 }
 
-export interface Nutrition {
-  calories: number;
-  carbohydrates: number;
-  protein: number;
-  fat: number;
+export interface Nutrition<T = number> {
+  calories: T;
+  carbohydrates: T;
+  protein: T;
+  fat: T;
 }
 
 export interface BodyMetrics {
