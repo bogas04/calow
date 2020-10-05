@@ -1,4 +1,4 @@
-name: Build project and run Lighthouse CI
+name: Lighthouse CI
 on:
   push:
     branches:
@@ -18,6 +18,8 @@ jobs:
           registry-url: https://registry.npmjs.org
       - name: ⬇️ download dependencies
         run: npm ci
+      - name: 🛠 build project
+        run: npm run build
       - name: 🏎 lighthouse CI
         run: |
           npm install -g @lhci/cli@0.3.x
