@@ -118,7 +118,8 @@ export default function ItemsPage() {
       </Box>
       {isLoading ? (
         <Box mt="4">
-          <Skeleton h="2" mt="4" w="30%" />
+          <Skeleton h="2" mt="6" mb="6" w="30%" />
+
           {[...new Array(4)].map((_, i) => (
             <Box
               key={i}
@@ -126,22 +127,22 @@ export default function ItemsPage() {
               borderStyle="solid"
               borderColor="gray.200"
               borderRadius={8}
-              my={5}
-              p={5}
+              my="4"
+              p="6"
             >
               <Box d="flex" flexDirection="row" mb="6">
                 <Skeleton w="30px" h="30px" rounded="50%" mr="4" />
-                <Skeleton flex="0.5" h="4" rounded="md" />
+                <Skeleton flex="0.8" h="4" rounded="md" />
               </Box>
               <Box
                 d="flex"
                 alignItems="center"
-                justifyContent="space-between"
+                justifyContent="flex-start"
                 my="3"
               >
-                <Skeleton w="10" h="2" />
-                <Skeleton w="10" h="2" />
-                <Skeleton w="10" h="2" />
+                <Skeleton w="10" h="2" mr="2" />
+                <Skeleton w="10" h="2" mr="2" />
+                <Skeleton w="10" h="2" mr="2" />
                 <Skeleton w="10" h="2" />
               </Box>
             </Box>
