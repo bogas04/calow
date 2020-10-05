@@ -126,7 +126,12 @@ export function Meter({
           x={common.cx - 6}
           y={common.cy + 5}
           fontSize={theme.fontSizes.xs}
-          style={{ opacity: Math.min(nutrition.calories / goal.calories, 0.1) }}
+          style={{
+            opacity: Math.max(
+              Math.min(nutrition.calories / goal.calories, 1),
+              0.1
+            ),
+          }}
         >
           ❤️
         </text>
