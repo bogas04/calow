@@ -28,6 +28,7 @@ export default function HomePage() {
         type: ACTIONS.DELETE_MEAL_ENTRY,
         payload: {
           index,
+          timestamp: date,
         },
       });
     }
