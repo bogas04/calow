@@ -27,7 +27,7 @@ function NutritionBar({ nutrition, border = true }: NutritionBarProps) {
             textTransform="capitalize"
             color={nutritionColors[k]}
           >
-            <Text fontSize="xs">
+            <Text fontSize="xs" whiteSpace="nowrap">
               {Number.isInteger(value) ? value : value.toFixed(2)}{" "}
               {nutritionShortNames[k]}
             </Text>
