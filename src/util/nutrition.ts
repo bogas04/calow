@@ -62,7 +62,7 @@ export function computeMacroFromCalories(calories: number): Nutrition {
   return {
     calories,
     carbohydrates: Math.ceil((0.45 * calories) / 4),
-    protein: Math.ceil((0.1 * calories) / 4),
+    protein: Math.ceil((0.2 * calories) / 4),
     fat: Math.ceil((0.35 * calories) / 9),
   };
 }
