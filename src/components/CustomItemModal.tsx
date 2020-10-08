@@ -16,6 +16,7 @@ import {
 } from "@chakra-ui/core";
 import React, { FormEvent, memo } from "react";
 import { ItemEntry, nutritionKeys, nutritionUnits } from "../store";
+import { mapNutrition } from "../util/nutrition";
 
 export interface CustomItemModalProps {
   name: string;
@@ -34,6 +35,7 @@ function CustomItemModal({
     e.preventDefault();
     const form = e.currentTarget;
     const calories = Number(form.calories.value);
+    const weight = Number(form.weight.value);
     const protein = Number(form.protein.value);
     const fat = Number(form.fat.value);
     const carbohydrates = Number(form.carbohydrates.value);
@@ -41,12 +43,15 @@ function CustomItemModal({
     onAdd({
       name,
       weight: 100,
-      nutrition: {
-        calories,
-        protein,
-        fat,
-        carbohydrates,
-      },
+      nutrition: mapNutrition(
+        {
+          calories,
+          protein,
+          fat,
+          carbohydrates,
+        },
+        (_, value) => (value * 100) / weight
+      ),
     });
   }
 
@@ -63,7 +68,17 @@ function CustomItemModal({
           </ModalHeader>
           <ModalBody>
             <FormHelperText>
-              Enter nutritional details of the item per 100 grams.
+              Enter nutritional details of the item per{" "}
+              <Input
+                name="weight"
+                defaultValue="100"
+                textAlign="center"
+                size="sm"
+                w="60px"
+                variant="flushed"
+                d="inline"
+              />{" "}
+              grams.
             </FormHelperText>
             {nutritionKeys.map((k) => (
               <FormControl key={k} my="2">
