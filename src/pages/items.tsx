@@ -14,7 +14,7 @@ import {
 } from "@chakra-ui/core";
 import Fuse from "fuse.js";
 import React, { useEffect, useMemo, useState } from "react";
-import ItemEntries from "../components/ItemEntries";
+import ItemNutrition from "../components/ItemNutrition";
 import { Page } from "../components/layouts";
 
 import { useItems } from "../store";
@@ -153,7 +153,9 @@ export default function ItemsPage() {
           {filteredItems.length !== 0 && (
             <Text mt="4">Sorted by {sortByTitles[sortBy]}</Text>
           )}
-          <ItemEntries items={filteredItems} />
+          {filteredItems.map((item) => (
+            <ItemNutrition item={item} />
+          ))}
         </>
       )}
     </Page>

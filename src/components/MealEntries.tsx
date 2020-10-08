@@ -8,8 +8,9 @@ import {
 } from "@chakra-ui/core";
 import React, { memo, useState } from "react";
 import { MealEntry } from "../store";
+import { mapNutrition } from "../util/nutrition";
 import { getTimeDifference } from "../util/time";
-import ItemEntries from "./ItemEntries";
+import ItemNutrition from "./ItemNutrition";
 import NutritionBar from "./NutritionBar";
 
 export interface MealEntriesProps {
@@ -44,6 +45,8 @@ function Meal({
   const [show, setShow] = useState(false);
 
   const handleToggle = () => setShow(!show);
+  const showTotal = meal.portionWeight !== meal.totalWeight;
+
   return (
     <>
       <Heading
@@ -89,7 +92,24 @@ function Meal({
       </Box>
       <Collapse isOpen={show} duration={0}>
         <Box pl="4">
-          <ItemEntries items={meal.items} size="sm" />
+          {showTotal && (
+            <ItemNutrition
+              size="sm"
+              item={{
+                name: "Nutritional Value / 100 grams",
+                weight: 100,
+                nutrition: mapNutrition(
+                  meal.nutrition,
+                  (_, value) => (value * 100) / meal.portionWeight
+                ),
+              }}
+              bg="blue.50"
+              rounded="md"
+            />
+          )}
+          {meal.items.map((item) => (
+            <ItemNutrition item={item} size="sm" />
+          ))}
         </Box>
       </Collapse>
     </>
