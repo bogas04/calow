@@ -10,8 +10,11 @@ import {
 } from "@chakra-ui/core";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import CustomItemEntry from "../components/CustomItemEntry";
+import CustomItemModal, {
+  CustomItemModalProps,
+} from "../components/CustomItemModal";
 import { Page } from "../components/layouts";
+import MealNameModal, { MealNameModalProps } from "../components/MealNameModal";
 import NutritionBar from "../components/NutritionBar";
 import {
   ACTIONS,
@@ -21,7 +24,6 @@ import {
   useStore,
 } from "../store";
 import DinnerArt from "../svg/DinnerArt";
-import { getMealName } from "../util/meal";
 import { computeWeightedNutrition, mapNutrition } from "../util/nutrition";
 
 export default function MealEntryPage() {
@@ -33,6 +35,7 @@ export default function MealEntryPage() {
   const [totalWeight, setTotalWeight] = useState(0);
   const [portionWeight, setPortionWeight] = useState(0);
   const [showCustomItemModal, setShowCustomItemModal] = useState(false);
+  const [showMealNameModal, setShowMealModal] = useState(false);
   const [customItemDetails, setCustomItemDetails] = useState({
     name: "",
     weight: 0,
@@ -109,23 +112,40 @@ export default function MealEntryPage() {
     setAddedItems((xs) => xs.map((x, i) => (i === index ? newDetails : x)));
   }
 
-  function handleDone() {
-    const now = new Date();
+  const handleAddCustomItem: CustomItemModalProps["onAdd"] = (item) => {
+    const { weight } = customItemDetails;
+    const weightedItem = {
+      ...item,
+      weight,
+      nutrition: computeWeightedNutrition(item.nutrition, weight),
+    };
+
+    setAddedItems((i) => i.concat(weightedItem));
+    setCustomItemDetails({ name: "", weight: 0 });
+    setShowCustomItemModal(false);
+  };
+
+  const handleMealSubmit: MealNameModalProps["onSubmit"] = ({
+    name,
+    date = Date.now(),
+  }) => {
+    console.log({ date });
     const entry = {
       nutrition: portionNutrition,
       items: addedItems,
-      timestamp: now.getTime(),
-      name: getMealName(now),
+      timestamp: date,
+      name,
       portionWeight,
       totalWeight,
     };
+
     dispatch({
       type: ACTIONS.ADD_MEAL_ENTRY,
       payload: { entry },
     });
     setAddedItems([]);
     router.push("/");
-  }
+  };
 
   const total = portionWeight !== totalWeight && (
     <Box d="flex" flexDirection="column" bg="blue.50" p="2" my="4" rounded="md">
@@ -282,7 +302,7 @@ export default function MealEntryPage() {
           size="sm"
           variantColor="green"
           variant="solid"
-          onClick={handleDone}
+          onClick={() => setShowMealModal(true)}
         >
           Done
         </Button>
@@ -352,22 +372,16 @@ export default function MealEntryPage() {
           </Box>
         )}
       </Box>
-      <CustomItemEntry
+      <MealNameModal
+        isOpen={showMealNameModal}
+        onClose={() => setShowMealModal(false)}
+        onSubmit={handleMealSubmit}
+      />
+      <CustomItemModal
         isOpen={showCustomItemModal}
         onClose={() => setShowCustomItemModal(false)}
         name={customItemDetails.name}
-        onAdd={(item) => {
-          const { weight } = customItemDetails;
-          const weightedItem = {
-            ...item,
-            weight,
-            nutrition: computeWeightedNutrition(item.nutrition, weight),
-          };
-
-          setAddedItems((i) => i.concat(weightedItem));
-          setCustomItemDetails({ name: "", weight: 0 });
-          setShowCustomItemModal(false);
-        }}
+        onAdd={handleAddCustomItem}
       />
     </Box>
   );

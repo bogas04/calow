@@ -17,17 +17,19 @@ import {
 import React, { FormEvent, memo } from "react";
 import { ItemEntry, nutritionKeys, nutritionUnits } from "../store";
 
+export interface CustomItemModalProps {
+  name: string;
+  isOpen: boolean;
+  onAdd: (item: ItemEntry) => void;
+  onClose: IModal["onClose"];
+}
+
 function CustomItemModal({
   name,
   isOpen,
   onClose,
   onAdd,
-}: {
-  name: string;
-  isOpen: boolean;
-  onAdd: (item: ItemEntry) => void;
-  onClose: IModal["onClose"];
-}) {
+}: CustomItemModalProps) {
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = e.currentTarget;
