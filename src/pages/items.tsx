@@ -153,8 +153,8 @@ export default function ItemsPage() {
           {filteredItems.length !== 0 && (
             <Text mt="4">Sorted by {sortByTitles[sortBy]}</Text>
           )}
-          {filteredItems.map((item) => (
-            <ItemNutrition item={item} />
+          {filteredItems.map((item, index) => (
+            <ItemNutrition item={item} key={index} />
           ))}
         </>
       )}

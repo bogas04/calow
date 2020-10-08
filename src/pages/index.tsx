@@ -3,18 +3,18 @@ import Link from "next/link";
 import React, { useState } from "react";
 
 import { Meter } from "../components/Meter";
-import { ACTIONS, useStore } from "../store";
-import MealEntries, { MealEntriesProps } from "../components/MealEntries";
+import { ACTIONS, MealEntry, useStore } from "../store";
 import EmptyArt from "../svg/EmptyArt";
 import { Page } from "../components/layouts";
 import DateBar from "../components/DateBar";
 import { TODAY, DAY } from "../constants/date";
+import MealNutrition from "../components/MealNutrition";
 
 export default function HomePage() {
   const [date, setDate] = useState(TODAY);
   const { dispatch, goal, nutrition, log } = useStore(date);
 
-  const handleDelete: MealEntriesProps["onDelete"] = (meal, index) => {
+  const handleDelete = (meal: MealEntry, index: number) => {
     if (
       window.confirm(
         `Are you sure you want to delete "${meal.name}" with ${
@@ -62,7 +62,13 @@ export default function HomePage() {
               <EmptyArt />
             </Box>
           )}
-          <MealEntries entries={log} onDelete={handleDelete} />
+          {log.map((meal, index) => (
+            <MealNutrition
+              meal={meal}
+              onDelete={() => handleDelete(meal, index)}
+              key={index}
+            />
+          ))}
         </Box>
 
         {date > TODAY - DAY && (

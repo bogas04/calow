@@ -13,35 +13,12 @@ import { getTimeDifference } from "../util/time";
 import ItemNutrition from "./ItemNutrition";
 import NutritionBar from "./NutritionBar";
 
-export interface MealEntriesProps {
-  entries: MealEntry[];
-  onDelete?: (meal: MealEntry, index: number) => void;
-}
-
-function MealEntries({ entries, onDelete }: MealEntriesProps) {
-  return (
-    <>
-      {entries.map((meal, i) => (
-        <Box key={i} mb="4">
-          <Meal
-            meal={meal}
-            onDelete={onDelete ? () => onDelete(meal, i) : undefined}
-          />
-        </Box>
-      ))}
-    </>
-  );
-}
-
-export default memo(MealEntries);
-
-function Meal({
-  meal,
-  onDelete,
-}: {
+export interface MealNutritionProps {
   meal: MealEntry;
   onDelete?: IconButtonProps["onClick"];
-}) {
+}
+
+function MealNutrition({ meal, onDelete }: MealNutritionProps) {
   const [show, setShow] = useState(false);
 
   const handleToggle = () => setShow(!show);
@@ -107,11 +84,13 @@ function Meal({
               rounded="md"
             />
           )}
-          {meal.items.map((item) => (
-            <ItemNutrition item={item} size="sm" />
+          {meal.items.map((item, itemIndex) => (
+            <ItemNutrition item={item} size="sm" key={itemIndex} />
           ))}
         </Box>
       </Collapse>
     </>
   );
 }
+
+export default memo(MealNutrition);

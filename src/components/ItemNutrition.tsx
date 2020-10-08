@@ -1,4 +1,5 @@
-import { Box, BoxProps, Heading, Link } from "@chakra-ui/core";
+import Link from "next/link";
+import { Box, BoxProps, Heading } from "@chakra-ui/core";
 import React, { memo } from "react";
 import { ItemEntry } from "../store";
 import NutritionBar from "./NutritionBar";
