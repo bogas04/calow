@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useReducer } from "react";
+import { set } from "idb-keyval";
 import useSWR from "swr";
 
 import { ACTIONS, Action, defaultState, reducer } from "./reducer";
@@ -25,6 +26,9 @@ export function useStoreReducer() {
 
   useEffect(() => {
     localStorage.setItem("store", JSON.stringify(store));
+    set("body", store.body);
+    set("goal", store.goal);
+    set("logs", store.logs);
   }, [store]);
 
   return {
