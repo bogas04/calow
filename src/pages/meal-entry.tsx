@@ -125,15 +125,17 @@ export default function MealEntryPage() {
     setShowCustomItemModal(false);
   };
 
-  const handleMealSubmit: MealNameModalProps["onSubmit"] = ({
+  function saveAndRedirect({
     name,
-    date = Date.now(),
-  }) => {
-    console.log({ date });
+    timestamp = Date.now(),
+  }: {
+    name: string;
+    timestamp?: number;
+  }) {
     const entry = {
       nutrition: portionNutrition,
       items: addedItems,
-      timestamp: date,
+      timestamp,
       name,
       portionWeight,
       totalWeight,
@@ -143,9 +145,18 @@ export default function MealEntryPage() {
       type: ACTIONS.ADD_MEAL_ENTRY,
       payload: { entry },
     });
+    setShowMealModal(false);
     setAddedItems([]);
     router.push("/");
-  };
+  }
+
+  function handleDone() {
+    if (addedItems.length === 1) {
+      saveAndRedirect({ name: addedItems[0].name, timestamp: Date.now() });
+      return;
+    }
+    setShowMealModal(true);
+  }
 
   const total = portionWeight !== totalWeight && (
     <Box d="flex" flexDirection="column" bg="blue.50" p="2" my="4" rounded="md">
@@ -302,7 +313,7 @@ export default function MealEntryPage() {
           size="sm"
           variantColor="green"
           variant="solid"
-          onClick={() => setShowMealModal(true)}
+          onClick={handleDone}
         >
           Done
         </Button>
@@ -375,7 +386,7 @@ export default function MealEntryPage() {
       <MealNameModal
         isOpen={showMealNameModal}
         onClose={() => setShowMealModal(false)}
-        onSubmit={handleMealSubmit}
+        onSubmit={saveAndRedirect}
       />
       <CustomItemModal
         isOpen={showCustomItemModal}

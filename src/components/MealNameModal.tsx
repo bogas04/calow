@@ -16,7 +16,7 @@ import React, { FormEvent, memo } from "react";
 
 export interface MealNameModalProps {
   isOpen: boolean;
-  onSubmit: (info: { name: string; date: number }) => void;
+  onSubmit: (info: { name: string; timestamp: number }) => void;
   onClose: IModal["onClose"];
 }
 
@@ -26,9 +26,9 @@ function MealNameModal({ isOpen, onClose, onSubmit }: MealNameModalProps) {
     const form = e.currentTarget;
     const name = form.mealname.value;
     // TODO: add time picker to let user change date later
-    const date = Date.now();
+    const timestamp = Date.now();
 
-    onSubmit({ name, date });
+    onSubmit({ name, timestamp });
   }
 
   return (
