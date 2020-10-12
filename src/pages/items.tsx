@@ -81,6 +81,7 @@ export default function ItemsPage() {
         d="flex"
         alignItems="flex-end"
         justifyContent="space-between"
+        onSubmit={(e) => e.preventDefault()}
       >
         <FormControl>
           <FormLabel htmlFor="search">Search for items.</FormLabel>
