@@ -39,7 +39,7 @@ export default function ItemsPage() {
     let filtered = [...items];
 
     if (query) {
-      const fuse = new Fuse(items, { keys: ["name"], threshold: 0.3 });
+      const fuse = new Fuse(items, { keys: ["name"], threshold: 0.25 });
       filtered = fuse.search(query).map((i) => i.item);
     }
 
