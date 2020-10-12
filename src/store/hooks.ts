@@ -68,7 +68,7 @@ export function useItems() {
   }
 
   const { data, error } = useSWR<SheetsApiResponse>(
-    `https://sheets.googleapis.com/v4/spreadsheets/${sheet}/values/Sheet1!A1:G1000?key=${key}`,
+    `https://sheets.googleapis.com/v4/spreadsheets/${sheet}/values/Sheet1?key=${key}`,
     {
       fetcher,
       revalidateOnFocus: false,
@@ -80,11 +80,13 @@ export function useItems() {
     const indices = {
       name: 0,
       icon: 1,
-      calories: 2,
-      protein: 3,
-      fat: 4,
-      carbohydrates: 5,
-      weight: 6,
+      categories: 2,
+      weight: 3,
+      calories: 4,
+      protein: 5,
+      fat: 6,
+      carbohydrates: 7,
+      fiber: 8,
     };
 
     items = data.values.reduce<ItemEntry[]>((acc, value, i) => {
