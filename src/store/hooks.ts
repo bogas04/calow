@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useReducer } from "react";
-import { set } from "idb-keyval";
+import { get, set } from "idb-keyval";
 import useSWR from "swr";
 
 import { ACTIONS, Action, defaultState, reducer } from "./reducer";
@@ -7,25 +7,27 @@ import { computeNutritionFromLog, createNutrition } from "../util/nutrition";
 import { getDateKey } from "../util/time";
 
 import { ItemEntry } from "./types";
+import { Store } from ".";
 
 export function useStoreReducer() {
   const [store, dispatch] = useReducer(reducer, defaultState);
 
   useEffect(() => {
-    if (localStorage.getItem("store")) {
+    (async () => {
       try {
-        const payload = JSON.parse(localStorage.getItem("store")!);
-        if (Object.keys(defaultState).every((k) => k in payload)) {
-          dispatch({ type: ACTIONS.SET, payload });
-        }
+        const [body, goal, logs] = await Promise.all([
+          get<Store["body"]>("body"),
+          get<Store["goal"]>("goal"),
+          get<Store["logs"]>("logs"),
+        ]);
+        dispatch({ type: ACTIONS.SET, payload: { body, goal, logs } });
       } catch (err) {
         alert("Sorry! We couldn't restore data stored in your phone.");
       }
-    }
+    })();
   }, []);
 
   useEffect(() => {
-    localStorage.setItem("store", JSON.stringify(store));
     set("body", store.body);
     set("goal", store.goal);
     set("logs", store.logs);
