@@ -20,7 +20,10 @@ export function useStoreReducer() {
           get<Store["goal"]>("goal"),
           get<Store["logs"]>("logs"),
         ]);
-        dispatch({ type: ACTIONS.SET, payload: { body, goal, logs } });
+
+        if (body && goal && logs) {
+          dispatch({ type: ACTIONS.SET, payload: { body, goal, logs } });
+        }
       } catch (err) {
         alert("Sorry! We couldn't restore data stored in your phone.");
       }
