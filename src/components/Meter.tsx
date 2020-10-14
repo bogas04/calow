@@ -138,7 +138,7 @@ export function Meter({
             ),
           }}
         >
-          ❤️
+          {nutrition.calories > goal.calories ? "💘" : "❤️"}
         </text>
       </svg>
       <Box fontWeight="bold">
