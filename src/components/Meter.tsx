@@ -1,5 +1,5 @@
 import { Box, theme } from "@chakra-ui/core";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   Nutrition,
@@ -35,6 +35,7 @@ export function Meter({
   nutrition: Nutrition;
   goal: Nutrition;
 }) {
+  const isAndroid_FIXME_USE_SVG_HEART_INSTEAD = useAndroid_FIXME_USE_SVG_HEART_INSTEAD();
   const circlePoint = mapNutrition(nutrition, (key, value) => {
     const degree = 360 * Number(Number(value / goal[key]).toFixed(2));
     const theta = Number(Number((Math.PI * degree) / 180).toFixed(2));
@@ -116,6 +117,7 @@ export function Meter({
                     strokeLinejoin="round"
                     strokeLinecap="round"
                     strokeWidth={0.5}
+                    style={{ transition: common.style.transition }}
                   />
                 </>
               )}
@@ -127,6 +129,9 @@ export function Meter({
           y={common.cy + 5}
           fontSize={theme.fontSizes.xs}
           style={{
+            transform: isAndroid_FIXME_USE_SVG_HEART_INSTEAD
+              ? `translateX(-1.5px)`
+              : undefined,
             opacity: Math.max(
               Math.min(nutrition.calories / goal.calories, 1),
               0.1
@@ -141,4 +146,16 @@ export function Meter({
       </Box>
     </Box>
   );
+}
+
+function useAndroid_FIXME_USE_SVG_HEART_INSTEAD() {
+  const [isAndroid, setAndroid] = useState(false);
+
+  useEffect(() => {
+    if (navigator.userAgent.toLowerCase().includes("android")) {
+      setAndroid(true);
+    }
+  }, []);
+
+  return isAndroid;
 }
