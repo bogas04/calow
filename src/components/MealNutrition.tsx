@@ -22,7 +22,6 @@ function MealNutrition({ meal, onDelete }: MealNutritionProps) {
   const [show, setShow] = useState(false);
 
   const handleToggle = () => setShow(!show);
-  const showTotal = meal.portionWeight !== meal.totalWeight;
 
   return (
     <>
@@ -58,9 +57,11 @@ function MealNutrition({ meal, onDelete }: MealNutritionProps) {
       </Heading>
 
       <NutritionBar nutrition={meal.nutrition} border={false} />
-      <Box d="flex" alignItems="center" flex="1" my="2">
+      <Box d="flex" alignItems="center" flex="1" mt="2" mb="6">
         <Text fontSize="xs" color="gray.600" fontWeight="300">
-          {meal.portionWeight}g / {meal.totalWeight}g
+          {meal.portionWeight === meal.totalWeight
+            ? `${meal.totalWeight}g`
+            : `${meal.portionWeight}g / ${meal.totalWeight}g`}
         </Text>
         <Box w="1px" h="20px" bg="gray.500" mx="2" />
         <Text fontSize="xs" color="gray.600" fontWeight="300">
@@ -69,21 +70,20 @@ function MealNutrition({ meal, onDelete }: MealNutritionProps) {
       </Box>
       <Collapse isOpen={show} duration={0}>
         <Box pl="4">
-          {showTotal && (
-            <ItemNutrition
-              size="sm"
-              item={{
-                name: "Nutritional Value / 100 grams",
-                weight: 100,
-                nutrition: mapNutrition(
-                  meal.nutrition,
-                  (_, value) => (value * 100) / meal.portionWeight
-                ),
-              }}
-              bg="blue.50"
-              rounded="md"
-            />
-          )}
+          <ItemNutrition
+            size="sm"
+            item={{
+              name: "Nutritional Value / 100 grams",
+              weight: 100,
+              nutrition: mapNutrition(
+                meal.nutrition,
+                (_, value) => (value * 100) / meal.portionWeight
+              ),
+            }}
+            bg="blue.50"
+            rounded="md"
+          />
+
           {meal.items.map((item, itemIndex) => (
             <ItemNutrition item={item} size="sm" key={itemIndex} />
           ))}
