@@ -13,7 +13,7 @@ export const defaultState = {
     gender: "female",
   } as BodyMetrics,
   /** goal */
-  goal: computeMacroFromCalories(1800),
+  goal: computeMacroFromCalories(0),
   /** logs of all days */
   logs: {} as { [dateKey: string]: MealEntry[] },
 };
