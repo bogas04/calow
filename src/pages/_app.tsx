@@ -9,6 +9,7 @@ import { AppProps } from "next/app";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 import { StoreContext, useStoreReducer } from "../store";
 
 import theme from "../theme";
@@ -29,7 +30,9 @@ function App({
   const title = pageTitle ? `${pageTitle} | Calow` : "Calow";
   const pageUrl = "https://bogas04.github.io/calow/";
   const description = "Intuitive minimalist calorie logging web app";
-  const image = pageUrl + "favicon.ico";
+  const image = pageUrl + "icon-512-512.png";
+
+  useServiceWorker();
 
   const footerClickHandler = (pathname: string) => {
     if (router.pathname === pathname) {
@@ -47,9 +50,42 @@ function App({
           <title>{title}</title>
           <meta name="title" content={title} />
           <meta name="description" content={description} />
-          <link rel="apple-touch-icon" sizes="180x180" href="favicon.ico" />
-          <link rel="icon" type="image/png" sizes="32x32" href="favicon.ico" />
-          <link rel="icon" type="image/png" sizes="16x16" href="favicon.ico" />
+
+          <link rel="manifest" href="manifest.json" />
+
+          <meta name="mobile-web-app-capable" content="yes" />
+          <meta name="apple-mobile-web-app-capable" content="yes" />
+          <meta name="application-name" content="calow" />
+          <meta name="apple-mobile-web-app-title" content="calow" />
+          <meta name="theme-color" content="#48bb78" />
+          <meta name="msapplication-navbutton-color" content="#48bb78" />
+          <meta
+            name="apple-mobile-web-app-status-bar-style"
+            content="black-translucent"
+          />
+          <meta name="msapplication-starturl" content="/" />
+          <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, shrink-to-fit=no"
+          />
+
+          <link
+            rel="apple-touch-icon"
+            sizes="180x180"
+            href={pageUrl + "icon-192-192.png"}
+          />
+          <link
+            rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href={pageUrl + "icon-48-48.png"}
+          />
+          <link
+            rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href={pageUrl + "icon-48-48.png"}
+          />
 
           <meta property="og:type" content="website" />
           <meta property="og:url" content={pageUrl} />
@@ -111,4 +147,9 @@ function App({
   );
 }
 
+function useServiceWorker() {
+  useEffect(() => {
+    navigator?.serviceWorker?.register("sw.js");
+  }, []);
+}
 export default App;
