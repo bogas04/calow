@@ -2,7 +2,7 @@
   "name": "calow",
   "short_name": "calow",
   "lang": "en-US",
-  "start_url": "/",
+  "start_url": "/calow",
   "display": "standalone",
   "theme_color": "#48bb78",
   "background_color": "#ffffff",
