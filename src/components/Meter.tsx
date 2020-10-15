@@ -1,4 +1,4 @@
-import { Box, theme } from "@chakra-ui/core";
+import { Box } from "@chakra-ui/core";
 import React, { useEffect, useState } from "react";
 
 import {
@@ -9,6 +9,7 @@ import {
 } from "../store";
 import { mapNutrition } from "../util/nutrition";
 import NutritionBar from "./NutritionBar";
+import theme from "../theme";
 
 const start = 10;
 const diff = 7.5;
@@ -141,6 +142,7 @@ export function Meter({
           {nutrition.calories > goal.calories ? "💘" : "❤️"}
         </text>
       </svg>
+
       <Box fontWeight="bold">
         <NutritionBar nutrition={nutrition} />
       </Box>
