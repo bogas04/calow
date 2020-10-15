@@ -6,7 +6,7 @@ import {
   IconButtonProps,
   Text,
 } from "@chakra-ui/core";
-import React, { memo, useState } from "react";
+import { memo, useState } from "react";
 import { MealEntry } from "../store";
 import { mapNutrition } from "../util/nutrition";
 import { getTimeDifference } from "../util/time";

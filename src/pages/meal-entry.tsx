@@ -9,7 +9,7 @@ import {
   Text,
 } from "@chakra-ui/core";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import CustomItemModal, {
   CustomItemModalProps,
 } from "../components/CustomItemModal";

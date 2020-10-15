@@ -1,5 +1,5 @@
 import { Box, Button } from "@chakra-ui/core";
-import React, { memo } from "react";
+import { memo } from "react";
 import { DAY, TODAY } from "../constants/date";
 
 import { formatShortDate } from "../util/time";

@@ -13,7 +13,7 @@ import {
   Text,
 } from "@chakra-ui/core";
 import Fuse from "fuse.js";
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import ItemNutrition from "../components/ItemNutrition";
 import { Page } from "../components/layouts";
 

@@ -12,7 +12,7 @@ import {
   Button,
   FormLabel,
 } from "@chakra-ui/core";
-import React, { FormEvent, memo } from "react";
+import { FormEvent, memo } from "react";
 
 export interface MealNameModalProps {
   isOpen: boolean;

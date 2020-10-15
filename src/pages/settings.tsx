@@ -12,7 +12,7 @@ import {
   SliderTrack,
   Tag,
 } from "@chakra-ui/core";
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import BodyMetricsForm from "../components/BodyMetricsForm";
 import { Page } from "../components/layouts";
 import NutritionBar from "../components/NutritionBar";

@@ -14,7 +14,7 @@ import {
   Button,
   Text,
 } from "@chakra-ui/core";
-import React, { FormEvent, memo } from "react";
+import { FormEvent, memo } from "react";
 import { ItemEntry, nutritionKeys, nutritionUnits } from "../store";
 import { mapNutrition } from "../util/nutrition";
 

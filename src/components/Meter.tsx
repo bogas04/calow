@@ -1,5 +1,5 @@
 import { Box } from "@chakra-ui/core";
-import React, { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 
 import {
   Nutrition,
@@ -76,7 +76,7 @@ export function Meter({
           const goalMet = nutrition[k] > goal[k];
 
           return (
-            <React.Fragment key={k}>
+            <Fragment key={k}>
               <circle
                 // this is a gray curve shown behind completed line
                 {...common}
@@ -122,7 +122,7 @@ export function Meter({
                   />
                 </>
               )}
-            </React.Fragment>
+            </Fragment>
           );
         })}
         <text

@@ -1,5 +1,5 @@
 import { Box, Text } from "@chakra-ui/core";
-import React from "react";
+import { memo } from "react";
 import {
   Nutrition,
   nutritionColors,
@@ -48,4 +48,4 @@ function NutritionBar({ nutrition, border = true }: NutritionBarProps) {
   );
 }
 
-export default React.memo(NutritionBar);
+export default memo(NutritionBar);
