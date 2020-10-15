@@ -48,6 +48,7 @@ export default function HomePage() {
           pr={[0, "8"]}
           flex="0.3"
           mr={[0, "16"]}
+          mb="2"
         >
           <Meter nutrition={nutrition} goal={goal} />
           <DateBar date={date} onChange={setDate} />
