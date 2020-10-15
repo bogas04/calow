@@ -43,7 +43,16 @@ export default function ItemsPage() {
 
     if (query) {
       const fuse = new Fuse(items, { keys: ["name"], threshold: 0.25 });
-      filtered = fuse.search(query).map((i) => i.item);
+
+      if (query.includes(",")) {
+        filtered = query
+          .split(",")
+          .map((q) => q.trim())
+          .map((q) => fuse.search(q).map((i) => i.item))
+          .flat();
+      } else {
+        filtered = fuse.search(query).map((i) => i.item);
+      }
     }
 
     return filtered.sort((a, b) => {
