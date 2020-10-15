@@ -1,9 +1,11 @@
 import {
   Box,
   Button,
+  Collapse,
   FormControl,
   FormLabel,
   Icon,
+  IconButton,
   Input,
   Menu,
   MenuButton,
@@ -21,8 +23,9 @@ import { useItems } from "../store";
 
 export default function ItemsPage() {
   const { items, isLoading } = useItems();
-  const [sortBy, setSortBy] = useState<keyof typeof sortByTitles>("name");
+  const [sortBy, setSortBy] = useState<SortByKeys>("name");
   const [query, setQuery] = useState("");
+  const [showInfo, setShowInfo] = useState(false);
 
   const handleSearch: React.FormEventHandler<HTMLInputElement> = (e) => {
     setQuery(e.currentTarget.value);
@@ -59,15 +62,22 @@ export default function ItemsPage() {
           }
           return 0;
         }
+        case "carbs/calories": {
+          return (
+            b.nutrition.carbohydrates / (b.weight * b.nutrition.calories) -
+            a.nutrition.carbohydrates / (a.weight * a.nutrition.calories)
+          );
+        }
+        case "fat/calories": {
+          return (
+            b.nutrition.fat / (b.weight * b.nutrition.calories) -
+            a.nutrition.fat / (a.weight * a.nutrition.calories)
+          );
+        }
         case "protein/calories": {
           return (
             b.nutrition.protein / (b.weight * b.nutrition.calories) -
             a.nutrition.protein / (a.weight * a.nutrition.calories)
-          );
-        }
-        case "protein/weight": {
-          return (
-            b.nutrition.protein / b.weight - a.nutrition.protein / a.weight
           );
         }
       }
@@ -103,17 +113,15 @@ export default function ItemsPage() {
             Sort
           </MenuButton>
           <MenuList>
-            {(Object.keys(sortByTitles) as [keyof typeof sortByTitles]).map(
-              (k) => (
-                <MenuItem
-                  onClick={() => setSortBy((s) => (s === k ? "name" : k))}
-                  key={k}
-                >
-                  {sortBy === k && <Icon name="check" mr="1" />}
-                  By {sortByTitles[k]}
-                </MenuItem>
-              )
-            )}
+            {(Object.keys(sortByTitles) as SortByKeys[]).map((k) => (
+              <MenuItem
+                onClick={() => setSortBy((s) => (s === k ? "name" : k))}
+                key={k}
+              >
+                {sortBy === k && <Icon name="check" mr="1" />}
+                By {sortByTitles[k].title}
+              </MenuItem>
+            ))}
           </MenuList>
         </Menu>
       </Box>
@@ -152,7 +160,34 @@ export default function ItemsPage() {
       ) : (
         <>
           {filteredItems.length !== 0 && (
-            <Text mt="4">Sorted by {sortByTitles[sortBy]}</Text>
+            <Box mt="4">
+              <Box d="flex" justifyContent="space-between" alignItems="center">
+                <Text>Sorted by {sortByTitles[sortBy].title}</Text>
+                {sortByTitles[sortBy].description && (
+                  <IconButton
+                    isRound
+                    size="sm"
+                    variant="ghost"
+                    aria-label={showInfo ? "Collapse" : "Expand"}
+                    onClick={() => setShowInfo(!showInfo)}
+                    color={showInfo ? "gray.800" : "gray.400"}
+                    icon="info"
+                  />
+                )}
+              </Box>
+              {sortByTitles[sortBy].description && (
+                <Collapse
+                  isOpen={showInfo}
+                  startingHeight={45}
+                  bg="gray.50"
+                  p="2"
+                  rounded="sm"
+                  fontSize="sm"
+                >
+                  {sortByTitles[sortBy].description}
+                </Collapse>
+              )}
+            </Box>
           )}
           {filteredItems.map((item, index) => (
             <ItemNutrition item={item} key={index} />
@@ -166,8 +201,20 @@ export default function ItemsPage() {
 ItemsPage.pageTitle = "Items";
 
 const sortByTitles = {
-  name: "Name",
-  "calories/weight": "Calories",
-  "protein/weight": "Protein per Weight",
-  "protein/calories": "Protein per Calories",
+  name: { title: "Name", description: "", source: "" },
+  "calories/weight": { title: "Calories", description: "", source: "" },
+  "protein/calories": {
+    title: "Protein per Calories",
+    description: "",
+    source: "",
+  },
+  "fat/calories": {
+    title: "Fat per Calories",
+    description:
+      "Fats are sources of essential fatty acids, an important dietary requirement, especially to absorb Vitamins A, D, E, and K. Fats also play a vital role in maintaining healthy skin and hair, insulating body organs against shock, maintaining body temperature, and promoting healthy cell function. Fat also serves as a useful buffer against a host of diseases. When a particular substance, whether chemical or biotic, reaches unsafe levels in the bloodstream, the body can effectively dilute or at least maintain equilibrium of the offending substances by storing it in new fat tissue. This helps to protect vital organs, until such time as the offending substances can be metabolized or removed from the body by such means as excretion, urination, accidental or intentional bloodletting, sebum excretion, and hair growth.",
+    source: "https://en.wikipedia.org/wiki/Fat#Biological_importance",
+  },
+  "carbs/calories": { title: "Carbs per Calories", description: "" },
 };
+
+type SortByKeys = keyof typeof sortByTitles;
