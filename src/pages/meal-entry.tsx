@@ -14,7 +14,7 @@ import CustomItemModal, {
   CustomItemModalProps,
 } from "../components/CustomItemModal";
 import { Page } from "../components/layouts";
-import MealNameModal, { MealNameModalProps } from "../components/MealNameModal";
+import MealNameModal from "../components/MealNameModal";
 import NutritionBar from "../components/NutritionBar";
 import {
   ACTIONS,
@@ -348,7 +348,7 @@ export default function MealEntryPage() {
         flexDirection="column"
         overflow="auto"
       >
-        <Box d="flex" justifyContent="center">
+        <Box d="flex" justifyContent="center" mb="2">
           <NutritionBar nutrition={portionNutrition} />
         </Box>
         <Box
