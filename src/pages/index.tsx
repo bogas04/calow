@@ -9,6 +9,7 @@ import { Page } from "../components/layouts";
 import DateBar from "../components/DateBar";
 import { TODAY, DAY } from "../constants/date";
 import MealNutrition from "../components/MealNutrition";
+import NutritionBar from "../components/NutritionBar";
 
 export default function HomePage() {
   const [date, setDate] = useState(TODAY);
@@ -51,6 +52,15 @@ export default function HomePage() {
           mb="2"
         >
           <Meter nutrition={nutrition} goal={goal} />
+          <Box
+            fontWeight="bold"
+            d="flex"
+            justifyContent="center"
+            alignItems="center"
+            mb="6"
+          >
+            <NutritionBar nutrition={nutrition} />
+          </Box>
           <DateBar date={date} onChange={setDate} />
         </Box>
 

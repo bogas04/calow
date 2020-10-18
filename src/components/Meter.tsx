@@ -8,7 +8,6 @@ import {
   nutritionKeys,
 } from "../store";
 import { mapNutrition } from "../util/nutrition";
-import NutritionBar from "./NutritionBar";
 import theme from "../theme";
 
 const start = 10;
@@ -61,8 +60,7 @@ export function Meter({
       d="flex"
       justifyContent="center"
       alignItems="center"
-      mt="2"
-      mb="6"
+      my="2"
       flexDirection="column"
       h={["auto", "30vh"]}
     >
@@ -144,10 +142,6 @@ export function Meter({
           {nutrition.calories > goal.calories ? "💘" : "❤️"}
         </text>
       </svg>
-
-      <Box fontWeight="bold">
-        <NutritionBar nutrition={nutrition} />
-      </Box>
     </Box>
   );
 }
