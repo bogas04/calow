@@ -134,7 +134,9 @@ export function Meter({
               ? `translateX(-1.5px)`
               : undefined,
             opacity: Math.max(
-              Math.min(nutrition.calories / goal.calories, 1),
+              goal.calories === 0
+                ? 0
+                : Math.min(nutrition.calories / goal.calories, 1),
               0.1
             ),
           }}
