@@ -89,8 +89,8 @@ export function useItems() {
       weight: 3,
       calories: 4,
       protein: 5,
-      fat: 6,
-      carbohydrates: 7,
+      carbohydrates: 6,
+      fat: 7,
       fiber: 8,
     };
 
