@@ -1,10 +1,18 @@
-import { Flex, Box, Link as ChakraLink, FormHelperText } from "@chakra-ui/core";
+import {
+  Flex,
+  Box,
+  Link as ChakraLink,
+  FormHelperText,
+  LinkProps as ChakraLinkProps,
+} from "@chakra-ui/core";
 import Link from "next/link";
 import { useState } from "react";
 
-import { Meter } from "../components/Meter";
+import { getShortMonth } from "../util/time";
 import { ACTIONS, MealEntry, useStore } from "../store";
 import EmptyArt from "../svg/EmptyArt";
+
+import { Meter } from "../components/Meter";
 import { Page } from "../components/layouts";
 import DateBar from "../components/DateBar";
 import { TODAY, DAY } from "../constants/date";
@@ -75,30 +83,26 @@ export default function HomePage() {
           ))}
         </Box>
 
-        {date > TODAY - DAY && (
+        {date > TODAY - DAY ? (
           <Link href="/meal-entry">
-            <ChakraLink
-              href="/meal-entry"
-              position="fixed"
-              right={0}
-              bottom={0}
-              mx={4}
-              my={20}
-              height="16"
-              fontSize="3xl"
-              fontWeight="100"
-              width="16"
-              d="flex"
-              _hover={{ textDecoration: "none", boxShadow: "lg" }}
-              alignItems="center"
-              justifyContent="center"
-              borderRadius="50%"
-              bg="green.400"
-              color="white"
-            >
+            <ChakraLink href="/meal-entry" {...FABProps} title="Add log item">
               +
             </ChakraLink>
           </Link>
+        ) : (
+          <ChakraLink
+            as="button"
+            {...FABProps}
+            bg="purple.300"
+            flexDirection="column"
+            title="Show today's log"
+            onClick={() => setDate(TODAY)}
+          >
+            {new Date().getDate()}
+            <Box fontSize="xs" mt={-2}>
+              {getShortMonth(new Date().getMonth())}
+            </Box>
+          </ChakraLink>
         )}
       </Flex>
     </Page>
@@ -106,3 +110,22 @@ export default function HomePage() {
 }
 
 HomePage.pageTitle = "Home";
+
+const FABProps: ChakraLinkProps = {
+  position: "fixed",
+  right: 0,
+  bottom: 0,
+  mx: 4,
+  my: 20,
+  height: "16",
+  fontSize: "3xl",
+  fontWeight: "100",
+  width: "16",
+  d: "flex",
+  _hover: { textDecoration: "none", boxShadow: "lg" },
+  alignItems: "center",
+  justifyContent: "center",
+  borderRadius: "50%",
+  bg: "green.400",
+  color: "white",
+};

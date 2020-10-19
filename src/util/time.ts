@@ -51,3 +51,7 @@ const months = [
 export function formatShortDate(date: Date) {
   return `${date.getDate()}, ${months[date.getMonth()]}`;
 }
+
+export function getShortMonth(month: number) {
+  return months[month];
+}
