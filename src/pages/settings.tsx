@@ -24,6 +24,7 @@ export default function SettingsPage() {
   const [expand, setExpand] = useState(false);
   const [showDataOptions, setShowDataOptions] = useState(false);
   const [goalCalories, setGoalCalories] = useState<number>();
+  const [isSliderDisabled, setIsSliderDisabled] = useState(true);
 
   const { body, goal, logs } = store;
   const { bmr, caloricNeeds } = useMemo(() => computeCaloricNeeds(body), [
@@ -83,12 +84,12 @@ export default function SettingsPage() {
         </Collapse>
         {hasComputedCaloricNeeds && (
           <Box
-            mt="6"
+            mt="4"
             d="flex"
             alignItems="center"
             justifyContent={["center", "flex-start"]}
           >
-            <NutritionBar nutrition={caloricNeeds} />
+            <NutritionBar nutrition={caloricNeeds} showLegend />
           </Box>
         )}
       </Box>
@@ -108,28 +109,48 @@ export default function SettingsPage() {
             </Tag>
           </Heading>
           <FormHelperText>{goalInfo.description}</FormHelperText>
-          <FormLabel fontSize="sm" textTransform="capitalize">
-            Calories {goal.calories || caloricNeeds.calories}kCal
-          </FormLabel>
-          <Slider
-            step={10}
-            defaultValue={goal.calories || caloricNeeds.calories}
-            value={goalCalories}
-            onChange={setGoalCalories}
-            min={bmr}
-            max={2 * caloricNeeds.calories - bmr}
+          <FormLabel
+            fontSize="sm"
+            textTransform="capitalize"
+            d="flex"
+            alignItems="center"
+            pr="0"
+            mt="2"
+            justifyContent="space-between"
           >
-            <SliderTrack />
-            <SliderFilledTrack bg={goalInfo.color} />
-            <SliderThumb />
-          </Slider>
+            Calories {goal.calories || caloricNeeds.calories}kCal
+            <Button
+              onClick={() => setIsSliderDisabled(!isSliderDisabled)}
+              size="xs"
+              variant={isSliderDisabled ? "ghost" : "solid"}
+              variantColor={isSliderDisabled ? undefined : "green"}
+            >
+              {isSliderDisabled ? "Edit" : "Done"}
+            </Button>
+          </FormLabel>
+
+          <Collapse isOpen={!isSliderDisabled}>
+            <Slider
+              step={10}
+              defaultValue={goal.calories || caloricNeeds.calories}
+              value={goalCalories}
+              onChange={setGoalCalories}
+              isDisabled={isSliderDisabled}
+              min={bmr}
+              max={2 * caloricNeeds.calories - bmr}
+            >
+              <SliderTrack />
+              <SliderFilledTrack bg={goalInfo.color} />
+              <SliderThumb />
+            </Slider>
+          </Collapse>
           <Box
-            mt="6"
+            mt="4"
             d="flex"
             justifyContent={["center", "flex-start"]}
             alignItems="center"
           >
-            <NutritionBar nutrition={goal} />
+            <NutritionBar nutrition={goal} showLegend />
           </Box>
         </Box>
       )}

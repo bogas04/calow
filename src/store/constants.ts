@@ -22,11 +22,18 @@ export const nutritionUnits = {
   calories: "kCal",
 };
 
-export const nutritionShortNames = {
-  fat: "F",
-  carbohydrates: "C",
-  protein: "P",
+export const nutritionShortUnits = {
+  fat: "g",
+  carbohydrates: "g",
+  protein: "g",
   calories: "kCal",
+};
+
+export const nutritionShortNames = {
+  fat: "fat",
+  carbohydrates: "carbs",
+  protein: "protein",
+  calories: "cals",
 };
 
 export const inititalNutrition = {

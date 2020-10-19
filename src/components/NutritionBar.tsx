@@ -1,50 +1,56 @@
-import { Box, Text } from "@chakra-ui/core";
+import { Flex, Grid, Text } from "@chakra-ui/core";
 import { memo } from "react";
 import {
   Nutrition,
   nutritionColors,
   nutritionKeys,
   nutritionShortNames,
+  nutritionShortUnits,
 } from "../store";
 
 export interface NutritionBarProps {
   nutrition: Nutrition;
   border?: boolean;
+  showLegend?: boolean;
 }
 
-function NutritionBar({ nutrition, border = true }: NutritionBarProps) {
+function NutritionBar({
+  nutrition,
+  border = true,
+  showLegend = !border,
+}: NutritionBarProps) {
   return (
-    <Box
-      d="flex"
-      {...(border ? { boxShadow: "sm", borderRadius: 50, p: 4 } : {})}
+    <Grid
+      gridTemplateColumns="repeat(4, auto)"
+      gridGap={border ? 4 : 6}
+      {...(border
+        ? {
+            boxShadow: "sm",
+            borderRadius: 50,
+            p: 4,
+            px: showLegend && border ? 6 : 4,
+          }
+        : {})}
     >
       {nutritionKeys.map((k, i) => {
         const value = nutrition[k];
         return (
-          <Box
-            d="flex"
+          <Flex
+            flexDirection="column"
             key={i}
             textTransform="capitalize"
-            color={nutritionColors[k]}
+            justifyContent="center"
+            alignItems="flex-start"
           >
-            <Text fontSize="xs" whiteSpace="nowrap">
-              {Number.isInteger(value) ? value : value.toFixed(2)}{" "}
-              {nutritionShortNames[k]}
+            <Text color={nutritionColors[k]} fontWeight="600" fontSize="xs">
+              {Number.isInteger(value) ? value : value.toFixed(2)}
+              {nutritionShortUnits[k]}
             </Text>
-            {i !== nutritionKeys.length - 1 && (
-              <Box
-                minW="1px"
-                maxW="1px"
-                width="1px"
-                backgroundColor="grey"
-                flex="1"
-                mx="2"
-              />
-            )}
-          </Box>
+            {showLegend && <Text fontSize="xs">{nutritionShortNames[k]}</Text>}
+          </Flex>
         );
       })}
-    </Box>
+    </Grid>
   );
 }
 
