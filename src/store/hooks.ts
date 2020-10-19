@@ -32,9 +32,13 @@ export function useStoreReducer() {
 
   useEffect(() => {
     set("body", store.body);
+  }, [store.body]);
+  useEffect(() => {
     set("goal", store.goal);
+  }, [store.goal]);
+  useEffect(() => {
     set("logs", store.logs);
-  }, [store]);
+  }, [store.logs]);
 
   return {
     ...store,
