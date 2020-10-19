@@ -1,4 +1,5 @@
 import {
+  Flex,
   Box,
   Button,
   FormControl,
@@ -159,7 +160,7 @@ export default function MealEntryPage() {
   }
 
   const total = portionWeight !== totalWeight && (
-    <Box d="flex" flexDirection="column" bg="blue.50" p="2" my="4" rounded="md">
+    <Flex direction="column" bg="blue.50" p="2" my="4" rounded="md">
       <Heading
         d="flex"
         justifyContent="space-between"
@@ -174,11 +175,11 @@ export default function MealEntryPage() {
         grams. This is the total nutritional value of the meal.
       </FormHelperText>
       <NutritionBar border={false} nutrition={mealNutrition} />
-    </Box>
+    </Flex>
   );
 
   const list = addedItems.map((item, i) => (
-    <Box key={i} d="flex" flexDirection="column" p="2" mb="1">
+    <Flex key={i} direction="column" p="2" mb="1">
       <Heading
         d="flex"
         justifyContent="space-between"
@@ -189,13 +190,7 @@ export default function MealEntryPage() {
         <Text>
           {item.icon || "🍛"} {item.name}
         </Text>
-        <Box
-          minW="100px"
-          maxW="100px"
-          d="flex"
-          alignItems="center"
-          justifyContent="flex-end"
-        >
+        <Flex minW="100px" maxW="100px" align="center" justify="flex-end">
           <Input
             inputMode="numeric"
             width={60}
@@ -209,20 +204,14 @@ export default function MealEntryPage() {
             mr="2"
           />
           <Box fontWeight="100">g</Box>
-        </Box>
+        </Flex>
       </Heading>
       <NutritionBar border={false} nutrition={item.nutrition} />
-    </Box>
+    </Flex>
   ));
 
   const form = (
-    <Box
-      as="form"
-      onSubmit={handleAddItem}
-      d="flex"
-      justifyContent="space-between"
-      flex="1"
-    >
+    <Flex as="form" onSubmit={handleAddItem} justify="space-between" flex="1">
       <FormControl mr="1">
         <Input
           isRequired
@@ -263,13 +252,13 @@ export default function MealEntryPage() {
           variantColor="green"
         />
       </FormControl>
-    </Box>
+    </Flex>
   );
 
   const footer = (
-    <Box d="flex" alignItems="center" justifyContent="space-between">
-      <Box d="flex" alignItems="center">
-        <Box d="flex" alignItems="center">
+    <Flex align="center" justify="space-between">
+      <Flex align="center">
+        <Flex align="center">
           <Input
             variant="flushed"
             w="30%"
@@ -287,8 +276,8 @@ export default function MealEntryPage() {
           <Text fontWeight="100" textAlign="center" fontSize="xs">
             g portion of
           </Text>
-        </Box>
-        <Box d="flex" alignItems="center">
+        </Flex>
+        <Flex align="center">
           <Input
             w="30%"
             fontSize="xs"
@@ -306,9 +295,9 @@ export default function MealEntryPage() {
           <Text fontWeight="100" textAlign="center" fontSize="xs">
             g total weight
           </Text>
-        </Box>
-      </Box>
-      <Box d="flex" flex="1" justifyContent="flex-end">
+        </Flex>
+      </Flex>
+      <Flex flex="1" justify="flex-end">
         <Button
           size="sm"
           variantColor="green"
@@ -317,30 +306,23 @@ export default function MealEntryPage() {
         >
           Done
         </Button>
-      </Box>
-    </Box>
+      </Flex>
+    </Flex>
   );
 
   const emptyArt = (
-    <Box
-      d="flex"
-      p="6"
-      flex="1"
-      flexDirection="column"
-      justifyContent="center"
-      alignItems="center"
-    >
+    <Flex p="6" flex="1" direction="column" justify="center" align="center">
       <FormHelperText>
         Add Items of your meal by using the form below.
       </FormHelperText>
       <Box my="6" h={["100%", "20vh"]}>
         <DinnerArt />
       </Box>
-    </Box>
+    </Flex>
   );
 
   return (
-    <Box h="100%" d="flex" flexDirection="column">
+    <Flex h="100%" direction="column">
       <Page
         heading="Add Entry"
         d="flex"
@@ -348,29 +330,23 @@ export default function MealEntryPage() {
         flexDirection="column"
         overflow="auto"
       >
-        <Box d="flex" justifyContent="center" mb="2">
+        <Flex justify="center" mb="2">
           <NutritionBar nutrition={portionNutrition} />
-        </Box>
-        <Box
-          d="flex"
-          flex="1"
-          flexDirection="column"
-          justifyContent="space-between"
-        >
+        </Flex>
+        <Flex flex="1" direction="column" justify="space-between">
           {addedItems.length === 0 && emptyArt}
-          <Box d="flex" flexDirection="column">
+          <Flex direction="column">
             {total}
             {list}
-          </Box>
-        </Box>
+          </Flex>
+        </Flex>
       </Page>
 
-      <Box
+      <Flex
         as="footer"
-        d="flex"
-        flexDirection={["column", "row"]}
-        alignItems="center"
-        justifyContent="space-between"
+        direction={["column", "row"]}
+        align="center"
+        justify="space-between"
         borderTop={"1px solid"}
         borderTopColor="gray.200"
       >
@@ -382,7 +358,7 @@ export default function MealEntryPage() {
             {footer}
           </Box>
         )}
-      </Box>
+      </Flex>
       <MealNameModal
         isOpen={showMealNameModal}
         onClose={() => setShowMealModal(false)}
@@ -394,7 +370,7 @@ export default function MealEntryPage() {
         name={customItemDetails.name}
         onAdd={handleAddCustomItem}
       />
-    </Box>
+    </Flex>
   );
 }
 

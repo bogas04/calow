@@ -36,11 +36,11 @@ function NutritionBar({
         const value = nutrition[k];
         return (
           <Flex
-            flexDirection="column"
+            direction="column"
             key={i}
             textTransform="capitalize"
-            justifyContent="center"
-            alignItems="flex-start"
+            justify="center"
+            align="flex-start"
           >
             <Text color={nutritionColors[k]} fontWeight="600" fontSize="xs">
               {Number.isInteger(value) ? value : value.toFixed(2)}

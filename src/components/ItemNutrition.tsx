@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Box, BoxProps, Heading, Text } from "@chakra-ui/core";
+import { Flex, Box, BoxProps, Heading, Text } from "@chakra-ui/core";
 import { memo } from "react";
 import { ItemEntry } from "../store";
 import NutritionBar from "./NutritionBar";
@@ -20,7 +20,7 @@ function ItemNutrition({ item, size = "lg", ...props }: ItemNutritionProps) {
       p={size === "sm" ? 3 : 5}
       {...props}
     >
-      <Box mb={size === "sm" ? 2 : 4} d="flex" justifyContent="space-between">
+      <Flex mb={size === "sm" ? 2 : 4} justify="space-between">
         <Heading size={size === "sm" ? "sm" : "md"}>
           <Link href={`/items?search=${item.name}`}>
             <a>
@@ -31,10 +31,10 @@ function ItemNutrition({ item, size = "lg", ...props }: ItemNutritionProps) {
             </a>
           </Link>
         </Heading>
-      </Box>
-      <Box d="flex" justifyContent="space-between">
+      </Flex>
+      <Flex justify="space-between">
         <NutritionBar border={false} nutrition={item.nutrition} />
-      </Box>
+      </Flex>
       <Text mt="2" fontSize="xs" color="gray.600" fontWeight="300">
         {item.weight}g
       </Text>

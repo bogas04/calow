@@ -4,7 +4,7 @@ import {
   RadioGroup,
   Radio,
   Input,
-  Box,
+  Flex,
   Select,
   Button,
 } from "@chakra-ui/core";
@@ -64,7 +64,7 @@ function BodyMetricForm({
           isRequired
         />
       </FormControl>
-      <Box d="flex" justifyContent="space-between" alignItems="center" my="2">
+      <Flex justify="space-between" align="center" my="2">
         <FormControl mr="1">
           <FormLabel>Height</FormLabel>
           <Input
@@ -85,7 +85,7 @@ function BodyMetricForm({
             name="weight"
           />
         </FormControl>
-      </Box>
+      </Flex>
       <FormControl my="2">
         <FormLabel>Activity</FormLabel>
         <Select

@@ -1,4 +1,4 @@
-import { Box, Link as ChakraLink, FormHelperText } from "@chakra-ui/core";
+import { Flex, Box, Link as ChakraLink, FormHelperText } from "@chakra-ui/core";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -37,10 +37,9 @@ export default function HomePage() {
 
   return (
     <Page h="100%">
-      <Box
-        d="flex"
-        flexDirection={["column", "row"]}
-        justifyContent={["space-between", "space-between"]}
+      <Flex
+        direction={["column", "row"]}
+        justify={["space-between", "space-between"]}
         h="100%"
       >
         <Box
@@ -52,15 +51,9 @@ export default function HomePage() {
           mb="2"
         >
           <Meter nutrition={nutrition} goal={goal} />
-          <Box
-            fontWeight="bold"
-            d="flex"
-            justifyContent="center"
-            alignItems="center"
-            mb="6"
-          >
+          <Flex fontWeight="bold" justify="center" align="center" mb="6">
             <NutritionBar nutrition={nutrition} />
-          </Box>
+          </Flex>
           <DateBar date={date} onChange={setDate} />
         </Box>
 
@@ -107,7 +100,7 @@ export default function HomePage() {
             </ChakraLink>
           </Link>
         )}
-      </Box>
+      </Flex>
     </Page>
   );
 }

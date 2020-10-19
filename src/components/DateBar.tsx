@@ -1,4 +1,4 @@
-import { Box, Button } from "@chakra-ui/core";
+import { Flex, Button } from "@chakra-ui/core";
 import { memo } from "react";
 import { DAY, TODAY } from "../constants/date";
 
@@ -12,7 +12,7 @@ function DateBar({
   onChange: (newDate: number) => void;
 }) {
   return (
-    <Box d="flex" alignItems="center" justifyContent="space-between" mb="3">
+    <Flex align="center" justify="space-between" mb="3">
       <Button
         size="sm"
         variant="ghost"
@@ -36,7 +36,7 @@ function DateBar({
       >
         {formatShortDate(new Date(date + DAY))}
       </Button>
-    </Box>
+    </Flex>
   );
 }
 export default memo(DateBar);

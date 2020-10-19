@@ -1,4 +1,5 @@
 import {
+  Flex,
   Box,
   Button,
   Collapse,
@@ -95,11 +96,10 @@ export default function ItemsPage() {
 
   return (
     <Page heading="Your Items">
-      <Box
+      <Flex
         as="form"
-        d="flex"
-        alignItems="flex-end"
-        justifyContent="space-between"
+        align="flex-end"
+        justify="space-between"
         onSubmit={(e) => e.preventDefault()}
       >
         <FormControl>
@@ -133,7 +133,7 @@ export default function ItemsPage() {
             ))}
           </MenuList>
         </Menu>
-      </Box>
+      </Flex>
       {isLoading ? (
         <Box mt="4">
           <Skeleton h="2" mt="6" mb="6" w="30%" />
@@ -148,21 +148,16 @@ export default function ItemsPage() {
               my="4"
               p="6"
             >
-              <Box d="flex" flexDirection="row" mb="6">
+              <Flex direction="row" mb="6">
                 <Skeleton w="30px" h="30px" rounded="50%" mr="4" />
                 <Skeleton flex="0.8" h="4" rounded="md" />
-              </Box>
-              <Box
-                d="flex"
-                alignItems="center"
-                justifyContent="flex-start"
-                my="3"
-              >
+              </Flex>
+              <Flex align="center" justify="flex-start" my="3">
                 <Skeleton w="10" h="2" mr="2" />
                 <Skeleton w="10" h="2" mr="2" />
                 <Skeleton w="10" h="2" mr="2" />
                 <Skeleton w="10" h="2" />
-              </Box>
+              </Flex>
             </Box>
           ))}
         </Box>
@@ -170,7 +165,7 @@ export default function ItemsPage() {
         <>
           {filteredItems.length !== 0 && (
             <Box mt="4">
-              <Box d="flex" justifyContent="space-between" alignItems="center">
+              <Flex justify="space-between" align="center">
                 <Text>Sorted by {sortByTitles[sortBy].title}</Text>
                 {sortByTitles[sortBy].description && (
                   <IconButton
@@ -183,7 +178,7 @@ export default function ItemsPage() {
                     icon="info"
                   />
                 )}
-              </Box>
+              </Flex>
               {sortByTitles[sortBy].description && (
                 <Collapse
                   isOpen={showInfo}

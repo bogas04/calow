@@ -1,4 +1,5 @@
 import {
+  Flex,
   Box,
   Button,
   Collapse,
@@ -83,14 +84,9 @@ export default function SettingsPage() {
           />
         </Collapse>
         {hasComputedCaloricNeeds && (
-          <Box
-            mt="4"
-            d="flex"
-            alignItems="center"
-            justifyContent={["center", "flex-start"]}
-          >
+          <Flex mt="4" align="center" justify={["center", "flex-start"]}>
             <NutritionBar nutrition={caloricNeeds} showLegend />
-          </Box>
+          </Flex>
         )}
       </Box>
 
@@ -144,14 +140,9 @@ export default function SettingsPage() {
               <SliderThumb />
             </Slider>
           </Collapse>
-          <Box
-            mt="4"
-            d="flex"
-            justifyContent={["center", "flex-start"]}
-            alignItems="center"
-          >
+          <Flex mt="4" justify={["center", "flex-start"]} align="center">
             <NutritionBar nutrition={goal} showLegend />
-          </Box>
+          </Flex>
         </Box>
       )}
       <Box as="section">
@@ -174,7 +165,7 @@ export default function SettingsPage() {
           All your data is stored locally on your device.
         </FormHelperText>
         <Collapse isOpen={showDataOptions}>
-          <Box d="flex" flexDirection={["column", "row"]}>
+          <Flex direction={["column", "row"]}>
             <Button
               my="2"
               variantColor="blue"
@@ -215,7 +206,7 @@ export default function SettingsPage() {
             >
               Delete My Data
             </Button>
-          </Box>
+          </Flex>
         </Collapse>
       </Box>
     </Page>

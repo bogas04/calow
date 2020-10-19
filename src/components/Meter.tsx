@@ -1,4 +1,4 @@
-import { Box } from "@chakra-ui/core";
+import { Flex } from "@chakra-ui/core";
 import { Fragment, useEffect, useState } from "react";
 
 import {
@@ -56,12 +56,11 @@ export function Meter({
   });
 
   return (
-    <Box
-      d="flex"
-      justifyContent="center"
-      alignItems="center"
+    <Flex
+      justify="center"
+      align="center"
       my="2"
-      flexDirection="column"
+      direction="column"
       h={["auto", "30vh"]}
     >
       <svg
@@ -142,7 +141,7 @@ export function Meter({
           {nutrition.calories > goal.calories ? "💘" : "❤️"}
         </text>
       </svg>
-    </Box>
+    </Flex>
   );
 }
 

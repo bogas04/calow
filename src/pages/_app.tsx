@@ -2,6 +2,7 @@ import {
   ThemeProvider,
   CSSReset,
   // ColorModeProvider,
+  Flex,
   Box,
 } from "@chakra-ui/core";
 import { Global } from "@emotion/core";
@@ -101,7 +102,7 @@ function App({
           <script async src="https://unpkg.com/thesemetrics@latest"></script>
         </Head>
 
-        <Box d="flex" flexDirection="column" height="100%">
+        <Flex direction="column" height="100%">
           <Box as="main" flex="1" overflow="auto">
             <Component {...pageProps} />
           </Box>
@@ -113,13 +114,7 @@ function App({
             backgroundColor="gray.600"
           >
             <Box as="nav">
-              <Box
-                as="ul"
-                d="flex"
-                listStyleType="none"
-                px="6"
-                justifyContent="space-between"
-              >
+              <Flex as="ul" listStyleType="none" px="6" justify="space-between">
                 <li>
                   <Link href="/">
                     <a onClick={() => footerClickHandler("/")}>📔 Home</a>
@@ -137,10 +132,10 @@ function App({
                     </a>
                   </Link>
                 </li>
-              </Box>
+              </Flex>
             </Box>
           </Box>
-        </Box>
+        </Flex>
         {/* </ColorModeProvider> */}
       </StoreContext.Provider>
     </ThemeProvider>

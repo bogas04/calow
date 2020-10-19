@@ -1,4 +1,5 @@
 import {
+  Flex,
   Box,
   Collapse,
   Heading,
@@ -33,7 +34,7 @@ function MealNutrition({ meal, onDelete }: MealNutritionProps) {
       >
         {meal.name}
 
-        <Box d="flex" justifyContent="flex-end" alignItems="center">
+        <Flex justify="flex-end" align="center">
           {onDelete && (
             <IconButton
               isRound
@@ -53,11 +54,11 @@ function MealNutrition({ meal, onDelete }: MealNutritionProps) {
             onClick={handleToggle}
             icon={show ? "chevron-up" : "chevron-down"}
           />
-        </Box>
+        </Flex>
       </Heading>
 
       <NutritionBar nutrition={meal.nutrition} border={false} />
-      <Box d="flex" alignItems="center" flex="1" mt="2" mb="6">
+      <Flex align="center" flex="1" mt="2" mb="6">
         <Text fontSize="xs" color="gray.600" fontWeight="300">
           {meal.portionWeight === meal.totalWeight
             ? `${meal.totalWeight}g`
@@ -67,7 +68,7 @@ function MealNutrition({ meal, onDelete }: MealNutritionProps) {
         <Text fontSize="xs" color="gray.600" fontWeight="300">
           {getTimeDifference(meal.timestamp)}
         </Text>
-      </Box>
+      </Flex>
       <Collapse isOpen={show} duration={0}>
         <Box pl="4">
           <ItemNutrition
