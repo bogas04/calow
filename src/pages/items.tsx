@@ -84,6 +84,11 @@ export default function ItemsPage() {
             a.nutrition.fat / (a.weight * a.nutrition.calories)
           );
         }
+        case "protein/weight": {
+          return (
+            b.nutrition.protein / b.weight - a.nutrition.protein / a.weight
+          );
+        }
         case "protein/calories": {
           return (
             b.nutrition.protein / (b.weight * b.nutrition.calories) -
@@ -207,6 +212,11 @@ ItemsPage.pageTitle = "Items";
 const sortByTitles = {
   name: { title: "Name", description: "", source: "" },
   "calories/weight": { title: "Calories", description: "", source: "" },
+  "protein/weight": {
+    title: "Protein per weight",
+    description: "",
+    source: "",
+  },
   "protein/calories": {
     title: "Protein per Calories",
     description: "",
