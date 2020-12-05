@@ -12,13 +12,15 @@ import {
   MenuList,
   MenuButton,
 } from "@chakra-ui/react";
-import { DeleteIcon, EditIcon, RepeatClockIcon } from "@chakra-ui/icons";
 import {
-  BsThreeDotsVertical as ThreeDotsIcon,
-  BsArrowsCollapse as CollapseIcon,
-  BsArrowsExpand as ExpandIcon,
-} from "react-icons/bs";
-import { memo, useState } from "react";
+  ChevronDownIcon,
+  ChevronUpIcon,
+  DeleteIcon,
+  EditIcon,
+  RepeatClockIcon,
+} from "@chakra-ui/icons";
+import { BsThreeDotsVertical as ThreeDotsIcon } from "react-icons/bs";
+import React, { memo, useState } from "react";
 import { MealEntry } from "../store";
 import { mapNutrition } from "../util/nutrition";
 import { getTimeDifference } from "../util/time";
@@ -48,12 +50,21 @@ function MealNutrition({
         <Heading>{meal.name}</Heading>
 
         <Flex justify="flex-end" align="center">
+          <IconButton
+            isRound
+            size="sm"
+            variant="ghost"
+            aria-label={show ? "Hide Details" : "Show Details"}
+            onClick={handleToggle}
+            icon={show ? <ChevronUpIcon /> : <ChevronDownIcon />}
+          />
           <Menu>
             <MenuButton
               as={IconButton}
               icon={<ThreeDotsIcon />}
               aria-label="Options"
               variant="ghost"
+              size="sm"
               rounded="full"
             />
             <MenuList minW={10}>
@@ -75,14 +86,6 @@ function MealNutrition({
                   Repeat
                 </MenuItem>
               )}
-              <MenuItem onClick={handleToggle}>
-                {show ? (
-                  <Icon as={CollapseIcon} mr={2} />
-                ) : (
-                  <Icon as={ExpandIcon} mr={2} />
-                )}
-                {show ? "Hide Items" : "Show Items"}
-              </MenuItem>
             </MenuList>
           </Menu>
         </Flex>
