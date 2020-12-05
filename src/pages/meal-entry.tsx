@@ -12,7 +12,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CustomItemModal, {
   CustomItemModalProps,
 } from "../components/CustomItemModal";
@@ -32,10 +32,34 @@ import { computeWeightedNutrition, mapNutrition } from "../util/nutrition";
 export default function MealEntryPage() {
   const {
     dispatch,
-    mealEntry: { addedItems, totalWeight, portionWeight },
+    mealEntry: { addedItems, totalWeight, portionWeight, name },
+    log,
   } = useStore();
   const { items } = useItems();
   const router = useRouter();
+  const [showMealNameModal, setShowMealModal] = useState(false);
+  const [showCustomItemModal, setShowCustomItemModal] = useState(false);
+  const [customItemDetails, setCustomItemDetails] = useState({
+    name: "",
+    weight: 0,
+  });
+
+  useEffect(() => {
+    const index = Number(router.query.index);
+    const meal = log[index];
+
+    if (meal && meal.name !== name && meal.items.length !== addedItems.length) {
+      dispatch({
+        type: ACTIONS.SET_MEAL_ENTRY_ITEMS,
+        payload: {
+          name: meal.name,
+          addedItems: meal.items,
+          totalWeight: meal.totalWeight,
+          portionWeight: meal.portionWeight,
+        },
+      });
+    }
+  }, [router.query.index, log]);
 
   // Compute total nutrition of current meal
   const mealNutrition = addedItems.reduce(
@@ -56,7 +80,9 @@ export default function MealEntryPage() {
       type: ACTIONS.UPDATE_MEAL_ENTRY_ITEM,
       payload: { index, item },
     });
-  const resetItems = () => dispatch({ type: ACTIONS.RESET_MEAL_ENTRY_ITEM });
+  const deleteItem = (index: number, item: ItemEntry) =>
+    dispatch({ type: ACTIONS.DELETE_MEAL_ENTRY_ITEM, payload: index });
+  const resetItems = () => dispatch({ type: ACTIONS.RESET_MEAL_ENTRY_ITEMS });
   const setPortionWeight = (weight: number) =>
     dispatch({
       type: ACTIONS.SET_MEAL_ENTRY_PORTION_WEIGHT,
@@ -64,14 +90,6 @@ export default function MealEntryPage() {
     });
   const setTotalWeight = (weight: number) =>
     dispatch({ type: ACTIONS.SET_MEAL_ENTRY_TOTAL_WEIGHT, payload: weight });
-
-  const [showMealNameModal, setShowMealModal] = useState(false);
-
-  const [showCustomItemModal, setShowCustomItemModal] = useState(false);
-  const [customItemDetails, setCustomItemDetails] = useState({
-    name: "",
-    weight: 0,
-  });
 
   function handleAddItem(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -150,10 +168,18 @@ export default function MealEntryPage() {
       totalWeight,
     };
 
-    dispatch({
-      type: ACTIONS.ADD_MEAL_ENTRY,
-      payload: { entry },
-    });
+    dispatch(
+      router.query.index && router.query.edit
+        ? {
+            type: ACTIONS.UPDATE_MEAL_ENTRY,
+            payload: { entry, index: Number(router.query.index) },
+          }
+        : {
+            type: ACTIONS.ADD_MEAL_ENTRY,
+            payload: { entry },
+          }
+    );
+
     setShowMealModal(false);
 
     resetItems();
@@ -372,6 +398,7 @@ export default function MealEntryPage() {
       <MealNameModal
         isOpen={showMealNameModal}
         onClose={() => setShowMealModal(false)}
+        defaultName={name}
         onSubmit={saveAndRedirect}
       />
       <CustomItemModal

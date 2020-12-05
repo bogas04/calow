@@ -19,6 +19,7 @@ export const defaultState = {
   /** meal entry page data. We store it here for edit and repeat features. */
   mealEntry: {
     addedItems: [] as ItemEntry[],
+    name: "",
     totalWeight: 0,
     portionWeight: 0,
   },
@@ -29,6 +30,8 @@ export interface Store extends Required<typeof defaultState> {}
 export enum ACTIONS {
   /** Save meal entry to logs */
   ADD_MEAL_ENTRY,
+  /** Update a particular meal entry to logs */
+  UPDATE_MEAL_ENTRY,
   /** Delete meal entry from logs */
   DELETE_MEAL_ENTRY,
   /** Reset entire state */
@@ -43,12 +46,14 @@ export enum ACTIONS {
   SET_BODY,
   /** Add new item to meal entry's state */
   ADD_MEAL_ENTRY_ITEM,
+  /** Set meal entry data to meal entry's state */
+  SET_MEAL_ENTRY_ITEMS,
   /** Delete item from meal entry's state */
   DELETE_MEAL_ENTRY_ITEM,
   /** Update item in meal entry's state */
   UPDATE_MEAL_ENTRY_ITEM,
   /** Clear added items to meal entry's state */
-  RESET_MEAL_ENTRY_ITEM,
+  RESET_MEAL_ENTRY_ITEMS,
   /** Set meal entry's total weight */
   SET_MEAL_ENTRY_TOTAL_WEIGHT,
   /** Set meal entry's portion weight */
@@ -85,16 +90,24 @@ export type Action =
       };
     }
   | {
+      type: ACTIONS.UPDATE_MEAL_ENTRY;
+      payload: {
+        index: number;
+        entry: MealEntry;
+      };
+    }
+  | {
       type: ACTIONS.SET_BODY;
       payload: BodyMetrics;
     }
   | { type: ACTIONS.ADD_MEAL_ENTRY_ITEM; payload: ItemEntry }
+  | { type: ACTIONS.SET_MEAL_ENTRY_ITEMS; payload: Store["mealEntry"] }
   | { type: ACTIONS.DELETE_MEAL_ENTRY_ITEM; payload: number }
   | {
       type: ACTIONS.UPDATE_MEAL_ENTRY_ITEM;
       payload: { index: number; item: ItemEntry };
     }
-  | { type: ACTIONS.RESET_MEAL_ENTRY_ITEM }
+  | { type: ACTIONS.RESET_MEAL_ENTRY_ITEMS }
   | { type: ACTIONS.SET_MEAL_ENTRY_PORTION_WEIGHT; payload: number }
   | { type: ACTIONS.SET_MEAL_ENTRY_TOTAL_WEIGHT; payload: number };
 
@@ -136,6 +149,24 @@ export const reducer: Reducer<Store, Action> = (state, action) => {
         },
       };
     }
+    case ACTIONS.UPDATE_MEAL_ENTRY: {
+      const index = action.payload.index;
+      const time = action.payload.entry.timestamp || Date.now();
+
+      const dateKey = getDateKey(time);
+      const logs = state.logs[dateKey] || [];
+      const newLogs = logs.map((x, i) =>
+        i === index ? action.payload.entry : x
+      );
+
+      return {
+        ...state,
+        logs: {
+          ...state.logs,
+          [dateKey]: newLogs,
+        },
+      };
+    }
     case ACTIONS.ADD_MEAL_ENTRY: {
       const time = action.payload.entry.timestamp || Date.now();
 
@@ -147,6 +178,15 @@ export const reducer: Reducer<Store, Action> = (state, action) => {
         logs: {
           ...state.logs,
           [dateKey]: logs.concat(action.payload.entry),
+        },
+      };
+    }
+    case ACTIONS.SET_MEAL_ENTRY_ITEMS: {
+      return {
+        ...state,
+        mealEntry: {
+          ...state.mealEntry,
+          ...action.payload,
         },
       };
     }
@@ -208,10 +248,10 @@ export const reducer: Reducer<Store, Action> = (state, action) => {
         },
       };
     }
-    case ACTIONS.RESET_MEAL_ENTRY_ITEM: {
+    case ACTIONS.RESET_MEAL_ENTRY_ITEMS: {
       return {
         ...state,
-        mealEntry: { addedItems: [], totalWeight: 0, portionWeight: 0 },
+        mealEntry: defaultState.mealEntry,
       };
     }
     case ACTIONS.SET_MEAL_ENTRY_TOTAL_WEIGHT: {

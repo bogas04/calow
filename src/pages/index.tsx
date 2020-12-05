@@ -7,10 +7,12 @@ import {
   FormControl,
 } from "@chakra-ui/react";
 import Link from "next/link";
-import { useState } from "react";
+import { useRouter } from "next/router";
+import { useState, MouseEventHandler } from "react";
 
 import { getShortMonth } from "../util/time";
-import { ACTIONS, MealEntry, useStore } from "../store";
+import { getClosestDatasetKey } from "../util/dom";
+import { ACTIONS, useStore } from "../store";
 import EmptyArt from "../svg/EmptyArt";
 
 import { Meter } from "../components/Meter";
@@ -22,9 +24,20 @@ import NutritionBar from "../components/NutritionBar";
 
 export default function HomePage() {
   const [date, setDate] = useState(TODAY);
+  const router = useRouter();
   const { dispatch, goal, nutrition, log } = useStore(date);
 
-  const handleDelete = (meal: MealEntry, index: number) => {
+  const onDelete: MouseEventHandler<HTMLButtonElement> = (e) => {
+    const itemIndex = getClosestDatasetKey(e, "index");
+    if (!itemIndex) {
+      alert(
+        "This shouldn't have happened.\nCouldn't find proper meal position."
+      );
+      return;
+    }
+    const index = Number(itemIndex);
+
+    const meal = log[index];
     if (
       window.confirm(
         `Are you sure you want to delete "${meal.name}" with ${
@@ -42,6 +55,55 @@ export default function HomePage() {
         },
       });
     }
+  };
+
+  const onRepeat: MouseEventHandler<HTMLButtonElement> = (e) => {
+    const itemIndex = getClosestDatasetKey(e, "index");
+    if (!itemIndex) {
+      alert(
+        "This shouldn't have happened.\nCouldn't find proper meal position."
+      );
+      return;
+    }
+    const index = Number(itemIndex);
+    const meal = log[index];
+    dispatch({
+      type: ACTIONS.SET_MEAL_ENTRY_ITEMS,
+
+      payload: {
+        name: meal.name,
+        addedItems: meal.items,
+        totalWeight: meal.totalWeight,
+        portionWeight: meal.portionWeight,
+      },
+    });
+
+    router.push("/meal-entry");
+  };
+
+  const onEdit: MouseEventHandler<HTMLButtonElement> = (e) => {
+    const itemIndex = getClosestDatasetKey(e, "index");
+    if (!itemIndex) {
+      alert(
+        "This shouldn't have happened.\nCouldn't find proper meal position."
+      );
+      return;
+    }
+    const index = Number(itemIndex);
+    const meal = log[index];
+
+    dispatch({
+      type: ACTIONS.SET_MEAL_ENTRY_ITEMS,
+
+      payload: {
+        name: meal.name,
+        addedItems: meal.items,
+        totalWeight: meal.totalWeight,
+        portionWeight: meal.portionWeight,
+      },
+    });
+
+    router.push(`/meal-entry?edit=1&index=${index}`);
   };
 
   return (
@@ -78,11 +140,14 @@ export default function HomePage() {
             </Box>
           )}
           {log.map((meal, index) => (
-            <MealNutrition
-              meal={meal}
-              onDelete={() => handleDelete(meal, index)}
-              key={index}
-            />
+            <Box key={index} data-index={index}>
+              <MealNutrition
+                meal={meal}
+                onDelete={onDelete}
+                onEdit={onEdit}
+                onRepeat={onRepeat}
+              />
+            </Box>
           ))}
         </Box>
 

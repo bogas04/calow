@@ -7,7 +7,13 @@ import {
   IconButtonProps,
   Text,
 } from "@chakra-ui/react";
-import { ChevronDownIcon, ChevronUpIcon, DeleteIcon } from "@chakra-ui/icons";
+import {
+  ChevronDownIcon,
+  ChevronUpIcon,
+  DeleteIcon,
+  EditIcon,
+  RepeatClockIcon,
+} from "@chakra-ui/icons";
 import { memo, useState } from "react";
 import { MealEntry } from "../store";
 import { mapNutrition } from "../util/nutrition";
@@ -18,9 +24,16 @@ import NutritionBar from "./NutritionBar";
 export interface MealNutritionProps {
   meal: MealEntry;
   onDelete?: IconButtonProps["onClick"];
+  onEdit?: IconButtonProps["onClick"];
+  onRepeat?: IconButtonProps["onClick"];
 }
 
-function MealNutrition({ meal, onDelete }: MealNutritionProps) {
+function MealNutrition({
+  meal,
+  onRepeat,
+  onDelete,
+  onEdit,
+}: MealNutritionProps) {
   const [show, setShow] = useState(false);
 
   const handleToggle = () => setShow(!show);
@@ -36,6 +49,28 @@ function MealNutrition({ meal, onDelete }: MealNutritionProps) {
         {meal.name}
 
         <Flex justify="flex-end" align="center">
+          {onRepeat && (
+            <IconButton
+              isRound
+              variant="ghost"
+              size="sm"
+              aria-label="Edit"
+              color="gray.500"
+              onClick={onRepeat}
+              icon={<RepeatClockIcon />}
+            />
+          )}
+          {onEdit && (
+            <IconButton
+              isRound
+              variant="ghost"
+              size="sm"
+              aria-label="Edit"
+              color="gray.500"
+              onClick={onEdit}
+              icon={<EditIcon />}
+            />
+          )}
           {onDelete && (
             <IconButton
               isRound

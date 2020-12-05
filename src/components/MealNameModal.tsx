@@ -17,9 +17,15 @@ export interface MealNameModalProps {
   isOpen: boolean;
   onSubmit: (info: { name: string; timestamp: number }) => void;
   onClose: ModalProps["onClose"];
+  defaultName?: string;
 }
 
-function MealNameModal({ isOpen, onClose, onSubmit }: MealNameModalProps) {
+function MealNameModal({
+  defaultName,
+  isOpen,
+  onClose,
+  onSubmit,
+}: MealNameModalProps) {
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = e.currentTarget;
@@ -42,6 +48,7 @@ function MealNameModal({ isOpen, onClose, onSubmit }: MealNameModalProps) {
               <Input
                 name="mealname"
                 type="text"
+                defaultValue={defaultName}
                 isRequired
                 placeholder="Enter meal name"
               />
