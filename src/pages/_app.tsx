@@ -93,7 +93,7 @@ function App({
         </Head>
 
         <Flex direction="column" height="100%">
-          <Box as="main" flex="1">
+          <Box as="main" flex="1" overflow="auto">
             <Component {...pageProps} />
           </Box>
           <Box
@@ -101,10 +101,6 @@ function App({
             id="footer"
             p="4"
             bg="rgba(0,0,0,0.1)"
-            position="fixed"
-            bottom="0"
-            left="0"
-            right="0"
             color="gray.800"
             style={{
               backdropFilter: "blur(10px)",
