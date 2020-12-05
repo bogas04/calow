@@ -90,12 +90,11 @@ export function useItems() {
       name: 0,
       icon: 1,
       categories: 2,
-      weight: 3,
-      calories: 4,
-      protein: 5,
-      carbohydrates: 6,
-      fat: 7,
-      fiber: 8,
+      calories: 3,
+      protein: 4,
+      carbohydrates: 5,
+      fat: 6,
+      fiber: 7,
     };
 
     items = data.values.reduce<ItemEntry[]>((acc, value, i) => {
@@ -104,7 +103,7 @@ export function useItems() {
         acc.push({
           name: value[indices.name],
           icon: value[indices.icon] || undefined,
-          weight: Number(value[indices.weight]),
+          weight: 100,
           nutrition: createNutrition((key) => Number(value[indices[key]])),
         });
       }
