@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Flex, Box, BoxProps, Heading, Text } from "@chakra-ui/core";
+import { Flex, Box, BoxProps, Heading, Text } from "@chakra-ui/react";
 import { memo } from "react";
 import { ItemEntry } from "../store";
 import NutritionBar from "./NutritionBar";

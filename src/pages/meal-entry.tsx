@@ -1,5 +1,7 @@
+import { AddIcon } from "@chakra-ui/icons";
 import {
   Flex,
+  Grid,
   Box,
   Button,
   FormControl,
@@ -8,7 +10,7 @@ import {
   IconButton,
   Input,
   Text,
-} from "@chakra-ui/core";
+} from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import CustomItemModal, {
@@ -170,10 +172,12 @@ export default function MealEntryPage() {
       >
         🍛 Meal Nutrition
       </Heading>
-      <FormHelperText mb="2">
-        You're having {portionWeight} grams of total meal of {totalWeight}{" "}
-        grams. This is the total nutritional value of the meal.
-      </FormHelperText>
+      <FormControl>
+        <FormHelperText mb="2">
+          You're having {portionWeight} grams of total meal of {totalWeight}{" "}
+          grams. This is the total nutritional value of the meal.
+        </FormHelperText>
+      </FormControl>
       <NutritionBar border={false} nutrition={mealNutrition} />
     </Flex>
   );
@@ -181,38 +185,39 @@ export default function MealEntryPage() {
   const list = addedItems.map((item, i) => (
     <Flex key={i} direction="column" p="2" mb="1">
       <Heading
-        d="flex"
-        justifyContent="space-between"
-        alignItems="center"
+        d="grid"
         size="sm"
         mb="2"
+        gridGap={2}
+        gridTemplateColumns="auto 75px 10px"
+        alignItems="center"
       >
         <Text>
           {item.icon || "🍛"} {item.name}
         </Text>
-        <Flex minW="100px" maxW="100px" align="center" justify="flex-end">
-          <Input
-            inputMode="numeric"
-            width={60}
-            variant="flushed"
-            textAlign="center"
-            value={item.weight}
-            placeholder="Weight"
-            size="sm"
-            data-item-index={i}
-            onChange={handleItemWeightChange}
-            mr="2"
-          />
-          <Box fontWeight="100">g</Box>
-        </Flex>
+        <Input
+          inputMode="numeric"
+          variant="flushed"
+          textAlign="center"
+          value={item.weight}
+          placeholder="Weight"
+          size="sm"
+          data-item-index={i}
+          onChange={handleItemWeightChange}
+          mr="2"
+        />
+        <Text fontWeight="100">g</Text>
       </Heading>
       <NutritionBar border={false} nutrition={item.nutrition} />
     </Flex>
   ));
 
   const form = (
-    <Flex as="form" onSubmit={handleAddItem} justify="space-between" flex="1">
-      <FormControl mr="1">
+    <form
+      onSubmit={handleAddItem}
+      style={{ justifyContent: "space-between", flex: 1 }}
+    >
+      <Grid templateColumns="1fr 1fr 0.2fr" gap={2}>
         <Input
           isRequired
           autoFocus
@@ -230,8 +235,6 @@ export default function MealEntryPage() {
             </option>
           ))}
         </datalist>
-      </FormControl>
-      <FormControl mx="1">
         <Input
           type="search"
           isRequired
@@ -241,18 +244,16 @@ export default function MealEntryPage() {
           size="sm"
           placeholder="Weight in grams"
         />
-      </FormControl>
-      <FormControl>
         <IconButton
           aria-label="Add item"
           size="sm"
           type="submit"
-          icon="add"
+          icon={<AddIcon />}
           variant="outline"
-          variantColor="green"
+          colorScheme="green"
         />
-      </FormControl>
-    </Flex>
+      </Grid>
+    </form>
   );
 
   const footer = (
@@ -300,7 +301,7 @@ export default function MealEntryPage() {
       <Flex flex="1" justify="flex-end">
         <Button
           size="sm"
-          variantColor="green"
+          colorScheme="green"
           variant="solid"
           onClick={handleDone}
         >
@@ -312,9 +313,11 @@ export default function MealEntryPage() {
 
   const emptyArt = (
     <Flex p="6" flex="1" direction="column" justify="center" align="center">
-      <FormHelperText>
-        Add Items of your meal by using the form below.
-      </FormHelperText>
+      <FormControl>
+        <FormHelperText>
+          Add Items of your meal by using the form below.
+        </FormHelperText>
+      </FormControl>
       <Box my="6" h={["100%", "20vh"]}>
         <DinnerArt />
       </Box>

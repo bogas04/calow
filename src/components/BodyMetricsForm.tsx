@@ -4,11 +4,12 @@ import {
   RadioGroup,
   Radio,
   Input,
-  Flex,
+  Box,
+  Grid,
   Select,
   Button,
-} from "@chakra-ui/core";
-import { memo } from "react";
+} from "@chakra-ui/react";
+import React, { memo } from "react";
 
 import { BodyMetrics } from "../store";
 
@@ -36,25 +37,29 @@ function BodyMetricForm({
   return (
     <form onSubmit={onSubmit}>
       <FormControl
+        px={1}
+        as="fieldset"
         d="flex"
         flexDirection="column"
         justifyContent="space-between"
         my="2"
       >
-        <FormLabel>Gender</FormLabel>
+        <FormLabel as="legend">Gender</FormLabel>
         <RadioGroup
           d="flex"
           justifyContent="space-between"
           name="gender"
           defaultValue={metrics.gender}
         >
-          <Radio value="female">🙍‍♀️ Female</Radio>
-          <Radio mr="2" value="male">
+          <Radio name="gender" value="female">
+            🙍‍♀️ Female
+          </Radio>
+          <Radio name="gender" value="male">
             🙍‍♂️ Male
           </Radio>
         </RadioGroup>
       </FormControl>
-      <FormControl my="2">
+      <FormControl my="2" px={1}>
         <FormLabel>Age</FormLabel>
         <Input
           inputMode="numeric"
@@ -64,8 +69,8 @@ function BodyMetricForm({
           isRequired
         />
       </FormControl>
-      <Flex justify="space-between" align="center" my="2">
-        <FormControl mr="1">
+      <Grid my="2" templateColumns="repeat(2,1fr)" gap={1} px={1}>
+        <FormControl>
           <FormLabel>Height</FormLabel>
           <Input
             defaultValue={metrics.height || undefined}
@@ -75,7 +80,7 @@ function BodyMetricForm({
             name="height"
           />
         </FormControl>
-        <FormControl ml="1">
+        <FormControl>
           <FormLabel>Weight</FormLabel>
           <Input
             inputMode="numeric"
@@ -85,8 +90,8 @@ function BodyMetricForm({
             name="weight"
           />
         </FormControl>
-      </Flex>
-      <FormControl my="2">
+      </Grid>
+      <FormControl my="2" px={1}>
         <FormLabel>Activity</FormLabel>
         <Select
           name="activity"
@@ -103,9 +108,9 @@ function BodyMetricForm({
           </option>
         </Select>
       </FormControl>
-      <Button mt="6" type="submit">
-        Calculate
-      </Button>
+      <Box px={1} pt={6}>
+        <Button type="submit">Calculate</Button>
+      </Box>
     </form>
   );
 }

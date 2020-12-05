@@ -1,11 +1,12 @@
+import { CheckIcon, ChevronDownIcon, InfoIcon } from "@chakra-ui/icons";
 import {
   Flex,
+  Grid,
   Box,
   Button,
   Collapse,
   FormControl,
   FormLabel,
-  Icon,
   IconButton,
   Input,
   Menu,
@@ -14,7 +15,7 @@ import {
   MenuList,
   Skeleton,
   Text,
-} from "@chakra-ui/core";
+} from "@chakra-ui/react";
 import Fuse from "fuse.js";
 import { useEffect, useMemo, useState } from "react";
 import ItemNutrition from "../components/ItemNutrition";
@@ -101,10 +102,11 @@ export default function ItemsPage() {
 
   return (
     <Page heading="Your Items">
-      <Flex
+      <Grid
         as="form"
-        align="flex-end"
-        justify="space-between"
+        templateColumns="auto 100px"
+        gap={2}
+        alignItems="end"
         onSubmit={(e) => e.preventDefault()}
       >
         <FormControl>
@@ -118,27 +120,25 @@ export default function ItemsPage() {
             onChange={handleSearch}
           />
         </FormControl>
-        <Menu>
-          <MenuButton
-            as={Button}
-            // @ts-ignore
-            rightIcon="chevron-down"
-          >
-            Sort
-          </MenuButton>
-          <MenuList>
-            {(Object.keys(sortByTitles) as SortByKeys[]).map((k) => (
-              <MenuItem
-                onClick={() => setSortBy((s) => (s === k ? "name" : k))}
-                key={k}
-              >
-                {sortBy === k && <Icon name="check" mr="1" />}
-                By {sortByTitles[k].title}
-              </MenuItem>
-            ))}
-          </MenuList>
-        </Menu>
-      </Flex>
+        <Flex justify="end">
+          <Menu>
+            <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+              Sort
+            </MenuButton>
+            <MenuList>
+              {(Object.keys(sortByTitles) as SortByKeys[]).map((k) => (
+                <MenuItem
+                  onClick={() => setSortBy((s) => (s === k ? "name" : k))}
+                  key={k}
+                >
+                  {sortBy === k && <CheckIcon mr="1" />}
+                  By {sortByTitles[k].title}
+                </MenuItem>
+              ))}
+            </MenuList>
+          </Menu>
+        </Flex>
+      </Grid>
       {isLoading ? (
         <Box mt="4">
           <Skeleton h="2" mt="6" mb="6" w="30%" />
@@ -180,20 +180,21 @@ export default function ItemsPage() {
                     aria-label={showInfo ? "Collapse" : "Expand"}
                     onClick={() => setShowInfo(!showInfo)}
                     color={showInfo ? "gray.800" : "gray.400"}
-                    icon="info"
+                    icon={<InfoIcon />}
                   />
                 )}
               </Flex>
               {sortByTitles[sortBy].description && (
-                <Collapse
-                  isOpen={showInfo}
-                  startingHeight={45}
-                  bg="gray.50"
-                  p="2"
-                  rounded="sm"
-                  fontSize="sm"
-                >
-                  {sortByTitles[sortBy].description}
+                <Collapse in={showInfo} startingHeight={45}>
+                  <Text
+                    bg="gray.50"
+                    p="2"
+                    fontSize="sm"
+                    rounded="md"
+                    onClick={() => setShowInfo(!showInfo)}
+                  >
+                    {sortByTitles[sortBy].description}
+                  </Text>
                 </Collapse>
               )}
             </Box>
@@ -213,7 +214,7 @@ const sortByTitles = {
   name: { title: "Name", description: "", source: "" },
   "calories/weight": { title: "Calories", description: "", source: "" },
   "protein/weight": {
-    title: "Protein per weight",
+    title: "Protein per Weight",
     description: "",
     source: "",
   },

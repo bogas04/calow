@@ -1,8 +1,7 @@
 import {
-  IModal,
+  ModalProps,
   Modal,
   ModalOverlay,
-  Box,
   ModalContent,
   ModalHeader,
   ModalBody,
@@ -11,13 +10,13 @@ import {
   ModalFooter,
   Button,
   FormLabel,
-} from "@chakra-ui/core";
+} from "@chakra-ui/react";
 import { FormEvent, memo } from "react";
 
 export interface MealNameModalProps {
   isOpen: boolean;
   onSubmit: (info: { name: string; timestamp: number }) => void;
-  onClose: IModal["onClose"];
+  onClose: ModalProps["onClose"];
 }
 
 function MealNameModal({ isOpen, onClose, onSubmit }: MealNameModalProps) {
@@ -34,7 +33,7 @@ function MealNameModal({ isOpen, onClose, onSubmit }: MealNameModalProps) {
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="xs">
       <ModalOverlay />
-      <Box as="form" onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit}>
         <ModalContent>
           <ModalHeader>🍛 Give your meal a name</ModalHeader>
           <ModalBody>
@@ -52,12 +51,12 @@ function MealNameModal({ isOpen, onClose, onSubmit }: MealNameModalProps) {
             <Button mr="2" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit" variantColor="green">
+            <Button type="submit" colorScheme="green">
               Done
             </Button>
           </ModalFooter>
         </ModalContent>
-      </Box>
+      </form>
     </Modal>
   );
 }

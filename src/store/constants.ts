@@ -1,4 +1,4 @@
-import { theme } from "@chakra-ui/core";
+import { theme } from "@chakra-ui/react";
 import { Nutrition } from "./types";
 
 export const nutritionColors = {

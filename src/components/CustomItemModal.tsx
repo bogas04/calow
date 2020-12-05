@@ -1,8 +1,7 @@
 import {
-  IModal,
+  ModalProps,
   Modal,
   ModalOverlay,
-  Box,
   ModalContent,
   ModalHeader,
   ModalBody,
@@ -13,7 +12,7 @@ import {
   ModalFooter,
   Button,
   Text,
-} from "@chakra-ui/core";
+} from "@chakra-ui/react";
 import { FormEvent, memo } from "react";
 import { ItemEntry, nutritionKeys, nutritionUnits } from "../store";
 import { mapNutrition } from "../util/nutrition";
@@ -22,7 +21,7 @@ export interface CustomItemModalProps {
   name: string;
   isOpen: boolean;
   onAdd: (item: ItemEntry) => void;
-  onClose: IModal["onClose"];
+  onClose: ModalProps["onClose"];
 }
 
 function CustomItemModal({
@@ -56,9 +55,9 @@ function CustomItemModal({
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="full">
+    <Modal isOpen={isOpen} onClose={onClose} size="lg">
       <ModalOverlay />
-      <Box as="form" onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit}>
         <ModalContent>
           <ModalHeader>
             Add details for{" "}
@@ -67,19 +66,21 @@ function CustomItemModal({
             </Text>
           </ModalHeader>
           <ModalBody>
-            <FormHelperText>
-              Enter nutritional details of the item per{" "}
-              <Input
-                name="weight"
-                defaultValue="100"
-                textAlign="center"
-                size="sm"
-                w="60px"
-                variant="flushed"
-                d="inline"
-              />{" "}
-              grams.
-            </FormHelperText>
+            <FormControl>
+              <FormHelperText>
+                Enter nutritional details of the item per{" "}
+                <Input
+                  name="weight"
+                  defaultValue="100"
+                  textAlign="center"
+                  size="sm"
+                  w="60px"
+                  variant="flushed"
+                  d="inline"
+                />{" "}
+                grams.
+              </FormHelperText>
+            </FormControl>
             {nutritionKeys.map((k) => (
               <FormControl key={k} my="2">
                 <FormLabel textTransform="capitalize">{k}</FormLabel>
@@ -96,7 +97,7 @@ function CustomItemModal({
             <Button type="submit">Add</Button>
           </ModalFooter>
         </ModalContent>
-      </Box>
+      </form>
     </Modal>
   );
 }

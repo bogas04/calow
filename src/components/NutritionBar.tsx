@@ -1,4 +1,4 @@
-import { Flex, Grid, Text } from "@chakra-ui/core";
+import { Flex, Grid, Text } from "@chakra-ui/react";
 import { memo } from "react";
 import {
   Nutrition,
@@ -25,7 +25,7 @@ function NutritionBar({
       gridGap={border ? 4 : 6}
       {...(border
         ? {
-            boxShadow: "sm",
+            boxShadow: "md",
             borderRadius: 50,
             p: 4,
             px: showLegend && border ? 6 : 4,

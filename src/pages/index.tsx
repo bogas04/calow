@@ -4,7 +4,8 @@ import {
   Link as ChakraLink,
   FormHelperText,
   LinkProps as ChakraLinkProps,
-} from "@chakra-ui/core";
+  FormControl,
+} from "@chakra-ui/react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -68,9 +69,11 @@ export default function HomePage() {
         <Box py={["1", "10"]} pb="40%" flex="0.7">
           {log.length === 0 && (
             <Box h={["auto", "30vh"]}>
-              <FormHelperText textAlign="center" mb="2">
-                You've no entries for the day.
-              </FormHelperText>
+              <FormControl>
+                <FormHelperText textAlign="center" mb="2">
+                  You've no entries for the day.
+                </FormHelperText>
+              </FormControl>
               <EmptyArt />
             </Box>
           )}

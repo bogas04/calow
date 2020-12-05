@@ -1,11 +1,4 @@
-import {
-  ThemeProvider,
-  CSSReset,
-  // ColorModeProvider,
-  Flex,
-  Box,
-} from "@chakra-ui/core";
-import { Global } from "@emotion/core";
+import { ChakraProvider, Flex, Box } from "@chakra-ui/react";
 import { AppProps } from "next/app";
 import Head from "next/head";
 import Link from "next/link";
@@ -14,12 +7,6 @@ import { useEffect } from "react";
 import { StoreContext, useStoreReducer } from "../store";
 
 import theme from "../theme";
-
-const globalStyles = {
-  body: { height: "100%" },
-  html: { height: "100%" },
-  "#__next": { height: "100%" },
-};
 
 function App({
   Component,
@@ -42,11 +29,8 @@ function App({
   };
 
   return (
-    <ThemeProvider theme={theme}>
+    <ChakraProvider theme={theme}>
       <StoreContext.Provider value={value}>
-        {/* <ColorModeProvider> */}
-        <Global styles={globalStyles} />
-        <CSSReset />
         <Head>
           <title>{title}</title>
           <meta name="title" content={title} />
@@ -138,7 +122,7 @@ function App({
         </Flex>
         {/* </ColorModeProvider> */}
       </StoreContext.Provider>
-    </ThemeProvider>
+    </ChakraProvider>
   );
 }
 

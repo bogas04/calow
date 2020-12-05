@@ -1,3 +1,4 @@
+import { ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons";
 import {
   Flex,
   Box,
@@ -12,8 +13,9 @@ import {
   SliderThumb,
   SliderTrack,
   Tag,
-} from "@chakra-ui/core";
-import { useEffect, useMemo, useState } from "react";
+  FormControl,
+} from "@chakra-ui/react";
+import React, { useEffect, useMemo, useState } from "react";
 import BodyMetricsForm from "../components/BodyMetricsForm";
 import { Page } from "../components/layouts";
 import NutritionBar from "../components/NutritionBar";
@@ -66,16 +68,18 @@ export default function SettingsPage() {
               variant="ghost"
               aria-label={expand ? "Collapse" : "Expand"}
               onClick={() => setExpand(!expand)}
-              icon={expand ? "chevron-up" : "chevron-down"}
+              icon={expand ? <ChevronUpIcon /> : <ChevronDownIcon />}
             />
           )}
         </Heading>
-        <FormHelperText>
-          These are your daily caloric needs in order to maintain your body
-          weight, based on your body metrics.
-        </FormHelperText>
+        <FormControl>
+          <FormHelperText>
+            These are your daily caloric needs in order to maintain your body
+            weight, based on your body metrics.
+          </FormHelperText>
+        </FormControl>
 
-        <Collapse isOpen={expand || !hasComputedCaloricNeeds}>
+        <Collapse in={expand || !hasComputedCaloricNeeds}>
           <BodyMetricsForm
             metrics={body}
             onChange={(payload) =>
@@ -104,41 +108,49 @@ export default function SettingsPage() {
               {goalInfo.text}
             </Tag>
           </Heading>
-          <FormHelperText>{goalInfo.description}</FormHelperText>
-          <FormLabel
-            fontSize="sm"
-            textTransform="capitalize"
-            d="flex"
-            alignItems="center"
-            pr="0"
-            mt="2"
-            justifyContent="space-between"
-          >
-            Calories {goal.calories || caloricNeeds.calories}kCal
-            <Button
-              onClick={() => setIsSliderDisabled(!isSliderDisabled)}
-              size="xs"
-              variant={isSliderDisabled ? "ghost" : "solid"}
-              variantColor={isSliderDisabled ? undefined : "green"}
-            >
-              {isSliderDisabled ? "Edit" : "Done"}
-            </Button>
-          </FormLabel>
+          <FormControl>
+            <FormHelperText>{goalInfo.description}</FormHelperText>
+          </FormControl>
 
-          <Collapse isOpen={!isSliderDisabled}>
-            <Slider
-              step={10}
-              defaultValue={goal.calories || caloricNeeds.calories}
-              value={goalCalories}
-              onChange={setGoalCalories}
-              isDisabled={isSliderDisabled}
-              min={bmr}
-              max={2 * caloricNeeds.calories - bmr}
+          <FormControl>
+            <FormLabel
+              fontSize="sm"
+              textTransform="capitalize"
+              d="flex"
+              alignItems="center"
+              pr="0"
+              mt="2"
+              justifyContent="space-between"
             >
-              <SliderTrack />
-              <SliderFilledTrack bg={goalInfo.color} />
-              <SliderThumb />
-            </Slider>
+              Calories {goal.calories || caloricNeeds.calories}kCal
+              <Button
+                onClick={() => setIsSliderDisabled(!isSliderDisabled)}
+                size="xs"
+                variant={isSliderDisabled ? "ghost" : "solid"}
+                colorScheme={isSliderDisabled ? undefined : "green"}
+              >
+                {isSliderDisabled ? "Edit" : "Done"}
+              </Button>
+            </FormLabel>
+          </FormControl>
+
+          <Collapse in={!isSliderDisabled}>
+            <Box py={2}>
+              <Slider
+                step={10}
+                defaultValue={goal.calories || caloricNeeds.calories}
+                value={goalCalories}
+                onChange={setGoalCalories}
+                isDisabled={isSliderDisabled}
+                min={bmr}
+                max={2 * caloricNeeds.calories - bmr}
+              >
+                <SliderTrack>
+                  <SliderFilledTrack bg={goalInfo.color} />
+                </SliderTrack>
+                <SliderThumb />
+              </Slider>
+            </Box>
           </Collapse>
           <Flex mt="4" justify={["center", "flex-start"]} align="center">
             <NutritionBar nutrition={goal} showLegend />
@@ -158,17 +170,20 @@ export default function SettingsPage() {
             variant="ghost"
             aria-label={showDataOptions ? "Collapse" : "Expand"}
             onClick={() => setShowDataOptions(!showDataOptions)}
-            icon={showDataOptions ? "chevron-up" : "chevron-down"}
+            icon={showDataOptions ? <ChevronUpIcon /> : <ChevronDownIcon />}
           />
         </Heading>
-        <FormHelperText mb="6">
-          All your data is stored locally on your device.
-        </FormHelperText>
-        <Collapse isOpen={showDataOptions}>
+
+        <FormControl>
+          <FormHelperText mb="6">
+            All your data is stored locally on your device.
+          </FormHelperText>
+        </FormControl>
+        <Collapse in={showDataOptions}>
           <Flex direction={["column", "row"]}>
             <Button
               my="2"
-              variantColor="blue"
+              colorScheme="blue"
               mr={[0, "2"]}
               onClick={() => {
                 const downloadLink = URL.createObjectURL(
@@ -191,7 +206,7 @@ export default function SettingsPage() {
               my="2"
               ml={[0, "2"]}
               variant="solid"
-              variantColor="red"
+              colorScheme="red"
               onClick={() => {
                 if (
                   window.confirm(

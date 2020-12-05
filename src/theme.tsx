@@ -1,18 +1,18 @@
-import { theme as chakraTheme } from "@chakra-ui/core";
-
+import { theme as chakraTheme, Theme } from "@chakra-ui/react";
 const fonts = { ...chakraTheme.fonts, mono: `'Menlo', monospace` };
 
-const breakpoints = ["40em", "52em", "64em"];
-
-const theme = {
+const theme: Theme = {
   ...chakraTheme,
   colors: {
     ...chakraTheme.colors,
   },
   fonts,
-  breakpoints,
-  icons: {
-    ...chakraTheme.icons,
+  styles: {
+    global: {
+      body: { height: "100%" },
+      html: { height: "100%" },
+      "#__next": { height: "100%" },
+    },
   },
 };
 

@@ -1,4 +1,4 @@
-import { Flex, Button } from "@chakra-ui/core";
+import { Flex, Button } from "@chakra-ui/react";
 import { memo } from "react";
 import { DAY, TODAY } from "../constants/date";
 

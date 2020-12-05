@@ -6,7 +6,8 @@ import {
   IconButton,
   IconButtonProps,
   Text,
-} from "@chakra-ui/core";
+} from "@chakra-ui/react";
+import { ChevronDownIcon, ChevronUpIcon, DeleteIcon } from "@chakra-ui/icons";
 import { memo, useState } from "react";
 import { MealEntry } from "../store";
 import { mapNutrition } from "../util/nutrition";
@@ -43,7 +44,7 @@ function MealNutrition({ meal, onDelete }: MealNutritionProps) {
               aria-label="Delete"
               color="gray.500"
               onClick={onDelete}
-              icon="delete"
+              icon={<DeleteIcon />}
             />
           )}
           <IconButton
@@ -52,7 +53,7 @@ function MealNutrition({ meal, onDelete }: MealNutritionProps) {
             variant="ghost"
             aria-label={show ? "Collapse" : "Expand"}
             onClick={handleToggle}
-            icon={show ? "chevron-up" : "chevron-down"}
+            icon={show ? <ChevronUpIcon /> : <ChevronDownIcon />}
           />
         </Flex>
       </Heading>
@@ -69,7 +70,7 @@ function MealNutrition({ meal, onDelete }: MealNutritionProps) {
           {getTimeDifference(meal.timestamp)}
         </Text>
       </Flex>
-      <Collapse isOpen={show} duration={0}>
+      <Collapse in={show}>
         <Box pl="4">
           <ItemNutrition
             size="sm"

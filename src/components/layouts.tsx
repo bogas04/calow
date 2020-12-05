@@ -1,4 +1,4 @@
-import { Box, BoxProps, Heading } from "@chakra-ui/core";
+import { Box, BoxProps, Heading } from "@chakra-ui/react";
 
 export const Page = ({
   heading,
