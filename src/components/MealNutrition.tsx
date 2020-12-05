@@ -5,15 +5,19 @@ import {
   Heading,
   IconButton,
   IconButtonProps,
+  Icon,
   Text,
+  Menu,
+  MenuItem,
+  MenuList,
+  MenuButton,
 } from "@chakra-ui/react";
+import { DeleteIcon, EditIcon, RepeatClockIcon } from "@chakra-ui/icons";
 import {
-  ChevronDownIcon,
-  ChevronUpIcon,
-  DeleteIcon,
-  EditIcon,
-  RepeatClockIcon,
-} from "@chakra-ui/icons";
+  BsThreeDotsVertical as ThreeDotsIcon,
+  BsArrowsCollapse as CollapseIcon,
+  BsArrowsExpand as ExpandIcon,
+} from "react-icons/bs";
 import { memo, useState } from "react";
 import { MealEntry } from "../store";
 import { mapNutrition } from "../util/nutrition";
@@ -40,58 +44,49 @@ function MealNutrition({
 
   return (
     <>
-      <Heading
-        mb="2"
-        d="flex"
-        justifyContent="space-between"
-        alignItems="center"
-      >
-        {meal.name}
+      <Flex d="flex" justify="space-between" align="center" mb="2">
+        <Heading>{meal.name}</Heading>
 
         <Flex justify="flex-end" align="center">
-          {onRepeat && (
-            <IconButton
-              isRound
+          <Menu>
+            <MenuButton
+              as={IconButton}
+              icon={<ThreeDotsIcon />}
+              aria-label="Options"
               variant="ghost"
-              size="sm"
-              aria-label="Edit"
-              color="gray.500"
-              onClick={onRepeat}
-              icon={<RepeatClockIcon />}
+              rounded="full"
             />
-          )}
-          {onEdit && (
-            <IconButton
-              isRound
-              variant="ghost"
-              size="sm"
-              aria-label="Edit"
-              color="gray.500"
-              onClick={onEdit}
-              icon={<EditIcon />}
-            />
-          )}
-          {onDelete && (
-            <IconButton
-              isRound
-              variant="ghost"
-              size="sm"
-              aria-label="Delete"
-              color="gray.500"
-              onClick={onDelete}
-              icon={<DeleteIcon />}
-            />
-          )}
-          <IconButton
-            isRound
-            size="sm"
-            variant="ghost"
-            aria-label={show ? "Collapse" : "Expand"}
-            onClick={handleToggle}
-            icon={show ? <ChevronUpIcon /> : <ChevronDownIcon />}
-          />
+            <MenuList minW={10}>
+              {onEdit && (
+                <MenuItem onClick={onEdit}>
+                  <EditIcon mr={2} />
+                  Edit
+                </MenuItem>
+              )}
+              {onDelete && (
+                <MenuItem onClick={onDelete}>
+                  <DeleteIcon mr={2} />
+                  Delete
+                </MenuItem>
+              )}
+              {onRepeat && (
+                <MenuItem onClick={onRepeat}>
+                  <RepeatClockIcon mr={2} />
+                  Repeat
+                </MenuItem>
+              )}
+              <MenuItem onClick={handleToggle}>
+                {show ? (
+                  <Icon as={CollapseIcon} mr={2} />
+                ) : (
+                  <Icon as={ExpandIcon} mr={2} />
+                )}
+                {show ? "Hide Items" : "Show Items"}
+              </MenuItem>
+            </MenuList>
+          </Menu>
         </Flex>
-      </Heading>
+      </Flex>
 
       <NutritionBar nutrition={meal.nutrition} border={false} />
       <Flex align="center" flex="1" mt="2" mb="6">
