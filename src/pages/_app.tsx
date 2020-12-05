@@ -9,7 +9,7 @@ import {
   BiHome as HomeIcon,
   BiSearch as SearchIcon,
   BiWrench as SettingsIcon,
-  BiListCheck as ItemsIcon,
+  BiListUl as ItemsIcon,
 } from "react-icons/bi";
 
 import theme from "../theme";
@@ -17,7 +17,12 @@ import theme from "../theme";
 function App({
   Component,
   pageProps,
-}: AppProps & { Component: AppProps["Component"] & { pageTitle?: string } }) {
+}: AppProps & {
+  Component: AppProps["Component"] & {
+    pageTitle?: string;
+    hideFooter?: boolean;
+  };
+}) {
   const value = useStoreReducer();
   const router = useRouter();
   const { pageTitle } = Component;
@@ -96,59 +101,66 @@ function App({
           <Box as="main" flex="1" overflow="auto">
             <Component {...pageProps} />
           </Box>
-          <Box
-            as="footer"
-            id="footer"
-            p="4"
-            bg="rgba(0,0,0,0.1)"
-            color="gray.800"
-            style={{
-              backdropFilter: "blur(10px)",
-              WebkitBackdropFilter: "blur(10px)",
-            }}
-          >
-            <Box as="nav">
-              <Flex as="ul" listStyleType="none" px="6" justify="space-between">
-                <li>
-                  <Link href="/">
-                    <a
-                      onClick={() => footerClickHandler("/")}
-                      title="Open Home"
-                    >
-                      <HomeIcon size="24" />
-                    </a>
-                  </Link>
-                </li>
-                {/* <li>
+          {!Component.hideFooter && (
+            <Box
+              as="footer"
+              id="footer"
+              p="4"
+              bg="rgba(0,0,0,0.1)"
+              color="gray.800"
+              style={{
+                backdropFilter: "blur(10px)",
+                WebkitBackdropFilter: "blur(10px)",
+              }}
+            >
+              <Box as="nav">
+                <Flex
+                  as="ul"
+                  listStyleType="none"
+                  px="6"
+                  justify="space-between"
+                >
+                  <li>
+                    <Link href="/">
+                      <a
+                        onClick={() => footerClickHandler("/")}
+                        title="Open Home"
+                      >
+                        <HomeIcon size="24" />
+                      </a>
+                    </Link>
+                  </li>
+                  {/* <li>
                   <Link href="/search">
                     <a onClick={() => footerClickHandler("/search")} title="Open Search">
                       <SearchIcon size="24"/>
                     </a>
                   </Link>
                 </li> */}
-                <li>
-                  <Link href="/items">
-                    <a
-                      onClick={() => footerClickHandler("/items")}
-                      title="Open Item Catalog"
-                    >
-                      <ItemsIcon size="24" />
-                    </a>
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/settings">
-                    <a
-                      onClick={() => footerClickHandler("/settings")}
-                      title="Open Settings"
-                    >
-                      <SettingsIcon size="24" />
-                    </a>
-                  </Link>
-                </li>
-              </Flex>
+                  <li>
+                    <Link href="/items">
+                      <a
+                        onClick={() => footerClickHandler("/items")}
+                        title="Open Item Catalog"
+                      >
+                        <ItemsIcon size="24" />
+                      </a>
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/settings">
+                      <a
+                        onClick={() => footerClickHandler("/settings")}
+                        title="Open Settings"
+                      >
+                        <SettingsIcon size="24" />
+                      </a>
+                    </Link>
+                  </li>
+                </Flex>
+              </Box>
             </Box>
-          </Box>
+          )}
         </Flex>
       </StoreContext.Provider>
     </ChakraProvider>

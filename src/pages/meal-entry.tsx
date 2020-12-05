@@ -412,3 +412,4 @@ export default function MealEntryPage() {
 }
 
 MealEntryPage.pageTitle = "Add Entry";
+MealEntryPage.hideFooter = true;
