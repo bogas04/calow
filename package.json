@@ -16,19 +16,19 @@
   "license": "MIT",
   "dependencies": {
     "@chakra-ui/core": "^0.8.0",
-    "@emotion/core": "^10.0.35",
+    "@emotion/core": "^10.1.1",
     "@emotion/styled": "^10.0.27",
     "emotion-theming": "^10.0.27",
-    "fuse.js": "^6.4.2",
+    "fuse.js": "^6.4.3",
     "idb-keyval": "^3.2.0",
-    "next": "^10.0.0",
+    "next": "^10.0.3",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
-    "swr": "^0.3.6",
-    "typescript": "^4.0.5"
+    "swr": "^0.3.9",
+    "typescript": "^4.1.2"
   },
   "devDependencies": {
-    "@types/node": "^14.14.5",
-    "@types/react": "^16.9.54"
+    "@types/node": "^14.14.10",
+    "@types/react": "^16.14.2"
   }
 }
