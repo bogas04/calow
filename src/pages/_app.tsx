@@ -11,7 +11,7 @@ import {
   BiWrench as SettingsIcon,
   BiListUl as ItemsIcon,
 } from "react-icons/bi";
-
+import "focus-visible/dist/focus-visible";
 import theme from "../theme";
 
 function App({
