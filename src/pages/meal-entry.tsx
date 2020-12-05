@@ -12,7 +12,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import CustomItemModal, {
   CustomItemModalProps,
 } from "../components/CustomItemModal";
@@ -30,30 +30,12 @@ import DinnerArt from "../svg/DinnerArt";
 import { computeWeightedNutrition, mapNutrition } from "../util/nutrition";
 
 export default function MealEntryPage() {
-  const { dispatch } = useStore();
+  const {
+    dispatch,
+    mealEntry: { addedItems, totalWeight, portionWeight },
+  } = useStore();
   const { items } = useItems();
   const router = useRouter();
-
-  const [addedItems, setAddedItems] = useState<ItemEntry[]>([]);
-  const [totalWeight, setTotalWeight] = useState(0);
-  const [portionWeight, setPortionWeight] = useState(0);
-  const [showCustomItemModal, setShowCustomItemModal] = useState(false);
-  const [showMealNameModal, setShowMealModal] = useState(false);
-  const [customItemDetails, setCustomItemDetails] = useState({
-    name: "",
-    weight: 0,
-  });
-
-  // Compute total weight each time a new item is added
-  useEffect(() => {
-    const newTotalWeight = addedItems.reduce(
-      (w, item) => (item.weight || 0) + w,
-      0
-    );
-
-    setTotalWeight(newTotalWeight);
-    setPortionWeight(newTotalWeight);
-  }, [addedItems]);
 
   // Compute total nutrition of current meal
   const mealNutrition = addedItems.reduce(
@@ -65,6 +47,30 @@ export default function MealEntryPage() {
   // Compute portion nutrition of current meal
   const portionNutrition = mapNutrition(mealNutrition, (_, value) => {
     return portionWeight === 0 ? 0 : (value * portionWeight) / totalWeight;
+  });
+
+  const addItem = (item: ItemEntry) =>
+    dispatch({ type: ACTIONS.ADD_MEAL_ENTRY_ITEM, payload: item });
+  const updateItem = (index: number, item: ItemEntry) =>
+    dispatch({
+      type: ACTIONS.UPDATE_MEAL_ENTRY_ITEM,
+      payload: { index, item },
+    });
+  const resetItems = () => dispatch({ type: ACTIONS.RESET_MEAL_ENTRY_ITEM });
+  const setPortionWeight = (weight: number) =>
+    dispatch({
+      type: ACTIONS.SET_MEAL_ENTRY_PORTION_WEIGHT,
+      payload: weight,
+    });
+  const setTotalWeight = (weight: number) =>
+    dispatch({ type: ACTIONS.SET_MEAL_ENTRY_TOTAL_WEIGHT, payload: weight });
+
+  const [showMealNameModal, setShowMealModal] = useState(false);
+
+  const [showCustomItemModal, setShowCustomItemModal] = useState(false);
+  const [customItemDetails, setCustomItemDetails] = useState({
+    name: "",
+    weight: 0,
   });
 
   function handleAddItem(e: React.FormEvent<HTMLFormElement>) {
@@ -92,7 +98,7 @@ export default function MealEntryPage() {
       nutrition: computeWeightedNutrition(item.nutrition, weight),
     };
 
-    setAddedItems((i) => i.concat(weightedItem));
+    addItem(weightedItem);
     form.querySelector("input")?.focus();
     form.reset();
   }
@@ -112,7 +118,7 @@ export default function MealEntryPage() {
       ),
     };
 
-    setAddedItems((xs) => xs.map((x, i) => (i === index ? newDetails : x)));
+    updateItem(index, newDetails);
   }
 
   const handleAddCustomItem: CustomItemModalProps["onAdd"] = (item) => {
@@ -123,7 +129,7 @@ export default function MealEntryPage() {
       nutrition: computeWeightedNutrition(item.nutrition, weight),
     };
 
-    setAddedItems((i) => i.concat(weightedItem));
+    addItem(weightedItem);
     setCustomItemDetails({ name: "", weight: 0 });
     setShowCustomItemModal(false);
   };
@@ -149,7 +155,8 @@ export default function MealEntryPage() {
       payload: { entry },
     });
     setShowMealModal(false);
-    setAddedItems([]);
+
+    resetItems();
     router.push("/");
   }
 
