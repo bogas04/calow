@@ -26,6 +26,7 @@ export default function HomePage() {
   const [date, setDate] = useState(TODAY);
   const router = useRouter();
   const { dispatch, goal, nutrition, log } = useStore(date);
+  const isSelectedDateToday = date > TODAY - DAY;
 
   const onDelete: MouseEventHandler<HTMLButtonElement> = (e) => {
     const itemIndex = getClosestDatasetKey(e, "index");
@@ -144,14 +145,14 @@ export default function HomePage() {
               <MealNutrition
                 meal={meal}
                 onDelete={onDelete}
-                onEdit={onEdit}
+                onEdit={isSelectedDateToday ? onEdit : undefined}
                 onRepeat={onRepeat}
               />
             </Box>
           ))}
         </Box>
 
-        {date > TODAY - DAY ? (
+        {isSelectedDateToday ? (
           <Link href="/meal-entry">
             <ChakraLink href="/meal-entry" {...FABProps} title="Add log item">
               +
