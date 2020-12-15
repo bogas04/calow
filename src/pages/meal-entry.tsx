@@ -1,18 +1,30 @@
-import { AddIcon } from "@chakra-ui/icons";
+import { AddIcon, DeleteIcon } from "@chakra-ui/icons";
 import {
   Flex,
   Grid,
   Box,
   Button,
   FormControl,
+  HStack,
   FormHelperText,
   Heading,
   IconButton,
   Input,
   Text,
+  UnorderedList,
+  ListItem,
 } from "@chakra-ui/react";
+import { motion } from "framer-motion";
+import Fuse from "fuse.js";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import React, {
+  ChangeEventHandler,
+  MouseEventHandler,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+
 import CustomItemModal, {
   CustomItemModalProps,
 } from "../components/CustomItemModal";
@@ -29,6 +41,8 @@ import {
 import DinnerArt from "../svg/DinnerArt";
 import { computeWeightedNutrition, mapNutrition } from "../util/nutrition";
 
+const FramerHStack = motion.custom(HStack);
+
 export default function MealEntryPage() {
   const {
     dispatch,
@@ -43,6 +57,22 @@ export default function MealEntryPage() {
     name: "",
     weight: 0,
   });
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const searchResults = useMemo(() => {
+    const f = new Fuse(items, { keys: ["name"], threshold: 0.25 });
+    return [
+      { name: `"${searchQuery.replaceAll('"', "")}"` } as ItemEntry,
+    ].concat(
+      f
+        .search(searchQuery)
+        .slice(0, 10)
+        .map((x) => x.item)
+    );
+  }, [searchQuery, items]);
+
+  const shouldShowSearchResults =
+    searchQuery !== "" && !searchResults.find((x) => x.name === searchQuery);
 
   useEffect(() => {
     const index = Number(router.query.index);
@@ -80,7 +110,7 @@ export default function MealEntryPage() {
       type: ACTIONS.UPDATE_MEAL_ENTRY_ITEM,
       payload: { index, item },
     });
-  const deleteItem = (index: number, item: ItemEntry) =>
+  const deleteItem = (index: number) =>
     dispatch({ type: ACTIONS.DELETE_MEAL_ENTRY_ITEM, payload: index });
   const resetItems = () => dispatch({ type: ACTIONS.RESET_MEAL_ENTRY_ITEMS });
   const setPortionWeight = (weight: number) =>
@@ -90,6 +120,17 @@ export default function MealEntryPage() {
     });
   const setTotalWeight = (weight: number) =>
     dispatch({ type: ACTIONS.SET_MEAL_ENTRY_TOTAL_WEIGHT, payload: weight });
+
+  const onSearchQueryChange: ChangeEventHandler<HTMLInputElement> = (e) =>
+    setSearchQuery(e.currentTarget.value);
+
+  const onSearchResultClick: MouseEventHandler<HTMLButtonElement> = (e) => {
+    const searchResultName = e.currentTarget.dataset.name;
+    if (searchResultName) {
+      setSearchQuery(searchResultName);
+    }
+    document.querySelector<HTMLInputElement>('input[name="weight"]')?.focus();
+  };
 
   function handleAddItem(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -117,6 +158,7 @@ export default function MealEntryPage() {
     };
 
     addItem(weightedItem);
+    setSearchQuery("");
     form.querySelector("input")?.focus();
     form.reset();
   }
@@ -239,7 +281,17 @@ export default function MealEntryPage() {
           onChange={handleItemWeightChange}
           mr="2"
         />
-        <Text fontWeight="100">g</Text>
+        <Flex alignItems="center" justifyContent="center">
+          <Text fontWeight="100">g</Text>
+          {/* <IconButton
+            size="sm"
+            rounded="full"
+            onClick={() => deleteItem(i)}
+            icon={<DeleteIcon />}
+            aria-label="Remove item"
+            variant="ghost"
+          /> */}
+        </Flex>
       </Heading>
       <NutritionBar border={false} nutrition={item.nutrition} />
     </Flex>
@@ -255,21 +307,15 @@ export default function MealEntryPage() {
           isRequired
           autoFocus
           type="search"
-          list="items-list"
+          onChange={onSearchQueryChange}
+          value={searchQuery}
           variant="filled"
           name="item"
           size="sm"
           placeholder="Search item"
         />
-        <datalist id="items-list">
-          {items.map((i) => (
-            <option key={i.name} value={i.name}>
-              {i.name}
-            </option>
-          ))}
-        </datalist>
         <Input
-          type="search"
+          type="text"
           isRequired
           inputMode="numeric"
           name="weight"
@@ -386,6 +432,41 @@ export default function MealEntryPage() {
         borderTop={"1px solid"}
         borderTopColor="gray.200"
       >
+        {shouldShowSearchResults && (
+          <FramerHStack
+            as={UnorderedList}
+            listStyleType="none"
+            d="flex"
+            overflow="auto"
+            w="100%"
+            m="0"
+            px="4"
+            py="2"
+            spacing={4}
+            borderBottom={"1px solid"}
+            borderBottomColor="gray.200"
+            initial={{ translateY: 100 }}
+            bg="gray.50"
+            animate={{ translateY: 0 }}
+            transition={{ duration: 0.1 }}
+          >
+            {searchResults.map((s) => (
+              <ListItem key={s.name}>
+                <Button
+                  colorScheme="gray"
+                  fontWeight="normal"
+                  variant="outline"
+                  size="sm"
+                  onClick={onSearchResultClick}
+                  data-name={s.name}
+                >
+                  {s.icon} {s.name}
+                </Button>
+              </ListItem>
+            ))}
+          </FramerHStack>
+        )}
+
         <Box my="3" w="100%" px="4">
           {form}
         </Box>
