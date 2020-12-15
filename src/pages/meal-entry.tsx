@@ -311,6 +311,7 @@ export default function MealEntryPage() {
           value={searchQuery}
           variant="filled"
           name="item"
+          autoComplete="off"
           size="sm"
           placeholder="Search item"
         />
