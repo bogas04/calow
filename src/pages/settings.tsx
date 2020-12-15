@@ -14,12 +14,15 @@ import {
   SliderTrack,
   Tag,
   FormControl,
+  Input,
+  Code,
 } from "@chakra-ui/react";
 import React, { useEffect, useMemo, useState } from "react";
 import BodyMetricsForm from "../components/BodyMetricsForm";
 import { Page } from "../components/layouts";
 import NutritionBar from "../components/NutritionBar";
-import { ACTIONS, useStore } from "../store";
+import { Store, ACTIONS, useStore } from "../store";
+import { readFile } from "../util/dom";
 import { computeCaloricNeeds } from "../util/nutrition";
 
 export default function SettingsPage() {
@@ -200,8 +203,50 @@ export default function SettingsPage() {
                 window.URL.revokeObjectURL(downloadLink);
               }}
             >
-              Export My Data
+              Export as <Code variant="ghost">.json</Code>
             </Button>
+            <Button
+              colorScheme="teal"
+              onClick={() =>
+                document
+                  .querySelector<HTMLInputElement>("#import-file-input")
+                  ?.click()
+              }
+            >
+              Import from <Code variant="ghost">.json</Code>
+            </Button>
+            <Input
+              hidden
+              id="import-file-input"
+              type="file"
+              accept=".json"
+              onChange={async (e) => {
+                try {
+                  if (e.target && e.target.files) {
+                    const content = await readFile(e.target?.files?.[0]);
+                    const json: Store = JSON.parse(content);
+
+                    if (!json.goal || !json.body || !json.logs) {
+                      throw new Error("Invalid file");
+                    }
+
+                    dispatch({
+                      type: ACTIONS.SET,
+                      payload: {
+                        goal: json.goal,
+                        logs: json.logs,
+                        body: json.body,
+                      },
+                    });
+                    alert("Successfully imported!");
+                  } else {
+                    throw new Error("No file selected");
+                  }
+                } catch (err) {
+                  alert(err.message);
+                }
+              }}
+            />
             <Button
               my="2"
               ml={[0, "2"]}
