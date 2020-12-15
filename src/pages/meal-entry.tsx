@@ -273,6 +273,7 @@ export default function MealEntryPage() {
         <Input
           inputMode="numeric"
           variant="flushed"
+          autoComplete="off"
           textAlign="center"
           value={item.weight}
           placeholder="Weight"
@@ -321,6 +322,7 @@ export default function MealEntryPage() {
           inputMode="numeric"
           name="weight"
           variant="filled"
+          autoComplete="off"
           size="sm"
           placeholder="Weight in grams"
         />
@@ -345,6 +347,7 @@ export default function MealEntryPage() {
             w="30%"
             fontSize="xs"
             inputMode="numeric"
+            autoComplete="off"
             textAlign="center"
             value={portionWeight}
             onChange={(e: React.FormEvent<HTMLInputElement>) =>
@@ -365,6 +368,7 @@ export default function MealEntryPage() {
             textAlign="center"
             variant="flushed"
             inputMode="numeric"
+            autoComplete="off"
             value={totalWeight}
             onChange={(e: React.FormEvent<HTMLInputElement>) =>
               setTotalWeight(Number(e.currentTarget.value))
