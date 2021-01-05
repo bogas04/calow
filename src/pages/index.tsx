@@ -1,18 +1,21 @@
 import {
   Flex,
+  Grid,
   Box,
   Link as ChakraLink,
   FormHelperText,
-  LinkProps as ChakraLinkProps,
   FormControl,
+  IconButton,
+  ChakraProps,
 } from "@chakra-ui/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState, MouseEventHandler } from "react";
 
+import { CgGlassAlt as WaterGlassIcon } from "react-icons/cg";
 import { getShortMonth } from "../util/time";
 import { getClosestDatasetKey } from "../util/dom";
-import { ACTIONS, useStore } from "../store";
+import { ACTIONS, inititalNutrition, useStore } from "../store";
 import EmptyArt from "../svg/EmptyArt";
 
 import { Meter } from "../components/Meter";
@@ -28,6 +31,22 @@ export default function HomePage() {
   const { dispatch, goal, nutrition, log } = useStore(date);
   const isSelectedDateToday = date > TODAY - DAY;
 
+  const onAddWater = () => {
+    dispatch({
+      type: ACTIONS.ADD_MEAL_ENTRY,
+      payload: {
+        entry: {
+          name: "Water",
+          water: 240,
+          nutrition: inititalNutrition,
+          timestamp: Date.now(),
+          totalWeight: 240,
+          portionWeight: 240,
+          items: [],
+        },
+      },
+    });
+  };
   const onDelete: MouseEventHandler<HTMLButtonElement> = (e) => {
     const itemIndex = getClosestDatasetKey(e, "index");
     if (!itemIndex) {
@@ -153,15 +172,30 @@ export default function HomePage() {
         </Box>
 
         {isSelectedDateToday ? (
-          <Link href="/meal-entry">
-            <ChakraLink href="/meal-entry" {...FABProps} title="Add log item">
-              +
-            </ChakraLink>
-          </Link>
+          <Grid {...FABContainerProps} autoFlow="row" gap={2}>
+            <IconButton
+              variant="ghost"
+              {...FABProps}
+              height="10"
+              width="10"
+              type="button"
+              bg="blue.600"
+              aria-label="Add water glass"
+              onClick={onAddWater}
+              justifySelf="center"
+              icon={<WaterGlassIcon size="20" />}
+            />
+            <Link href="/meal-entry">
+              <ChakraLink href="/meal-entry" {...FABProps} title="Add log item">
+                +
+              </ChakraLink>
+            </Link>
+          </Grid>
         ) : (
           <ChakraLink
             as="button"
             {...FABProps}
+            {...FABContainerProps}
             bg="purple.300"
             flexDirection="column"
             title="Show today's log"
@@ -180,20 +214,23 @@ export default function HomePage() {
 
 HomePage.pageTitle = "Home";
 
-const FABProps: ChakraLinkProps = {
+const FABContainerProps: ChakraProps = {
   position: "fixed",
   right: 0,
   bottom: 0,
   mx: 4,
   my: 20,
+};
+
+const FABProps: ChakraProps = {
   height: "16",
+  width: "16",
   fontSize: "3xl",
   fontWeight: "100",
-  width: "16",
   d: "flex",
-  _hover: { textDecoration: "none", boxShadow: "lg" },
   alignItems: "center",
   justifyContent: "center",
+  _hover: { textDecoration: "none", boxShadow: "lg" },
   borderRadius: "50%",
   bg: "green.400",
   color: "white",

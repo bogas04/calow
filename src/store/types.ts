@@ -5,6 +5,7 @@ export interface MealEntry {
   totalWeight: number;
   portionWeight: number;
   nutrition: Nutrition;
+  water?: number;
 }
 
 export interface ItemEntry {
