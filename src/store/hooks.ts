@@ -58,6 +58,7 @@ export function useStore(time?: number) {
 
   return {
     ...store,
+    water: log.reduce((sum, l) => sum + (l.water || 0), 0),
     nutrition: computeNutritionFromLog(log),
     log,
   };

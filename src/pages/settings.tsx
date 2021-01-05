@@ -48,7 +48,7 @@ export default function SettingsPage() {
   }, [goalCalories]);
 
   const goalInfo = getGoalInfo(
-    goal.calories || caloricNeeds.calories,
+    goal.nutrition.calories || caloricNeeds.calories,
     caloricNeeds.calories
   );
 
@@ -118,6 +118,18 @@ export default function SettingsPage() {
           <FormControl>
             <FormLabel
               fontSize="sm"
+              d="flex"
+              alignItems="center"
+              pr="0"
+              mt="2"
+              justifyContent="space-between"
+            >
+              Water {goal.water} mL
+            </FormLabel>
+          </FormControl>
+          <FormControl>
+            <FormLabel
+              fontSize="sm"
               textTransform="capitalize"
               d="flex"
               alignItems="center"
@@ -125,7 +137,7 @@ export default function SettingsPage() {
               mt="2"
               justifyContent="space-between"
             >
-              Calories {goal.calories || caloricNeeds.calories}kCal
+              Calories {goal.nutrition.calories || caloricNeeds.calories}kCal
               <Button
                 onClick={() => setIsSliderDisabled(!isSliderDisabled)}
                 size="xs"
@@ -141,7 +153,7 @@ export default function SettingsPage() {
             <Box py={2}>
               <Slider
                 step={10}
-                defaultValue={goal.calories || caloricNeeds.calories}
+                defaultValue={goal.nutrition.calories || caloricNeeds.calories}
                 value={goalCalories}
                 onChange={setGoalCalories}
                 isDisabled={isSliderDisabled}
@@ -156,7 +168,7 @@ export default function SettingsPage() {
             </Box>
           </Collapse>
           <Flex mt="4" justify={["center", "flex-start"]} align="center">
-            <NutritionBar nutrition={goal} showLegend />
+            <NutritionBar nutrition={goal.nutrition} showLegend />
           </Flex>
         </Box>
       )}

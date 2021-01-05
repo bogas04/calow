@@ -13,7 +13,10 @@ export const defaultState = {
     gender: "female",
   } as BodyMetrics,
   /** goal */
-  goal: computeMacroFromCalories(0),
+  goal: {
+    nutrition: computeMacroFromCalories(0),
+    water: 0,
+  },
   /** logs of all days */
   logs: {} as { [dateKey: string]: MealEntry[] },
   /** meal entry page data. We store it here for edit and repeat features. */
@@ -132,7 +135,15 @@ export const reducer: Reducer<Store, Action> = (state, action) => {
       });
     }
     case ACTIONS.SET_GOAL: {
-      return { ...state, goal: { ...state.goal, ...action.payload } };
+      const water = state.body.gender === "male" ? 3000 : 2000;
+      return {
+        ...state,
+        goal: {
+          ...state.goal,
+          water,
+          nutrition: { ...state.goal.nutrition, ...action.payload },
+        },
+      };
     }
     case ACTIONS.DELETE_MEAL_ENTRY: {
       const { timestamp = Date.now(), index } = action.payload;

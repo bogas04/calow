@@ -7,6 +7,7 @@ import {
   FormControl,
   IconButton,
   ChakraProps,
+  Icon,
 } from "@chakra-ui/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -24,11 +25,12 @@ import DateBar from "../components/DateBar";
 import { TODAY, DAY } from "../constants/date";
 import MealNutrition from "../components/MealNutrition";
 import NutritionBar from "../components/NutritionBar";
+import { BsDropletFill, BsDropletHalf } from "react-icons/bs";
 
 export default function HomePage() {
   const [date, setDate] = useState(TODAY);
   const router = useRouter();
-  const { dispatch, goal, nutrition, log } = useStore(date);
+  const { dispatch, goal, nutrition, water, log } = useStore(date);
   const isSelectedDateToday = date > TODAY - DAY;
 
   const onAddWater = () => {
@@ -141,10 +143,28 @@ export default function HomePage() {
           mr={[0, "16"]}
           mb="2"
         >
-          <Meter nutrition={nutrition} goal={goal} />
+          <Meter nutrition={nutrition} goal={goal.nutrition} />
+
           <Flex fontWeight="bold" justify="center" align="center" mb="6">
             <NutritionBar nutrition={nutrition} />
           </Flex>
+
+          <Grid
+            overflow="auto"
+            mx={[-4]}
+            p="4"
+            autoColumns="1fr"
+            autoFlow="column"
+            gap={2}
+            my={4}
+          >
+            <Icon
+              minW={10}
+              color={goal.water > water ? "gray.400" : "gray.800"}
+              as={goal.water > water ? BsDropletHalf : BsDropletFill}
+            />
+          </Grid>
+
           <DateBar date={date} onChange={setDate} />
         </Box>
 
