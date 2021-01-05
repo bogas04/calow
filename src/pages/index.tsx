@@ -25,7 +25,17 @@ import DateBar from "../components/DateBar";
 import { TODAY, DAY } from "../constants/date";
 import MealNutrition from "../components/MealNutrition";
 import NutritionBar from "../components/NutritionBar";
-import { BsDropletFill, BsDropletHalf } from "react-icons/bs";
+import {
+  BsDropletHalf as WaterIcon,
+  BsDropletFill as WaterFullIcon,
+} from "react-icons/bs";
+import {
+  GiGrainBundle as GrainIcon,
+  GiMetalBar as MetalIcon,
+  GiOrange as OrangeIcon,
+  GiSaltShaker as SaltIcon,
+} from "react-icons/gi";
+import { BiBone as BoneIcon } from "react-icons/bi";
 
 export default function HomePage() {
   const [date, setDate] = useState(TODAY);
@@ -151,18 +161,26 @@ export default function HomePage() {
 
           <Grid
             overflow="auto"
-            mx={[-4]}
             p="4"
             autoColumns="1fr"
             autoFlow="column"
-            gap={2}
-            my={4}
+            gap={6}
+            my={6}
+            mx={[-4]}
+            pl={[6]}
+            color="gray.400"
           >
             <Icon
               minW={10}
               color={goal.water > water ? "gray.400" : "gray.800"}
-              as={goal.water > water ? BsDropletHalf : BsDropletFill}
+              as={goal.water > water ? WaterIcon : WaterFullIcon}
+              title="Water"
             />
+            <GrainIcon size="20" title="Fiber" />
+            <BoneIcon size="20" title="Calcium" />
+            <MetalIcon size="20" title="Iron" />
+            <SaltIcon size="20" title="Sodium" />
+            <OrangeIcon size="20" title="Vitamin C" />
           </Grid>
 
           <DateBar date={date} onChange={setDate} />
