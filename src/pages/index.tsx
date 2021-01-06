@@ -206,7 +206,7 @@ export default function HomePage() {
               icon={<WaterGlassIcon size="20" />}
             />
             <Link href="/meal-entry">
-              <ChakraLink href="/meal-entry" {...FABProps} title="Add log item">
+              <ChakraLink {...FABProps} title="Add log item" userSelect="none">
                 +
               </ChakraLink>
             </Link>
