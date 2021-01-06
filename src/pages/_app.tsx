@@ -24,7 +24,6 @@ function App({
   };
 }) {
   const value = useStoreReducer();
-  const router = useRouter();
   const { pageTitle } = Component;
   const title = pageTitle ? `${pageTitle} | Calow` : "Calow";
   const pageUrl = "https://bogas04.github.io/calow/";
@@ -32,12 +31,6 @@ function App({
   const image = pageUrl + "icon-512-512.png";
 
   useServiceWorker();
-
-  const footerClickHandler = (pathname: string) => {
-    if (router.pathname === pathname) {
-      document.querySelector("main")?.scrollTo(0, 0);
-    }
-  };
 
   return (
     <ChakraProvider theme={theme}>
@@ -104,6 +97,7 @@ function App({
           {!Component.hideFooter && (
             <Box
               as="footer"
+              overflow="hidden"
               id="footer"
               p="4"
               bg="rgba(0,0,0,0.1)"
@@ -121,41 +115,24 @@ function App({
                   justify="space-between"
                 >
                   <li>
-                    <Link href="/">
-                      <a
-                        onClick={() => footerClickHandler("/")}
-                        title="Open Home"
-                      >
-                        <HomeIcon size="24" />
-                      </a>
-                    </Link>
+                    <NavLink href="/" title="Open Home">
+                      <HomeIcon size="24" />
+                    </NavLink>
                   </li>
                   {/* <li>
-                  <Link href="/search">
-                    <a onClick={() => footerClickHandler("/search")} title="Open Search">
+                    <NavLink href="/search" title="Open Search">
                       <SearchIcon size="24"/>
-                    </a>
-                  </Link>
-                </li> */}
+                    </NavLink>
+                  </li> */}
                   <li>
-                    <Link href="/items">
-                      <a
-                        onClick={() => footerClickHandler("/items")}
-                        title="Open Item Catalog"
-                      >
-                        <ItemsIcon size="24" />
-                      </a>
-                    </Link>
+                    <NavLink href="/items" title="Open Item Catalog">
+                      <ItemsIcon size="24" />
+                    </NavLink>
                   </li>
                   <li>
-                    <Link href="/settings">
-                      <a
-                        onClick={() => footerClickHandler("/settings")}
-                        title="Open Settings"
-                      >
-                        <SettingsIcon size="24" />
-                      </a>
-                    </Link>
+                    <NavLink href="/settings" title="Open Settings">
+                      <SettingsIcon size="24" />
+                    </NavLink>
                   </li>
                 </Flex>
               </Box>
@@ -173,3 +150,52 @@ function useServiceWorker() {
   }, []);
 }
 export default App;
+
+const Indicator = () => {
+  return (
+    <Box position="absolute" bottom={-5}>
+      <Box
+        height="10px"
+        width="10px"
+        rounded="full"
+        bg="teal.300"
+        boxShadow="0 0 16px 0 white"
+      />
+    </Box>
+  );
+};
+
+const NavLink = ({
+  title,
+  href,
+  children,
+}: {
+  title: string;
+  href: string;
+  children: React.ReactNode;
+}) => {
+  const router = useRouter();
+
+  const footerClickHandler = (pathname: string) => {
+    if (router.pathname === pathname) {
+      document.querySelector("main")?.scrollTo(0, 0);
+    }
+  };
+
+  return (
+    <Link href={href}>
+      <Flex
+        as="a"
+        onClick={() => footerClickHandler(href)}
+        title={title}
+        align="center"
+        justify="center"
+        direction="column"
+        pos="relative"
+      >
+        {children}
+        {router.pathname === href && <Indicator />}
+      </Flex>
+    </Link>
+  );
+};
