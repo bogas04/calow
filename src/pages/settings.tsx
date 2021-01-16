@@ -39,7 +39,7 @@ export default function SettingsPage() {
   const [expand, setExpand] = useState(false);
   const [showDataOptions, setShowDataOptions] = useState(false);
   const [goalCalories, setGoalCalories] = useState<number>();
-  const [goalType, setGoalType] = useState<GoalTypes>("neutral");
+  const [goalType, setGoalType] = useState<GoalTypes>();
   const [isSliderDisabled, setIsSliderDisabled] = useState(true);
 
   const { body, goal, logs } = store;
@@ -50,14 +50,15 @@ export default function SettingsPage() {
 
   useEffect(() => {
     const calories = goalCalories ?? goal.nutrition.calories;
+    const diet = goalType ?? goal.diet;
     dispatch({
       type: ACTIONS.SET_GOAL,
       payload: {
         nutrition: computeMacroFromCalories(
           calories,
-          macroCombination[goalType].macros
+          macroCombination[diet].macros
         ),
-        diet: goalType,
+        diet,
       },
     });
   }, [goalCalories, goalType]);
@@ -66,6 +67,7 @@ export default function SettingsPage() {
     goal.nutrition.calories || caloricNeeds.calories,
     caloricNeeds.calories
   );
+  const goalDiet = goalType || goal.diet;
 
   const hasComputedCaloricNeeds =
     caloricNeeds.calories !== 0 || !!body.height || !!body.weight;
@@ -159,7 +161,7 @@ export default function SettingsPage() {
                 onChange={(e) =>
                   setGoalType(e.currentTarget.value as GoalTypes)
                 }
-                value={goalType}
+                defaultValue={goalDiet}
               >
                 {(Object.keys(macroCombination) as GoalTypes[]).map((k) => (
                   <Box as="option" value={k}>
@@ -169,15 +171,15 @@ export default function SettingsPage() {
               </Select>
             </Flex>
             <FormHelperText my={2}>
-              {macroCombination[goalType].description}
+              {macroCombination[goalDiet].description}
             </FormHelperText>
             <FormHelperText>
               <Box>
-                {Object.keys(macroCombination[goalType].macros).map(
+                {Object.keys(macroCombination[goalDiet].macros).map(
                   (m, i, arr) =>
                     `${capitalize(m)} - ${
                       // @ts-ignore
-                      macroCombination[goalType].macros[m] * 100
+                      macroCombination[goalDiet].macros[m] * 100
                     }% ${i !== arr.length - 1 ? " · " : ""}`
                 )}
               </Box>
