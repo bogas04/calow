@@ -58,12 +58,15 @@ export function computeCaloricNeeds({
   return { bmr, caloricNeeds: computeMacroFromCalories(calories) };
 }
 
-export function computeMacroFromCalories(calories: number): Nutrition {
+export function computeMacroFromCalories(
+  calories: number,
+  multiplier = macroCombination.neutral.macros
+): Nutrition {
   return {
     calories,
-    carbohydrates: Math.ceil((0.50 * calories) / 4),
-    protein: Math.ceil((0.225 * calories) / 4),
-    fat: Math.ceil((0.275 * calories) / 9),
+    carbohydrates: Math.ceil((multiplier.carbohydrates * calories) / 4),
+    protein: Math.ceil((multiplier.protein * calories) / 4),
+    fat: Math.ceil((multiplier.fat * calories) / 9),
   };
 }
 
@@ -82,3 +85,50 @@ export function computeNutritionFromLog(entries: MealEntry[]) {
     return addNutrition(portionNutrition, totalNutrition);
   }, inititalNutrition);
 }
+
+/**
+ * The acceptable macronutrient distribution ranges (AMDR) are 45–65% of your daily calories from carbs, 20–35% from fats and 10–35% from protein.
+ * https://www.healthline.com/nutrition/best-macronutrient-ratio
+ */
+export const macroCombination = {
+  protein: {
+    name: "High protein",
+    description:
+      "A high protein diet can help in weight loss and muscle building. Choose this if you intend to engage in intense weight training.",
+    macros: {
+      carbohydrates: 0.45,
+      protein: 0.35,
+      fat: 0.2,
+    },
+  },
+  carbohydrates: {
+    name: "High carb",
+    macros: {
+      carbohydrates: 0.65,
+      protein: 0.15,
+      fat: 0.2,
+    },
+    description:
+      "A high carbohydrate diet is easiest to maintain, however stay wary of refined carbohydrates.",
+  },
+  fat: {
+    name: "High fat",
+    description:
+      "A high fat diet can help in feeling fuller with small portions.",
+    macros: {
+      carbohydrates: 0.45,
+      protein: 0.2,
+      fat: 0.35,
+    },
+  },
+  neutral: {
+    name: "Neutral",
+    macros: {
+      carbohydrates: 0.455,
+      protein: 0.225,
+      fat: 0.27,
+    },
+
+    description: "This diet is well balanced in terms of macro nutrients.",
+  },
+};

@@ -1,5 +1,5 @@
 import { Reducer } from "react";
-import { computeMacroFromCalories } from "../util/nutrition";
+import { computeMacroFromCalories, macroCombination } from "../util/nutrition";
 import { getDateKey } from "../util/time";
 import { BodyMetrics, ItemEntry, MealEntry, Nutrition } from "./types";
 
@@ -15,6 +15,7 @@ export const defaultState = {
   /** goal */
   goal: {
     nutrition: computeMacroFromCalories(0),
+    diet: "neutral" as keyof typeof macroCombination,
     water: 0,
   },
   /** logs of all days */
@@ -43,8 +44,6 @@ export enum ACTIONS {
   SET,
   /** Set goal */
   SET_GOAL,
-  /** Set goal based on provided calories */
-  SET_GOAL_FROM_CALORIES,
   /** Set body metrics */
   SET_BODY,
   /** Add new item to meal entry's state */
@@ -72,12 +71,8 @@ export type Action =
       payload: Omit<Store, "mealEntry">;
     }
   | {
-      type: ACTIONS.SET_GOAL_FROM_CALORIES;
-      payload: number;
-    }
-  | {
       type: ACTIONS.SET_GOAL;
-      payload: Partial<Nutrition>;
+      payload: Omit<Store["goal"], "water">;
     }
   | {
       type: ACTIONS.DELETE_MEAL_ENTRY;
@@ -128,20 +123,14 @@ export const reducer: Reducer<Store, Action> = (state, action) => {
     case ACTIONS.SET_BODY: {
       return { ...state, body: { ...state.body, ...action.payload } };
     }
-    case ACTIONS.SET_GOAL_FROM_CALORIES: {
-      return reducer(state, {
-        type: ACTIONS.SET_GOAL,
-        payload: computeMacroFromCalories(action.payload),
-      });
-    }
     case ACTIONS.SET_GOAL: {
       const water = state.body.gender === "male" ? 3000 : 2000;
       return {
         ...state,
         goal: {
           ...state.goal,
+          ...action.payload,
           water,
-          nutrition: { ...state.goal.nutrition, ...action.payload },
         },
       };
     }

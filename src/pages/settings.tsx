@@ -1,5 +1,6 @@
 import { ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons";
 import {
+  Text,
   Flex,
   Box,
   Button,
@@ -16,6 +17,7 @@ import {
   FormControl,
   Input,
   Code,
+  Select,
 } from "@chakra-ui/react";
 import React, { useEffect, useMemo, useState } from "react";
 import BodyMetricsForm from "../components/BodyMetricsForm";
@@ -23,13 +25,20 @@ import { Page } from "../components/layouts";
 import NutritionBar from "../components/NutritionBar";
 import { Store, ACTIONS, useStore } from "../store";
 import { readFile } from "../util/dom";
-import { computeCaloricNeeds } from "../util/nutrition";
+import {
+  computeCaloricNeeds,
+  computeMacroFromCalories,
+  macroCombination,
+} from "../util/nutrition";
+import { capitalize } from "../util/string";
 
+type GoalTypes = keyof typeof macroCombination;
 export default function SettingsPage() {
   const { dispatch, ...store } = useStore();
   const [expand, setExpand] = useState(false);
   const [showDataOptions, setShowDataOptions] = useState(false);
   const [goalCalories, setGoalCalories] = useState<number>();
+  const [goalType, setGoalType] = useState<GoalTypes>("neutral");
   const [isSliderDisabled, setIsSliderDisabled] = useState(true);
 
   const { body, goal, logs } = store;
@@ -39,13 +48,18 @@ export default function SettingsPage() {
   const daysOfData = Object.keys(logs).length;
 
   useEffect(() => {
-    if (goalCalories) {
-      dispatch({
-        type: ACTIONS.SET_GOAL_FROM_CALORIES,
-        payload: goalCalories,
-      });
-    }
-  }, [goalCalories]);
+    const calories = goalCalories ?? goal.nutrition.calories;
+    dispatch({
+      type: ACTIONS.SET_GOAL,
+      payload: {
+        nutrition: computeMacroFromCalories(
+          calories,
+          macroCombination[goalType].macros
+        ),
+        diet: goalType,
+      },
+    });
+  }, [goalCalories, goalType]);
 
   const goalInfo = getGoalInfo(
     goal.nutrition.calories || caloricNeeds.calories,
@@ -127,6 +141,7 @@ export default function SettingsPage() {
               Water {goal.water} mL
             </FormLabel>
           </FormControl>
+
           <FormControl>
             <FormLabel
               fontSize="sm"
@@ -148,6 +163,38 @@ export default function SettingsPage() {
               </Button>
             </FormLabel>
           </FormControl>
+
+          <Box py={2}>
+            <FormControl>
+              <FormLabel fontSize="sm" d="flex" pr="0" mt="2">
+                Diet
+              </FormLabel>
+              <Select
+                onChange={(e) =>
+                  setGoalType(e.currentTarget.value as GoalTypes)
+                }
+                value={goalType}
+              >
+                {(Object.keys(macroCombination) as GoalTypes[]).map((k) => (
+                  <Box as="option" value={k}>
+                    {macroCombination[k].name}
+                  </Box>
+                ))}
+              </Select>
+              <Text my={2}>{macroCombination[goalType].description}</Text>
+              <FormHelperText>
+                <Box>
+                  {Object.keys(macroCombination[goalType].macros).map(
+                    (m, i, arr) =>
+                      `${capitalize(m)} - ${
+                        // @ts-ignore
+                        macroCombination[goalType].macros[m] * 100
+                      }% ${i !== arr.length - 1 ? " · " : ""}`
+                  )}
+                </Box>
+              </FormHelperText>
+            </FormControl>
+          </Box>
 
           <Collapse in={!isSliderDisabled}>
             <Box py={2}>
