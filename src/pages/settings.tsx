@@ -20,6 +20,7 @@ import {
   Select,
 } from "@chakra-ui/react";
 import React, { useEffect, useMemo, useState } from "react";
+import { ImSpoonKnife } from "react-icons/im";
 import BodyMetricsForm from "../components/BodyMetricsForm";
 import { Page } from "../components/layouts";
 import NutritionBar from "../components/NutritionBar";
@@ -30,7 +31,7 @@ import {
   computeMacroFromCalories,
   macroCombination,
 } from "../util/nutrition";
-import { capitalize } from "../util/string";
+import { capitalize, roundToTens } from "../util/primitives";
 
 type GoalTypes = keyof typeof macroCombination;
 export default function SettingsPage() {
@@ -71,9 +72,10 @@ export default function SettingsPage() {
 
   return (
     <Page heading="Settings">
-      <Box mb="6" as="section">
+      <Box mb="12" as="section">
         <Heading
           size="lg"
+          mb="4"
           d="flex"
           justifyContent="space-between"
           alignItems="center"
@@ -106,16 +108,16 @@ export default function SettingsPage() {
         </Collapse>
         {hasComputedCaloricNeeds && (
           <Flex mt="4" align="center" justify={["center", "flex-start"]}>
-            <NutritionBar nutrition={caloricNeeds} showLegend />
+            <NutritionBar nutrition={caloricNeeds} showLegend border={false} />
           </Flex>
         )}
       </Box>
 
       {hasComputedCaloricNeeds && (
-        <Box mb="6" as="section">
+        <Box mb="12" as="section">
           <Heading
             size="lg"
-            my="2"
+            my="4"
             justifyContent="space-between"
             alignItems="center"
             d="flex"
@@ -125,51 +127,35 @@ export default function SettingsPage() {
               {goalInfo.text}
             </Tag>
           </Heading>
-          <FormControl>
-            <FormHelperText>{goalInfo.description}</FormHelperText>
-          </FormControl>
+          <Text fontSize="sm">{goalInfo.description}</Text>
 
-          <FormControl>
+          <FormControl mt={4} mb={4}>
             <FormLabel
-              fontSize="sm"
+              fontSize="md"
               d="flex"
               alignItems="center"
               pr="0"
               mt="2"
               justifyContent="space-between"
             >
-              Water {goal.water} mL
+              <Text fontWeight="bold">Water</Text>
+              <Text>{goal.water} mL</Text>
             </FormLabel>
+            <FormHelperText>
+              For {body.gender}s, recommended water intake (excluding water
+              content of foods) is {goal.water} mL
+            </FormHelperText>
           </FormControl>
 
-          <FormControl>
-            <FormLabel
-              fontSize="sm"
-              textTransform="capitalize"
-              d="flex"
-              alignItems="center"
-              pr="0"
-              mt="2"
-              justifyContent="space-between"
-            >
-              Calories {goal.nutrition.calories || caloricNeeds.calories}kCal
-              <Button
-                onClick={() => setIsSliderDisabled(!isSliderDisabled)}
-                size="xs"
-                variant={isSliderDisabled ? "ghost" : "solid"}
-                colorScheme={isSliderDisabled ? undefined : "green"}
-              >
-                {isSliderDisabled ? "Edit" : "Done"}
-              </Button>
-            </FormLabel>
-          </FormControl>
-
-          <Box py={2}>
-            <FormControl>
-              <FormLabel fontSize="sm" d="flex" pr="0" mt="2">
+          <FormControl my={4}>
+            <Flex justify="space-between" align="center">
+              <FormLabel fontSize="md" mt="2" flex={0.4} fontWeight="bold">
                 Diet
               </FormLabel>
               <Select
+                size="sm"
+                variant="flushed"
+                width="auto"
                 onChange={(e) =>
                   setGoalType(e.currentTarget.value as GoalTypes)
                 }
@@ -181,20 +167,46 @@ export default function SettingsPage() {
                   </Box>
                 ))}
               </Select>
-              <Text my={2}>{macroCombination[goalType].description}</Text>
-              <FormHelperText>
-                <Box>
-                  {Object.keys(macroCombination[goalType].macros).map(
-                    (m, i, arr) =>
-                      `${capitalize(m)} - ${
-                        // @ts-ignore
-                        macroCombination[goalType].macros[m] * 100
-                      }% ${i !== arr.length - 1 ? " · " : ""}`
-                  )}
-                </Box>
-              </FormHelperText>
-            </FormControl>
-          </Box>
+            </Flex>
+            <FormHelperText my={2}>
+              {macroCombination[goalType].description}
+            </FormHelperText>
+            <FormHelperText>
+              <Box>
+                {Object.keys(macroCombination[goalType].macros).map(
+                  (m, i, arr) =>
+                    `${capitalize(m)} - ${
+                      // @ts-ignore
+                      macroCombination[goalType].macros[m] * 100
+                    }% ${i !== arr.length - 1 ? " · " : ""}`
+                )}
+              </Box>
+            </FormHelperText>
+          </FormControl>
+
+          <FormControl my={4}>
+            <FormLabel
+              d="flex"
+              alignItems="center"
+              pr="0"
+              mt="2"
+              justifyContent="space-between"
+            >
+              <Text fontSize="md" textTransform="capitalize" fontWeight="bold">
+                Calories
+              </Text>
+              <Box fontSize="sm">
+                <Button
+                  onClick={() => setIsSliderDisabled(!isSliderDisabled)}
+                  size="sm"
+                  variant={isSliderDisabled ? "ghost" : "solid"}
+                  colorScheme={isSliderDisabled ? undefined : "green"}
+                >
+                  {isSliderDisabled ? "Edit" : "Done"}
+                </Button>
+              </Box>
+            </FormLabel>
+          </FormControl>
 
           <Collapse in={!isSliderDisabled}>
             <Box py={2}>
@@ -204,25 +216,32 @@ export default function SettingsPage() {
                 value={goalCalories}
                 onChange={setGoalCalories}
                 isDisabled={isSliderDisabled}
-                min={bmr}
-                max={2 * caloricNeeds.calories - bmr}
+                min={roundToTens(bmr * 1.05)}
+                max={roundToTens(2 * caloricNeeds.calories - bmr)}
               >
                 <SliderTrack>
                   <SliderFilledTrack bg={goalInfo.color} />
                 </SliderTrack>
-                <SliderThumb />
+                <SliderThumb boxSize={6} bg={goalInfo.color}>
+                  <ImSpoonKnife color="white" size="12" />
+                </SliderThumb>
               </Slider>
             </Box>
           </Collapse>
           <Flex mt="4" justify={["center", "flex-start"]} align="center">
-            <NutritionBar nutrition={goal.nutrition} showLegend />
+            <NutritionBar
+              nutrition={goal.nutrition}
+              showLegend
+              border={false}
+            />
           </Flex>
         </Box>
       )}
-      <Box as="section">
+      <Box mb="12" as="section">
         <Heading
           size="lg"
           d="flex"
+          my="4"
           justifyContent="space-between"
           alignItems="center"
         >
