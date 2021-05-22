@@ -15,7 +15,7 @@ export function mapNutrition<T = number>(
       ...newNutrition,
       [key]: fn(key, nutrition[key]),
     }),
-    (nutrition as unknown) as Nutrition<T>
+    nutrition as unknown as Nutrition<T>
   );
 }
 
@@ -70,7 +70,31 @@ export function computeMacroFromCalories(
   };
 }
 
-export function computeNutritionFromLog(entries: MealEntry[]) {
+export function computeMicroNutritionFromLog(entries: MealEntry[]) {
+  const totalMicro: Record<string, number> = {};
+  for (const meal of entries) {
+    // add micro of all items in the meal based on their weight
+    for (const item of meal.items) {
+      for (const [microName, valuePer100] of Object.entries(item.micro ?? {})) {
+        totalMicro[microName] ??= 0;
+        totalMicro[microName] += (valuePer100 * item.weight) / 100;
+        console.log(
+          `${item.weight}g of ${item.name} has ${totalMicro[microName]} ${microName}`
+        );
+      }
+    }
+
+    // adjust for meal portion
+    for (const [microName, valuePerTotal] of Object.entries(totalMicro)) {
+      totalMicro[microName] =
+        (valuePerTotal * meal.portionWeight) / meal.totalWeight;
+    }
+  }
+
+  return totalMicro;
+}
+
+export function computeMacroNutritionFromLog(entries: MealEntry[]) {
   return entries.reduce((totalNutrition, meal) => {
     const totalMealNutrition = meal.items.reduce(
       (mealNutrition, item) => addNutrition(mealNutrition, item.nutrition),

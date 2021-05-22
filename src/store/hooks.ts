@@ -3,7 +3,11 @@ import { get, set } from "idb-keyval";
 import useSWR from "swr";
 
 import { ACTIONS, Action, defaultState, reducer } from "./reducer";
-import { computeNutritionFromLog, createNutrition } from "../util/nutrition";
+import {
+  computeMacroNutritionFromLog,
+  computeMicroNutritionFromLog,
+  createNutrition,
+} from "../util/nutrition";
 import { getDateKey } from "../util/time";
 
 import { ItemEntry } from "./types";
@@ -59,7 +63,8 @@ export function useStore(time?: number) {
   return {
     ...store,
     water: log.reduce((sum, l) => sum + (l.water || 0), 0),
-    nutrition: computeNutritionFromLog(log),
+    nutrition: computeMacroNutritionFromLog(log),
+    micro: computeMicroNutritionFromLog(log),
     log,
   };
 }
@@ -87,7 +92,9 @@ export function useItems() {
 
   let items: ItemEntry[] = [];
   if (data && data.values) {
-    const indices = {
+    const knownNutritionIndices: {
+      [name: string]: /** index in sheet */ number;
+    } = {
       name: 0,
       icon: 1,
       categories: 2,
@@ -95,19 +102,45 @@ export function useItems() {
       protein: 4,
       carbohydrates: 5,
       fat: 6,
-      fiber: 7,
     };
+    const lastKnownNutritionIndex = Math.max(
+      ...Object.values(knownNutritionIndices)
+    );
 
-    items = data.values.reduce<ItemEntry[]>((acc, value, i) => {
-      // ignore the header row
-      if (i > 0) {
-        acc.push({
-          name: value[indices.name],
-          icon: value[indices.icon] || undefined,
-          weight: 100,
-          nutrition: createNutrition((key) => Number(value[indices[key]])),
-        });
-      }
+    const unknowNutritionIndexMap: {
+      [
+        /** index in sheet */
+        index: number
+      ]: /** name of nutrition */
+      string;
+    } = data.values.slice(0, 1)[0].reduce((acc, microName, index) => {
+      return index > lastKnownNutritionIndex
+        ? { ...acc, [index]: microName.toLowerCase() }
+        : {};
+    }, {});
+
+    items = data.values.slice(1).reduce<ItemEntry[]>((acc, value, i) => {
+      const micro = value.reduce((microAcc, nutritionValue, microIndex) => {
+        if (microIndex <= lastKnownNutritionIndex) {
+          return microAcc;
+        }
+        return {
+          ...microAcc,
+          [unknowNutritionIndexMap[microIndex]]: Number(nutritionValue),
+        };
+      }, {});
+
+      const sanitizedData: ItemEntry = {
+        name: value[knownNutritionIndices.name],
+        icon: value[knownNutritionIndices.icon] || undefined,
+        weight: 100,
+        nutrition: createNutrition((key) =>
+          Number(value[knownNutritionIndices[key]])
+        ),
+        micro,
+      };
+
+      acc.push(sanitizedData);
       return acc;
     }, []);
 

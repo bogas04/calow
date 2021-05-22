@@ -103,10 +103,6 @@ function App({
               p="4"
               bg="rgba(0,0,0,0.1)"
               color="gray.800"
-              style={{
-                backdropFilter: "blur(10px)",
-                WebkitBackdropFilter: "blur(10px)",
-              }}
             >
               <Box as="nav">
                 <Flex

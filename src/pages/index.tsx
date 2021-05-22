@@ -26,13 +26,16 @@ import { TODAY, DAY } from "../constants/date";
 import MealNutrition from "../components/MealNutrition";
 import NutritionBar from "../components/NutritionBar";
 import { BsDropletFill, BsDropletHalf } from "react-icons/bs";
+import { InfoIcon } from "@chakra-ui/icons";
+import ExpandedItemNutritionModal from "../components/ExpandedItemNutritionModal";
 
 // Disabled due to low usage.
 const isWaterEnabled = false;
 export default function HomePage() {
   const [date, setDate] = useState(TODAY);
   const router = useRouter();
-  const { dispatch, goal, nutrition, water, log } = useStore(date);
+  const [isInfoModalOpen, setInfoModalOpen] = useState(false);
+  const { dispatch, goal, nutrition, micro, water, log } = useStore(date);
   const isSelectedDateToday = date > TODAY - DAY;
 
   const onAddWater = () => {
@@ -111,6 +114,13 @@ export default function HomePage() {
     router.push(`/meal-entry?edit=1&index=${index}`);
   };
 
+  function onInfoClick() {
+    setInfoModalOpen(true);
+  }
+  function onInfoModalClose() {
+    setInfoModalOpen(false);
+  }
+
   return (
     <Page h="100%">
       <Flex
@@ -127,6 +137,22 @@ export default function HomePage() {
           mb="2"
         >
           <Meter nutrition={nutrition} goal={goal.nutrition} />
+          <Box
+            justifyContent="flex-end"
+            display="flex"
+            mt="-10"
+            mb="-2"
+            w="90%"
+          >
+            <IconButton
+              aria-label="Micronutrient information"
+              color="gray.400"
+              variant="ghost"
+              rounded="full"
+              icon={<InfoIcon />}
+              onClick={onInfoClick}
+            />
+          </Box>
 
           <Flex fontWeight="bold" justify="center" align="center" mb="6">
             <NutritionBar nutrition={nutrition} />
@@ -215,6 +241,18 @@ export default function HomePage() {
           </ChakraLink>
         )}
       </Flex>
+
+      <ExpandedItemNutritionModal
+        item={{
+          name: "Nutrition of the day",
+          icon: "🍽",
+          nutrition,
+          micro,
+          weight: 100,
+        }}
+        onClose={onInfoModalClose}
+        isOpen={isInfoModalOpen}
+      />
     </Page>
   );
 }
