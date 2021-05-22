@@ -48,14 +48,16 @@ function ItemNutrition({ item, size = "lg", ...props }: ItemNutritionProps) {
         </Flex>
         <Flex justify="space-between" align="flex-start">
           <NutritionBar border={false} nutrition={item.nutrition} />
-          <IconButton
-            variant="ghost"
-            rounded="full"
-            color="gray.500"
-            icon={<BsThreeDots />}
-            aria-label="Micronutrients"
-            onClick={openMicroNutrientsModal}
-          />
+          {item.micro && (
+            <IconButton
+              variant="ghost"
+              rounded="full"
+              color="gray.500"
+              icon={<BsThreeDots />}
+              aria-label="Micronutrients"
+              onClick={openMicroNutrientsModal}
+            />
+          )}
         </Flex>
         <Text mt="2" fontSize="xs" color="gray.600" fontWeight="300">
           {item.weight}g

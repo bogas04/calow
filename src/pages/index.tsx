@@ -243,6 +243,7 @@ export default function HomePage() {
       </Flex>
 
       <ExpandedItemNutritionModal
+        hideWeight
         item={{
           name: "Nutrition of the day",
           icon: "🍽",

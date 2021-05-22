@@ -17,8 +17,12 @@ import NutritionBar from "./NutritionBar";
 function ExpandedItemNutritionModal({
   item,
   isOpen,
+  hideWeight = false,
   onClose,
-}: { item: ItemEntry } & Pick<ModalProps, "isOpen" | "onClose">) {
+}: { item: ItemEntry; hideWeight?: boolean } & Pick<
+  ModalProps,
+  "isOpen" | "onClose"
+>) {
   const hasMicro = Object.keys(item.micro ?? {}).length !== 0;
   return (
     <Modal
@@ -31,7 +35,7 @@ function ExpandedItemNutritionModal({
       <ModalContent pb={5}>
         <ModalHeader>
           <Box d="flex" alignItems="center" justifyContent="space-between">
-            {item.name} ({item.weight}g)
+            {item.name} {hideWeight ? "" : `(${item.weight}g)`}
             <IconButton
               aria-label="close"
               rounded="full"
@@ -60,7 +64,9 @@ function ExpandedItemNutritionModal({
                     <Text textTransform="capitalize" fontWeight="400">
                       {microName}
                     </Text>
-                    <Text>{(microValue * item.weight) / 100}</Text>
+                    <Text>
+                      {Number((microValue * item.weight) / 100).toFixed(2)}
+                    </Text>
                   </Box>
                 )
               )}

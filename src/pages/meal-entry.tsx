@@ -35,11 +35,16 @@ import {
   ACTIONS,
   inititalNutrition,
   ItemEntry,
+  MealEntry,
   useItems,
   useStore,
 } from "../store";
 import DinnerArt from "../svg/DinnerArt";
-import { computeWeightedNutrition, mapNutrition } from "../util/nutrition";
+import {
+  computeMicroNutritionFromLog,
+  computeWeightedNutrition,
+  mapNutrition,
+} from "../util/nutrition";
 
 const FramerHStack = motion(HStack);
 
@@ -201,7 +206,7 @@ export default function MealEntryPage() {
     name: string;
     timestamp?: number;
   }) {
-    const entry = {
+    const entry: MealEntry = {
       nutrition: portionNutrition,
       items: addedItems,
       timestamp,
@@ -209,6 +214,8 @@ export default function MealEntryPage() {
       portionWeight,
       totalWeight,
     };
+
+    entry.micro = computeMicroNutritionFromLog([entry]);
 
     dispatch(
       router.query.index && router.query.edit

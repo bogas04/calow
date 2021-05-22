@@ -5,7 +5,6 @@ import {
   Heading,
   IconButton,
   IconButtonProps,
-  Icon,
   Text,
   Menu,
   MenuItem,
@@ -19,13 +18,17 @@ import {
   EditIcon,
   RepeatClockIcon,
 } from "@chakra-ui/icons";
-import { BsThreeDotsVertical as ThreeDotsIcon } from "react-icons/bs";
+import {
+  BsThreeDots,
+  BsThreeDotsVertical as ThreeDotsIcon,
+} from "react-icons/bs";
 import React, { memo, useState } from "react";
 import { MealEntry } from "../store";
 import { mapNutrition } from "../util/nutrition";
 import { getTimeDifference } from "../util/time";
 import ItemNutrition from "./ItemNutrition";
 import NutritionBar from "./NutritionBar";
+import ExpandedItemNutritionModal from "./ExpandedItemNutritionModal";
 
 export interface MealNutritionProps {
   meal: MealEntry;
@@ -40,9 +43,12 @@ function MealNutrition({
   onDelete,
   onEdit,
 }: MealNutritionProps) {
-  const [show, setShow] = useState(false);
+  const [showItemDetails, setShowItemDetails] = useState(false);
+  const [showMicroNutrientsModal, setShowMicroNutrientsModal] = useState(false);
+  const closeMicroNutrientsModal = () => setShowMicroNutrientsModal(false);
+  const openMicroNutrientsModal = () => setShowMicroNutrientsModal(true);
 
-  const handleToggle = () => setShow(!show);
+  const handleToggle = () => setShowItemDetails(!showItemDetails);
 
   return (
     <>
@@ -54,9 +60,9 @@ function MealNutrition({
             isRound
             size="sm"
             variant="ghost"
-            aria-label={show ? "Hide Details" : "Show Details"}
+            aria-label={showItemDetails ? "Hide Details" : "Show Details"}
             onClick={handleToggle}
-            icon={show ? <ChevronUpIcon /> : <ChevronDownIcon />}
+            icon={showItemDetails ? <ChevronUpIcon /> : <ChevronDownIcon />}
           />
           <Menu>
             <MenuButton
@@ -91,7 +97,17 @@ function MealNutrition({
         </Flex>
       </Flex>
 
-      <NutritionBar nutrition={meal.nutrition} border={false} />
+      <Flex justify="space-between" align="flex-start">
+        <NutritionBar nutrition={meal.nutrition} border={false} />
+        <IconButton
+          variant="ghost"
+          rounded="full"
+          color="gray.500"
+          icon={<BsThreeDots />}
+          aria-label="Micronutrients"
+          onClick={openMicroNutrientsModal}
+        />
+      </Flex>
       <Flex align="center" flex="1" mt="2" mb="6">
         <Text fontSize="xs" color="gray.600" fontWeight="300">
           {meal.portionWeight === meal.totalWeight
@@ -103,7 +119,7 @@ function MealNutrition({
           {getTimeDifference(meal.timestamp)}
         </Text>
       </Flex>
-      <Collapse in={show}>
+      <Collapse in={showItemDetails}>
         <Box pl="4">
           <ItemNutrition
             size="sm"
@@ -124,6 +140,17 @@ function MealNutrition({
           ))}
         </Box>
       </Collapse>
+      <ExpandedItemNutritionModal
+        hideWeight
+        item={{
+          name: meal.name,
+          nutrition: meal.nutrition,
+          micro: meal.micro,
+          weight: 100,
+        }}
+        onClose={closeMicroNutrientsModal}
+        isOpen={showMicroNutrientsModal}
+      />
     </>
   );
 }
