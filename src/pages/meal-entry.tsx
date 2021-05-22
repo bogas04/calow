@@ -41,7 +41,7 @@ import {
 import DinnerArt from "../svg/DinnerArt";
 import { computeWeightedNutrition, mapNutrition } from "../util/nutrition";
 
-const FramerHStack = motion.custom(HStack);
+const FramerHStack = motion(HStack);
 
 export default function MealEntryPage() {
   const {
@@ -62,7 +62,7 @@ export default function MealEntryPage() {
   const searchResults = useMemo(() => {
     const f = new Fuse(items, { keys: ["name"], threshold: 0.25 });
     return [
-      { name: `"${searchQuery.replaceAll('"', "")}"` } as ItemEntry,
+      { name: `"${searchQuery.replace(/"/gi, "")}"` } as ItemEntry,
     ].concat(
       f
         .search(searchQuery)

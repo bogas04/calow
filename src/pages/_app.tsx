@@ -1,3 +1,4 @@
+import "core-js/features/object/from-entries";
 import { ChakraProvider, Flex, Box } from "@chakra-ui/react";
 import { AppProps } from "next/app";
 import Head from "next/head";
