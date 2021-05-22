@@ -11,7 +11,7 @@ import {
 } from "@chakra-ui/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState, MouseEventHandler } from "react";
+import { useState, MouseEventHandler, MouseEvent } from "react";
 
 import { CgGlassAlt as WaterGlassIcon } from "react-icons/cg";
 import { getShortMonth } from "../util/time";
@@ -51,17 +51,11 @@ export default function HomePage() {
       },
     });
   };
-  const onDelete: MouseEventHandler<HTMLButtonElement> = (e) => {
-    const itemIndex = getClosestDatasetKey(e, "index");
-    if (!itemIndex) {
-      alert(
-        "This shouldn't have happened.\nCouldn't find proper meal position."
-      );
-      return;
-    }
-    const index = Number(itemIndex);
 
+  const onDelete: MouseEventHandler<HTMLButtonElement> = (e) => {
+    const index = getMealIndexFromMenuButton(e);
     const meal = log[index];
+
     if (
       window.confirm(
         `Are you sure you want to delete "${meal.name}" with ${
@@ -82,15 +76,9 @@ export default function HomePage() {
   };
 
   const onRepeat: MouseEventHandler<HTMLButtonElement> = (e) => {
-    const itemIndex = getClosestDatasetKey(e, "index");
-    if (!itemIndex) {
-      alert(
-        "This shouldn't have happened.\nCouldn't find proper meal position."
-      );
-      return;
-    }
-    const index = Number(itemIndex);
+    const index = getMealIndexFromMenuButton(e);
     const meal = log[index];
+
     dispatch({
       type: ACTIONS.SET_MEAL_ENTRY_ITEMS,
 
@@ -106,14 +94,7 @@ export default function HomePage() {
   };
 
   const onEdit: MouseEventHandler<HTMLButtonElement> = (e) => {
-    const itemIndex = getClosestDatasetKey(e, "index");
-    if (!itemIndex) {
-      alert(
-        "This shouldn't have happened.\nCouldn't find proper meal position."
-      );
-      return;
-    }
-    const index = Number(itemIndex);
+    const index = getMealIndexFromMenuButton(e);
     const meal = log[index];
 
     dispatch({
@@ -184,7 +165,7 @@ export default function HomePage() {
             </Box>
           )}
           {log.map((meal, index) => (
-            <Box key={index} data-index={index}>
+            <Box key={index} {...{ [`data-${MEAL_INDEX_DATA_ATTR}`]: index }}>
               <MealNutrition
                 meal={meal}
                 onDelete={onDelete}
@@ -261,3 +242,17 @@ const FABProps: ChakraProps = {
   bg: "green.400",
   color: "white",
 };
+
+function getMealIndexFromMenuButton(e: MouseEvent<HTMLButtonElement>) {
+  const itemIndex = getClosestDatasetKey(e, MEAL_INDEX_DATA_ATTR);
+  if (itemIndex === null || itemIndex === undefined) {
+    throw new Error(
+      "This shouldn't have happened.\nCouldn't find proper meal position."
+    );
+  }
+  const index = Number(itemIndex);
+
+  return index;
+}
+
+const MEAL_INDEX_DATA_ATTR = "mealindex";
