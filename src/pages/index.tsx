@@ -27,6 +27,8 @@ import MealNutrition from "../components/MealNutrition";
 import NutritionBar from "../components/NutritionBar";
 import { BsDropletFill, BsDropletHalf } from "react-icons/bs";
 
+// Disabled due to low usage.
+const isWaterEnabled = false;
 export default function HomePage() {
   const [date, setDate] = useState(TODAY);
   const router = useRouter();
@@ -149,21 +151,23 @@ export default function HomePage() {
             <NutritionBar nutrition={nutrition} />
           </Flex>
 
-          <Grid
-            overflow="auto"
-            mx={[-4]}
-            p="4"
-            autoColumns="1fr"
-            autoFlow="column"
-            gap={2}
-            my={4}
-          >
-            <Icon
-              minW={10}
-              color={goal.water > water ? "gray.400" : "gray.800"}
-              as={goal.water > water ? BsDropletHalf : BsDropletFill}
-            />
-          </Grid>
+          {isWaterEnabled && (
+            <Grid
+              overflow="auto"
+              mx={[-4]}
+              p="4"
+              autoColumns="1fr"
+              autoFlow="column"
+              gap={2}
+              my={4}
+            >
+              <Icon
+                minW={10}
+                color={goal.water > water ? "gray.400" : "gray.800"}
+                as={goal.water > water ? BsDropletHalf : BsDropletFill}
+              />
+            </Grid>
+          )}
 
           <DateBar date={date} onChange={setDate} />
         </Box>
@@ -193,18 +197,20 @@ export default function HomePage() {
 
         {isSelectedDateToday ? (
           <Grid {...FABContainerProps} autoFlow="row" gap={2}>
-            <IconButton
-              variant="ghost"
-              {...FABProps}
-              height="10"
-              width="10"
-              type="button"
-              bg="blue.600"
-              aria-label="Add water glass"
-              onClick={onAddWater}
-              justifySelf="center"
-              icon={<WaterGlassIcon size="20" />}
-            />
+            {isWaterEnabled && (
+              <IconButton
+                variant="ghost"
+                {...FABProps}
+                height="10"
+                width="10"
+                type="button"
+                bg="blue.600"
+                aria-label="Add water glass"
+                onClick={onAddWater}
+                justifySelf="center"
+                icon={<WaterGlassIcon size="20" />}
+              />
+            )}
             <Link href="/meal-entry">
               <ChakraLink {...FABProps} title="Add log item" userSelect="none">
                 +
