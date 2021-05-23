@@ -80,6 +80,15 @@ export default function MealEntryPage() {
     searchQuery !== "" && !searchResults.find((x) => x.name === searchQuery);
 
   useEffect(() => {
+    // on page unload, reset the state
+    return () => {
+      dispatch({
+        type: ACTIONS.RESET_MEAL_ENTRY_ITEMS,
+      });
+    };
+  }, []);
+
+  useEffect(() => {
     const index = Number(router.query.index);
     const meal = log[index];
 
