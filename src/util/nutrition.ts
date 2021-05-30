@@ -71,27 +71,24 @@ export function computeMacroFromCalories(
 }
 
 export function computeMicroNutritionFromLog(entries: MealEntry[]) {
-  const totalMicro: Record<string, number> = {};
-  for (const meal of entries) {
-    // add micro of all items in the meal based on their weight
-    for (const item of meal.items) {
-      for (const [microName, valuePer100] of Object.entries(item.micro ?? {})) {
-        totalMicro[microName] ??= 0;
-        totalMicro[microName] += (valuePer100 * item.weight) / 100;
-        console.log(
-          `${item.weight}g of ${item.name} has ${totalMicro[microName]} ${microName}`
-        );
-      }
-    }
+  // will contain micro of all items in the meals based on their weight
+  const totalMicros: Record<string, number> = {};
 
-    // adjust for meal portion
-    for (const [microName, valuePerTotal] of Object.entries(totalMicro)) {
-      totalMicro[microName] =
-        (valuePerTotal * meal.portionWeight) / meal.totalWeight;
+  for (const meal of entries) {
+    const mealMultiplier = meal.portionWeight / meal.totalWeight;
+
+    for (const item of meal.items) {
+      // portion of item consumed in the meal
+      const itemMultiplier = (item.weight / 100) * mealMultiplier;
+
+      for (const [microName, valuePer100] of Object.entries(item.micro ?? {})) {
+        totalMicros[microName] ??= 0;
+        totalMicros[microName] += valuePer100 * itemMultiplier;
+      }
     }
   }
 
-  return totalMicro;
+  return totalMicros;
 }
 
 export function computeMacroNutritionFromLog(entries: MealEntry[]) {
