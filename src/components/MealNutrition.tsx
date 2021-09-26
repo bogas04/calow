@@ -19,6 +19,10 @@ import {
   RepeatClockIcon,
 } from "@chakra-ui/icons";
 import {
+  BiBookmarkMinus as RemoveBookmarkIcon,
+  BiBookmarkPlus as AddBookmarkIcon,
+} from "react-icons/bi";
+import {
   BsThreeDots,
   BsThreeDotsVertical as ThreeDotsIcon,
 } from "react-icons/bs";
@@ -35,6 +39,8 @@ export interface MealNutritionProps {
   onDelete?: IconButtonProps["onClick"];
   onEdit?: IconButtonProps["onClick"];
   onRepeat?: IconButtonProps["onClick"];
+  onBookmark?: IconButtonProps["onClick"];
+  bookmarked?: boolean;
 }
 
 function MealNutrition({
@@ -42,6 +48,8 @@ function MealNutrition({
   onRepeat,
   onDelete,
   onEdit,
+  onBookmark,
+  bookmarked,
 }: MealNutritionProps) {
   const [showItemDetails, setShowItemDetails] = useState(false);
   const [showMicroNutrientsModal, setShowMicroNutrientsModal] = useState(false);
@@ -90,6 +98,14 @@ function MealNutrition({
                 <MenuItem onClick={onRepeat}>
                   <RepeatClockIcon mr={2} />
                   Repeat
+                </MenuItem>
+              )}
+              {onBookmark && (
+                <MenuItem onClick={onBookmark}>
+                  <Box mr={2}>
+                    {bookmarked ? <RemoveBookmarkIcon /> : <AddBookmarkIcon />}
+                  </Box>
+                  {bookmarked ? "Remove Bookmark" : "Add Bookmark"}
                 </MenuItem>
               )}
             </MenuList>

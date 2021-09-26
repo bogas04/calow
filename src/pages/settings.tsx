@@ -43,9 +43,10 @@ export default function SettingsPage() {
   const [isSliderDisabled, setIsSliderDisabled] = useState(true);
 
   const { body, goal, logs } = store;
-  const { bmr, caloricNeeds } = useMemo(() => computeCaloricNeeds(body), [
-    body,
-  ]);
+  const { bmr, caloricNeeds } = useMemo(
+    () => computeCaloricNeeds(body),
+    [body]
+  );
   const daysOfData = Object.keys(logs).length;
 
   useEffect(() => {
@@ -316,6 +317,7 @@ export default function SettingsPage() {
                         goal: json.goal,
                         logs: json.logs,
                         body: json.body,
+                        bookmarks: json.bookmarks,
                       },
                     });
                     alert("Successfully imported!");
@@ -323,7 +325,7 @@ export default function SettingsPage() {
                     throw new Error("No file selected");
                   }
                 } catch (err) {
-                  alert(err.message);
+                  alert((err as Error).message);
                 }
               }}
             />

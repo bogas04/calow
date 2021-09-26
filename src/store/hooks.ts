@@ -19,14 +19,18 @@ export function useStoreReducer() {
   useEffect(() => {
     (async () => {
       try {
-        const [body, goal, logs] = await Promise.all([
+        const [body, goal, logs, bookmarks = []] = await Promise.all([
           get<Store["body"]>("body"),
           get<Store["goal"]>("goal"),
           get<Store["logs"]>("logs"),
+          get<Store["bookmarks"]>("bookmarks"),
         ]);
 
         if (body && goal && logs) {
-          dispatch({ type: ACTIONS.SET, payload: { body, goal, logs } });
+          dispatch({
+            type: ACTIONS.SET,
+            payload: { body, goal, logs, bookmarks },
+          });
         }
       } catch (err) {
         alert("Sorry! We couldn't restore data stored in your phone.");
@@ -34,6 +38,9 @@ export function useStoreReducer() {
     })();
   }, []);
 
+  useEffect(() => {
+    set("bookmarks", store.bookmarks);
+  }, [store.bookmarks]);
   useEffect(() => {
     set("body", store.body);
   }, [store.body]);
@@ -59,6 +66,7 @@ export function useStore(time?: number) {
   const store = useContext(StoreContext);
 
   const log = store.logs[getDateKey(time || Date.now())] || [];
+  const bookmarks = store.bookmarks || [];
 
   return {
     ...store,
@@ -66,6 +74,7 @@ export function useStore(time?: number) {
     nutrition: computeMacroNutritionFromLog(log),
     micro: computeMicroNutritionFromLog(log),
     log,
+    bookmarks,
   };
 }
 

@@ -8,7 +8,7 @@ import { useEffect } from "react";
 import { StoreContext, useStoreReducer } from "../store";
 import {
   BiHome as HomeIcon,
-  BiSearch as SearchIcon,
+  BiBookmarks as BookmarkIcon,
   BiWrench as SettingsIcon,
   BiListUl as ItemsIcon,
 } from "react-icons/bi";
@@ -116,11 +116,11 @@ function App({
                       <HomeIcon size="24" />
                     </NavLink>
                   </li>
-                  {/* <li>
-                    <NavLink href="/search" title="Open Search">
-                      <SearchIcon size="24"/>
+                  <li>
+                    <NavLink href="/bookmarks" title="Bookmarks">
+                      <BookmarkIcon size="24" />
                     </NavLink>
-                  </li> */}
+                  </li>
                   <li>
                     <NavLink href="/items" title="Open Item Catalog">
                       <ItemsIcon size="24" />

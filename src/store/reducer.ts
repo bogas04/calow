@@ -27,6 +27,8 @@ export const defaultState = {
     totalWeight: 0,
     portionWeight: 0,
   },
+  /** saved meal items */
+  bookmarks: [] as { date: string; index: number }[],
 };
 
 export interface Store extends Required<typeof defaultState> {}
@@ -60,6 +62,10 @@ export enum ACTIONS {
   SET_MEAL_ENTRY_TOTAL_WEIGHT,
   /** Set meal entry's portion weight */
   SET_MEAL_ENTRY_PORTION_WEIGHT,
+  /** Add bookmark */
+  ADD_BOOKMARK,
+  /** Remove bookmark */
+  REMOVE_BOOKMARK,
 }
 
 export type Action =
@@ -107,7 +113,9 @@ export type Action =
     }
   | { type: ACTIONS.RESET_MEAL_ENTRY_ITEMS }
   | { type: ACTIONS.SET_MEAL_ENTRY_PORTION_WEIGHT; payload: number }
-  | { type: ACTIONS.SET_MEAL_ENTRY_TOTAL_WEIGHT; payload: number };
+  | { type: ACTIONS.SET_MEAL_ENTRY_TOTAL_WEIGHT; payload: number }
+  | { type: ACTIONS.ADD_BOOKMARK; payload: { date: string; index: number } }
+  | { type: ACTIONS.REMOVE_BOOKMARK; payload: { date: string; index: number } };
 
 export const reducer: Reducer<Store, Action> = (state, action) => {
   switch (action.type) {
@@ -264,6 +272,23 @@ export const reducer: Reducer<Store, Action> = (state, action) => {
       return {
         ...state,
         mealEntry: { ...state.mealEntry, portionWeight: action.payload },
+      };
+    }
+    case ACTIONS.ADD_BOOKMARK: {
+      return {
+        ...state,
+        bookmarks: (state.bookmarks || []).concat(action.payload),
+      };
+    }
+    case ACTIONS.REMOVE_BOOKMARK: {
+      const bookmarks = state.bookmarks.filter(
+        (x) =>
+          !(x.index === action.payload.index && x.date === action.payload.date)
+      );
+
+      return {
+        ...state,
+        bookmarks,
       };
     }
     default:

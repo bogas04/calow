@@ -14,9 +14,9 @@ import { useRouter } from "next/router";
 import { useState, MouseEventHandler, MouseEvent } from "react";
 
 import { CgGlassAlt as WaterGlassIcon } from "react-icons/cg";
-import { getShortMonth } from "../util/time";
+import { getDateKey, getShortMonth } from "../util/time";
 import { getClosestDatasetKey } from "../util/dom";
-import { ACTIONS, inititalNutrition, useStore } from "../store";
+import { ACTIONS, inititalNutrition, Store, useStore } from "../store";
 import EmptyArt from "../svg/EmptyArt";
 
 import { Meter } from "../components/Meter";
@@ -35,7 +35,8 @@ export default function HomePage() {
   const [date, setDate] = useState(TODAY);
   const router = useRouter();
   const [isInfoModalOpen, setInfoModalOpen] = useState(false);
-  const { dispatch, goal, nutrition, micro, water, log } = useStore(date);
+  const { dispatch, bookmarks, goal, nutrition, micro, water, log } =
+    useStore(date);
   const isSelectedDateToday = date > TODAY - DAY;
 
   const onAddWater = () => {
@@ -94,6 +95,16 @@ export default function HomePage() {
     });
 
     router.push("/meal-entry");
+  };
+
+  const onBookmark: MouseEventHandler<HTMLButtonElement> = (e) => {
+    const index = getMealIndexFromMenuButton(e);
+    const bookmarked = isBookmarked(bookmarks, date, index);
+
+    dispatch({
+      type: bookmarked ? ACTIONS.REMOVE_BOOKMARK : ACTIONS.ADD_BOOKMARK,
+      payload: { date: getDateKey(date), index },
+    });
   };
 
   const onEdit: MouseEventHandler<HTMLButtonElement> = (e) => {
@@ -197,6 +208,8 @@ export default function HomePage() {
                 onDelete={onDelete}
                 onEdit={isSelectedDateToday ? onEdit : undefined}
                 onRepeat={onRepeat}
+                onBookmark={onBookmark}
+                bookmarked={isBookmarked(bookmarks, date, index)}
               />
             </Box>
           ))}
@@ -295,3 +308,15 @@ function getMealIndexFromMenuButton(e: MouseEvent<HTMLButtonElement>) {
 }
 
 const MEAL_INDEX_DATA_ATTR = "mealindex";
+
+function isBookmarked(
+  bookmarks: Store["bookmarks"],
+  date: number,
+  index: number
+) {
+  return (
+    typeof bookmarks.find(
+      (x) => x.date === getDateKey(date) && x.index === index
+    ) !== "undefined"
+  );
+}
