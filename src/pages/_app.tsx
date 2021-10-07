@@ -9,6 +9,7 @@ import { StoreContext, useStoreReducer } from "../store";
 import {
   BiHome as HomeIcon,
   BiBookmarks as BookmarkIcon,
+  BiSearch as SearchIcon,
   BiWrench as SettingsIcon,
   BiListUl as ItemsIcon,
 } from "react-icons/bi";
@@ -119,6 +120,11 @@ function App({
                   <li>
                     <NavLink href="/bookmarks" title="Bookmarks">
                       <BookmarkIcon size="24" />
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink href="/search" title="Search">
+                      <SearchIcon size="24" />
                     </NavLink>
                   </li>
                   <li>

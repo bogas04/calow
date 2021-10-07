@@ -33,6 +33,15 @@ export const getDateKey = (time: number) => {
   ).padStart(2, "0")}/${d.getFullYear()}`;
 };
 
+export const formatDateKey = (key: string) => {
+  const [date, month, year] = key.split("/").map(Number);
+  const d = new Date();
+  d.setDate(date);
+  d.setMonth(month - 1);
+  d.setFullYear(year);
+
+  return formatShortDate(d);
+};
 const months = [
   "Jan",
   "Feb",

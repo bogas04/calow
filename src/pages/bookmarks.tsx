@@ -21,6 +21,7 @@ export default function BookmarksPage() {
       payload: { date, index },
     });
   };
+
   const onRepeat: MouseEventHandler<HTMLButtonElement> = (e) => {
     const localIndex = getMealIndexFromMenuButton(e);
     const { meal } = filteredBookmarks[localIndex];
@@ -37,6 +38,7 @@ export default function BookmarksPage() {
 
     router.push("/meal-entry");
   };
+
   const filteredBookmarks = useMemo(() => {
     const processedBookmarks = bookmarks.map((x) => ({
       date: x.date,
