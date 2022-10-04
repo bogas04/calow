@@ -1,5 +1,11 @@
-import { createContext, useContext, useEffect, useReducer } from "react";
-import { get, set } from "idb-keyval";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useReducer,
+  useRef,
+} from "react";
+import { getMany, update } from "idb-keyval";
 import useSWR from "swr";
 
 import { ACTIONS, Action, defaultState, reducer } from "./reducer";
@@ -15,16 +21,28 @@ import { Store } from ".";
 
 export function useStoreReducer() {
   const [store, dispatch] = useReducer(reducer, defaultState);
+  /**
+   * A boolean ref to check if we've read from the database
+   * doesn't need to be a state variable as it's tied to `store`
+   */
+  const hasLoadedFromDataBase = useRef(false);
 
   useEffect(() => {
-    (async () => {
+    const bootstrap = async () => {
       try {
-        const [body, goal, logs, bookmarks = []] = await Promise.all([
-          get<Store["body"]>("body"),
-          get<Store["goal"]>("goal"),
-          get<Store["logs"]>("logs"),
-          get<Store["bookmarks"]>("bookmarks"),
-        ]);
+        const [body, goal, logs, bookmarks = []] = (await getMany([
+          "body",
+          "goal",
+          "logs",
+          "bookmarks",
+        ])) as [
+          Store["body"],
+          Store["goal"],
+          Store["logs"],
+          Store["bookmarks"]
+        ];
+
+        hasLoadedFromDataBase.current = true;
 
         if (body && goal && logs) {
           dispatch({
@@ -35,26 +53,74 @@ export function useStoreReducer() {
       } catch (err) {
         alert("Sorry! We couldn't restore data stored in your phone.");
       }
-    })();
+    };
+
+    bootstrap();
+
+    window.calowResetStore = bootstrap;
+    window.calowClearStore = () =>
+      dispatch({
+        type: ACTIONS.SET,
+        payload: {
+          body: defaultState.body,
+          goal: defaultState.goal,
+          logs: defaultState.logs,
+          bookmarks: defaultState.bookmarks,
+        },
+      });
+
+    return () => {
+      window.calowResetStore = undefined;
+      window.calowClearStore = undefined;
+    };
   }, []);
 
-  useEffect(() => {
-    set("bookmarks", store.bookmarks);
-  }, [store.bookmarks]);
-  useEffect(() => {
-    set("body", store.body);
-  }, [store.body]);
-  useEffect(() => {
-    set("goal", store.goal);
-  }, [store.goal]);
-  useEffect(() => {
-    set("logs", store.logs);
-  }, [store.logs]);
+  useSyncedKey("bookmarks", store.bookmarks, hasLoadedFromDataBase.current);
+  useSyncedKey("body", store.body, hasLoadedFromDataBase.current);
+  useSyncedKey("goal", store.goal, hasLoadedFromDataBase.current);
+  useSyncedKey("logs", store.logs, hasLoadedFromDataBase.current);
 
   return {
     ...store,
     dispatch,
   };
+}
+
+/**
+ * A custom hook that is typed to save a key and value to idb-keyval database,
+ * along with a confirmation message in case new value is empty and old value is not,
+ * i.e. deletion of a key.
+ */
+function useSyncedKey<K extends SavedKeys>(
+  key: K,
+  newValue: Store[K],
+  isReady: boolean
+) {
+  useEffect(() => {
+    /**
+     * If we've not yet read from the databse
+     * then this particular render is to be ignored
+     * so that we don't risk clearing the persistend value pre-maturely
+     */
+    if (!isReady) {
+      return;
+    }
+
+    update<Store[K]>(key, (oldValue) => {
+      const isNewValueEmpty = isEmpty[key](newValue);
+      const isOldValueNotEmpty = oldValue && !isEmpty[key](oldValue);
+
+      if (
+        isNewValueEmpty &&
+        isOldValueNotEmpty &&
+        !confirm(deletionMessages[key]) // ask user for confirmation
+      ) {
+        window.calowResetStore?.();
+        return oldValue;
+      }
+      return newValue;
+    });
+  }, [key, newValue, isReady]);
 }
 
 export const StoreContext = createContext({
@@ -170,3 +236,45 @@ export function useItems() {
     error,
   };
 }
+
+declare global {
+  interface Window {
+    /**
+     * Resets app state from database
+     */
+    calowResetStore?(): void;
+    /**
+     * Clears app state but doesn't update database
+     * used for debugging purposes
+     */
+    calowClearStore?(): void;
+  }
+}
+
+/**
+ * All the keys that are saved in idb-keyval database
+ */
+type SavedKeys = Extract<keyof Store, "goal" | "logs" | "body" | "bookmarks">;
+
+/**
+ * Confirmation message in case user wishes to delete any of the saved keys
+ */
+const deletionMessages: Record<SavedKeys, string> = {
+  body: "Are you sure you want to delete your body data?",
+  bookmarks: "Are you sure you want to delete your bookmarks?",
+  logs: "Are you sure you want to delete your logs?",
+  goal: "Are you sure you want to delete your goal data?",
+};
+
+/**
+ * Helper object that has isEmpty functions for saved keys
+ */
+const isEmpty: { [key in SavedKeys]: (v?: Store[key]) => boolean } = {
+  body: (body?: Store["body"]) =>
+    (body || defaultState.body).height === defaultState.body.height,
+  goal: (goal?: Store["goal"]) =>
+    (goal || defaultState.goal).nutrition.calories ===
+    defaultState.goal.nutrition.calories,
+  logs: (logs?: Store["logs"]) => Object.keys(logs || {}).length === 0,
+  bookmarks: (bookmarks?: Store["bookmarks"]) => bookmarks?.length == -0,
+};
