@@ -1,38 +1,34 @@
 import {
-  Flex,
-  Box,
-  Collapse,
-  Heading,
-  IconButton,
-  IconButtonProps,
-  Text,
-  Menu,
-  MenuItem,
-  MenuList,
-  MenuButton,
-} from "@chakra-ui/react";
-import {
   ChevronDownIcon,
   ChevronUpIcon,
   DeleteIcon,
   EditIcon,
+  LinkIcon as ShareIcon,
   RepeatClockIcon,
 } from "@chakra-ui/icons";
 import {
-  BiBookmarkMinus as RemoveBookmarkIcon,
-  BiBookmarkPlus as AddBookmarkIcon,
-} from "react-icons/bi";
-import {
-  BsThreeDots,
-  BsThreeDotsVertical as ThreeDotsIcon,
-} from "react-icons/bs";
-import React, { memo, useState } from "react";
+  Box,
+  Collapse,
+  Flex,
+  Heading,
+  IconButton,
+  IconButtonProps,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  Text,
+} from "@chakra-ui/react";
+import { memo, useCallback, useState } from "react";
+import { BiBookmarkMinus as RemoveBookmarkIcon, BiBookmarkPlus as AddBookmarkIcon } from "react-icons/bi";
+import { BsThreeDots, BsThreeDotsVertical as ThreeDotsIcon } from "react-icons/bs";
 import { MealEntry } from "../store";
 import { mapNutrition } from "../util/nutrition";
 import { getTimeDifference } from "../util/time";
+import ExpandedItemNutritionModal from "./ExpandedItemNutritionModal";
 import ItemNutrition from "./ItemNutrition";
 import NutritionBar from "./NutritionBar";
-import ExpandedItemNutritionModal from "./ExpandedItemNutritionModal";
+import { ShareModal } from "./ShareMealModal";
 
 export interface MealNutritionProps {
   meal: MealEntry;
@@ -43,18 +39,14 @@ export interface MealNutritionProps {
   bookmarked?: boolean;
 }
 
-function MealNutrition({
-  meal,
-  onRepeat,
-  onDelete,
-  onEdit,
-  onBookmark,
-  bookmarked,
-}: MealNutritionProps) {
+function MealNutrition({ meal, onRepeat, onDelete, onEdit, onBookmark, bookmarked }: MealNutritionProps) {
   const [showItemDetails, setShowItemDetails] = useState(false);
   const [showMicroNutrientsModal, setShowMicroNutrientsModal] = useState(false);
-  const closeMicroNutrientsModal = () => setShowMicroNutrientsModal(false);
-  const openMicroNutrientsModal = () => setShowMicroNutrientsModal(true);
+  const [showShareModal, setShowShareModal] = useState(false);
+  const closeMicroNutrientsModal = useCallback(() => setShowMicroNutrientsModal(false), []);
+  const openMicroNutrientsModal = useCallback(() => setShowMicroNutrientsModal(true), []);
+  const closeShareModal = useCallback(() => setShowShareModal(false), []);
+  const openShareModal = useCallback(() => setShowShareModal(true), []);
 
   const handleToggle = () => setShowItemDetails(!showItemDetails);
 
@@ -94,6 +86,10 @@ function MealNutrition({
                   Delete
                 </MenuItem>
               )}
+              <MenuItem onClick={openShareModal}>
+                <ShareIcon mr={2} />
+                Share
+              </MenuItem>
               {onRepeat && (
                 <MenuItem onClick={onRepeat}>
                   <RepeatClockIcon mr={2} />
@@ -102,9 +98,7 @@ function MealNutrition({
               )}
               {onBookmark && (
                 <MenuItem onClick={onBookmark}>
-                  <Box mr={2}>
-                    {bookmarked ? <RemoveBookmarkIcon /> : <AddBookmarkIcon />}
-                  </Box>
+                  <Box mr={2}>{bookmarked ? <RemoveBookmarkIcon /> : <AddBookmarkIcon />}</Box>
                   {bookmarked ? "Remove Bookmark" : "Add Bookmark"}
                 </MenuItem>
               )}
@@ -142,10 +136,7 @@ function MealNutrition({
             item={{
               name: "Nutritional Value / 100 grams",
               weight: 100,
-              nutrition: mapNutrition(
-                meal.nutrition,
-                (_, value) => (value * 100) / meal.portionWeight
-              ),
+              nutrition: mapNutrition(meal.nutrition, (_, value) => (value * 100) / meal.portionWeight),
             }}
             bg="blue.50"
             rounded="md"
@@ -167,6 +158,7 @@ function MealNutrition({
         onClose={closeMicroNutrientsModal}
         isOpen={showMicroNutrientsModal}
       />
+      <ShareModal isOpen={showShareModal} onClose={closeShareModal} meal={meal} />
     </>
   );
 }

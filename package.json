@@ -37,5 +37,8 @@
     "@next/bundle-analyzer": "^12.3.1",
     "@types/node": "^18.8.1",
     "@types/react": "^18.0.21"
+  },
+  "prettier": {
+    "printWidth": 120
   }
 }
