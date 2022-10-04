@@ -39,14 +39,14 @@ function BodyMetricForm({
       <FormControl
         px={1}
         as="fieldset"
-        d="flex"
+        display="flex"
         flexDirection="column"
         justifyContent="space-between"
         my="2"
       >
         <FormLabel as="legend">Gender</FormLabel>
         <RadioGroup
-          d="flex"
+          display="flex"
           justifyContent="space-between"
           name="gender"
           defaultValue={metrics.gender}

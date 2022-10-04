@@ -61,7 +61,7 @@ function CustomItemModal({
         <ModalContent>
           <ModalHeader>
             Add details for{" "}
-            <Text d="inline" textDecoration="underline">
+            <Text display="inline" textDecoration="underline">
               {name}
             </Text>
           </ModalHeader>
@@ -76,7 +76,7 @@ function CustomItemModal({
                   size="sm"
                   w="60px"
                   variant="flushed"
-                  d="inline"
+                  display="inline"
                 />{" "}
                 grams.
               </FormHelperText>

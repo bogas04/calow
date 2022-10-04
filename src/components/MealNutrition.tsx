@@ -60,7 +60,7 @@ function MealNutrition({
 
   return (
     <>
-      <Flex d="flex" justify="space-between" align="center" mb="2">
+      <Flex justify="space-between" align="center" mb="2">
         <Heading size="md">{meal.name}</Heading>
 
         <Flex justify="flex-end" align="center">

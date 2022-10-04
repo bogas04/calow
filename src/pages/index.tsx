@@ -148,13 +148,7 @@ export default function HomePage() {
           mb="2"
         >
           <Meter nutrition={nutrition} goal={goal.nutrition} />
-          <Box
-            justifyContent="flex-end"
-            display="flex"
-            mt="-10"
-            mb="-2"
-            w="90%"
-          >
+          <Flex justify="flex-end" mt="-10" mb="-2" w="90%">
             <IconButton
               aria-label="Micronutrient information"
               color="gray.400"
@@ -163,7 +157,7 @@ export default function HomePage() {
               icon={<InfoIcon />}
               onClick={onInfoClick}
             />
-          </Box>
+          </Flex>
 
           <Flex fontWeight="bold" justify="center" align="center" mb="6">
             <NutritionBar nutrition={nutrition} />
@@ -286,7 +280,7 @@ const FABProps: ChakraProps = {
   width: "16",
   fontSize: "3xl",
   fontWeight: "100",
-  d: "flex",
+  display: "flex",
   alignItems: "center",
   justifyContent: "center",
   _hover: { textDecoration: "none", boxShadow: "lg" },

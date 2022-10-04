@@ -5,10 +5,10 @@ import {
   ModalOverlay,
   ModalContent,
   ModalHeader,
-  Box,
   IconButton,
   CloseButton,
   ModalBody,
+  Flex,
 } from "@chakra-ui/react";
 import React, { memo } from "react";
 import { ItemEntry } from "../store";
@@ -34,7 +34,7 @@ function ExpandedItemNutritionModal({
       <ModalOverlay />
       <ModalContent pb={5}>
         <ModalHeader>
-          <Box d="flex" alignItems="center" justifyContent="space-between">
+          <Flex align="center" justify="space-between">
             {item.name} {hideWeight ? "" : `(${item.weight}g)`}
             <IconButton
               aria-label="close"
@@ -43,7 +43,7 @@ function ExpandedItemNutritionModal({
               variant="ghost"
               onClick={onClose}
             />
-          </Box>
+          </Flex>
         </ModalHeader>
         <ModalBody>
           <NutritionBar nutrition={item.nutrition} border={false} />
@@ -54,11 +54,10 @@ function ExpandedItemNutritionModal({
               </Text>
               {Object.entries(item.micro ?? {}).map(
                 ([microName, microValue]) => (
-                  <Box
+                  <Flex
                     key={microName}
-                    d="flex"
-                    justifyContent="space-between"
-                    alignItems="center"
+                    justify="space-between"
+                    align="center"
                     my="1"
                   >
                     <Text textTransform="capitalize" fontWeight="400">
@@ -67,7 +66,7 @@ function ExpandedItemNutritionModal({
                     <Text>
                       {Number((microValue * item.weight) / 100).toFixed(2)}
                     </Text>
-                  </Box>
+                  </Flex>
                 )
               )}
             </>

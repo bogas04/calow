@@ -79,7 +79,7 @@ export default function SettingsPage() {
         <Heading
           size="lg"
           mb="4"
-          d="flex"
+          display="flex"
           justifyContent="space-between"
           alignItems="center"
         >
@@ -123,7 +123,7 @@ export default function SettingsPage() {
             my="4"
             justifyContent="space-between"
             alignItems="center"
-            d="flex"
+            display="flex"
           >
             Your Goal
             <Tag size="sm" textTransform="uppercase" color={goalInfo.color}>
@@ -135,7 +135,7 @@ export default function SettingsPage() {
           <FormControl mt={4} mb={4}>
             <FormLabel
               fontSize="md"
-              d="flex"
+              display="flex"
               alignItems="center"
               pr="0"
               mt="2"
@@ -189,7 +189,7 @@ export default function SettingsPage() {
 
           <FormControl my={4}>
             <FormLabel
-              d="flex"
+              display="flex"
               alignItems="center"
               pr="0"
               mt="2"
@@ -243,7 +243,7 @@ export default function SettingsPage() {
       <Box mb="12" as="section">
         <Heading
           size="lg"
-          d="flex"
+          display="flex"
           my="4"
           justifyContent="space-between"
           alignItems="center"

@@ -89,7 +89,6 @@ function App({
           <meta property="twitter:title" content={title} />
           <meta property="twitter:description" content={description} />
           <meta property="twitter:image" content={image} />
-          <script async src="https://unpkg.com/thesemetrics@latest"></script>
         </Head>
 
         <Flex direction="column" height="100%">

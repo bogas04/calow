@@ -13,6 +13,8 @@ import {
   Text,
   UnorderedList,
   ListItem,
+  InputGroup,
+  InputRightElement,
 } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 import Fuse from "fuse.js";
@@ -255,7 +257,7 @@ export default function MealEntryPage() {
   const total = portionWeight !== totalWeight && (
     <Flex direction="column" bg="blue.50" p="2" my="4" rounded="md">
       <Heading
-        d="flex"
+        display="flex"
         justifyContent="space-between"
         alignItems="center"
         size="md"
@@ -276,7 +278,7 @@ export default function MealEntryPage() {
   const list = addedItems.map((item, i) => (
     <Flex key={i} direction="column" p="2" mb="1">
       <Heading
-        d="grid"
+        display="grid"
         size="sm"
         mb="2"
         gridGap={2}
@@ -290,6 +292,7 @@ export default function MealEntryPage() {
           inputMode="numeric"
           variant="flushed"
           autoComplete="off"
+          width={"1.2"}
           textAlign="center"
           value={item.weight}
           placeholder="Weight"
@@ -428,7 +431,7 @@ export default function MealEntryPage() {
     <Flex h="100%" direction="column">
       <Page
         heading="Add Entry"
-        d="flex"
+        display="flex"
         flex="1"
         flexDirection="column"
         overflow="auto"
@@ -457,7 +460,7 @@ export default function MealEntryPage() {
           <FramerHStack
             as={UnorderedList}
             listStyleType="none"
-            d="flex"
+            display="flex"
             overflow="auto"
             w="100%"
             m="0"
