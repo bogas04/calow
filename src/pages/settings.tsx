@@ -161,6 +161,10 @@ export default function SettingsPage() {
             </FormLabel>
           </FormControl>
 
+          <Flex mt="4" justify={["center", "flex-start"]} align="center">
+            <NutritionBar nutrition={goal.nutrition} showLegend border={false} />
+          </Flex>
+
           <Collapse in={!isSliderDisabled}>
             <Box py={2}>
               <Slider
@@ -181,9 +185,6 @@ export default function SettingsPage() {
               </Slider>
             </Box>
           </Collapse>
-          <Flex mt="4" justify={["center", "flex-start"]} align="center">
-            <NutritionBar nutrition={goal.nutrition} showLegend border={false} />
-          </Flex>
         </Box>
       )}
       <Box mb="12" as="section">
