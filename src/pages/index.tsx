@@ -11,7 +11,7 @@ import {
 } from "@chakra-ui/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState, MouseEventHandler, MouseEvent } from "react";
+import { useState, MouseEventHandler, MouseEvent, useDeferredValue } from "react";
 
 import { CgGlassAlt as WaterGlassIcon } from "react-icons/cg";
 import { getDateKey, getShortMonth } from "../util/time";
@@ -28,6 +28,7 @@ import NutritionBar from "../components/NutritionBar";
 import { BsDropletFill, BsDropletHalf } from "react-icons/bs";
 import { InfoIcon } from "@chakra-ui/icons";
 import ExpandedItemNutritionModal from "../components/ExpandedItemNutritionModal";
+import { LoadingContainer } from "../components/LoadingContainer";
 
 // Disabled due to low usage.
 const isWaterEnabled = false;
@@ -35,8 +36,19 @@ export default function HomePage() {
   const [date, setDate] = useState(TODAY);
   const router = useRouter();
   const [isInfoModalOpen, setInfoModalOpen] = useState(false);
-  const { dispatch, bookmarks, goal, nutrition, micro, water, log } = useStore(date);
+  const { dispatch, bookmarks, goal, nutrition, micro, water, log: actualLog } = useStore(date);
   const isSelectedDateToday = date > TODAY - DAY;
+
+  /**
+   * Log can be quite big, and we are pretty okay with interruptions
+   * in rendering due to user input, such as tapping a button
+   */
+  const log = useDeferredValue(actualLog);
+  /**
+   * While we're letting user input interrupt rendering, we need to
+   * let user know that the data is stale
+   */
+  const isLogLoading = log !== actualLog && actualLog.length !== 0;
 
   const onAddWater = () => {
     dispatch({
@@ -162,7 +174,7 @@ export default function HomePage() {
           <DateBar date={date} onChange={setDate} />
         </Box>
 
-        <Box py={["1", "10"]} pb="40%" flex="0.7">
+        <LoadingContainer isLoading={isLogLoading} py={["1", "10"]} pb="40%" flex="0.7">
           {log.length === 0 && (
             <Box h={["auto", "30vh"]}>
               <FormControl>
@@ -185,7 +197,7 @@ export default function HomePage() {
               />
             </Box>
           ))}
-        </Box>
+        </LoadingContainer>
 
         {isSelectedDateToday ? (
           <Grid {...FABContainerProps} autoFlow="row" gap={2}>

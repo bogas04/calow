@@ -17,9 +17,10 @@ import {
   Text,
 } from "@chakra-ui/react";
 import Fuse from "fuse.js";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useDeferredValue } from "react";
 import ItemNutrition from "../components/ItemNutrition";
 import { Page } from "../components/layouts";
+import { LoadingContainer } from "../components/LoadingContainer";
 
 import { useItems } from "../store";
 
@@ -40,7 +41,7 @@ export default function ItemsPage() {
     }
   }, []);
 
-  const filteredItems = useMemo(() => {
+  const actualFilteredItems = useMemo(() => {
     let filtered = [...items];
 
     if (query) {
@@ -95,6 +96,17 @@ export default function ItemsPage() {
     });
   }, [query, items, sortBy]);
 
+  /**
+   * filteredItems can be quite big, and we are pretty okay with interruptions
+   * in rendering due to user input, such as typing
+   */
+  const filteredItems = useDeferredValue(actualFilteredItems);
+  /**
+   * While we're letting user input interrupt rendering, we need to
+   * let user know that the data is stale
+   */
+  const isFilteredItemsLoading = filteredItems !== actualFilteredItems && actualFilteredItems.length !== 0;
+
   return (
     <Page heading="Your Items">
       <Grid as="form" templateColumns="auto 100px" gap={2} alignItems="end" onSubmit={(e) => e.preventDefault()}>
@@ -139,7 +151,7 @@ export default function ItemsPage() {
           ))}
         </Box>
       ) : (
-        <>
+        <LoadingContainer isLoading={isFilteredItemsLoading} loadingText="Loading...">
           {filteredItems.length !== 0 && (
             <Box mt="4">
               <Flex justify="space-between" align="center">
@@ -168,7 +180,7 @@ export default function ItemsPage() {
           {filteredItems.map((item, index) => (
             <ItemNutrition item={item} key={index} />
           ))}
-        </>
+        </LoadingContainer>
       )}
     </Page>
   );
