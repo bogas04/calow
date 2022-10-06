@@ -24,12 +24,7 @@ export interface CustomItemModalProps {
   onClose: ModalProps["onClose"];
 }
 
-function CustomItemModal({
-  name,
-  isOpen,
-  onClose,
-  onAdd,
-}: CustomItemModalProps) {
+function CustomItemModal({ name, isOpen, onClose, onAdd }: CustomItemModalProps) {
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = e.currentTarget;

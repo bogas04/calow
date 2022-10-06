@@ -20,12 +20,7 @@ export interface MealNameModalProps {
   defaultName?: string;
 }
 
-function MealNameModal({
-  defaultName,
-  isOpen,
-  onClose,
-  onSubmit,
-}: MealNameModalProps) {
+function MealNameModal({ defaultName, isOpen, onClose, onSubmit }: MealNameModalProps) {
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = e.currentTarget;
@@ -45,13 +40,7 @@ function MealNameModal({
           <ModalBody>
             <FormControl>
               <FormLabel>Meal's Name</FormLabel>
-              <Input
-                name="mealname"
-                type="text"
-                defaultValue={defaultName}
-                isRequired
-                placeholder="Enter meal name"
-              />
+              <Input name="mealname" type="text" defaultValue={defaultName} isRequired placeholder="Enter meal name" />
             </FormControl>
           </ModalBody>
           <ModalFooter>

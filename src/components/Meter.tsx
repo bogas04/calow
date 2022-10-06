@@ -1,12 +1,7 @@
 import { Flex } from "@chakra-ui/react";
 import { Fragment, useEffect, useState } from "react";
 
-import {
-  Nutrition,
-  nutritionColors,
-  nutritionColorsRaw,
-  nutritionKeys,
-} from "../store";
+import { Nutrition, nutritionColors, nutritionColorsRaw, nutritionKeys } from "../store";
 import { mapNutrition } from "../util/nutrition";
 import theme from "../theme";
 
@@ -28,13 +23,7 @@ const common = {
   style: { transition: "all ease-in-out 0.5s" },
 } as const;
 
-export function Meter({
-  nutrition,
-  goal,
-}: {
-  nutrition: Nutrition;
-  goal: Nutrition;
-}) {
+export function Meter({ nutrition, goal }: { nutrition: Nutrition; goal: Nutrition }) {
   const isAndroid_FIXME_USE_SVG_HEART_INSTEAD = useAndroid_FIXME_USE_SVG_HEART_INSTEAD();
   const circlePoint = mapNutrition(nutrition, (key, value) => {
     const degree = 360 * Number(Number(value / goal[key]).toFixed(2));
@@ -56,19 +45,8 @@ export function Meter({
   });
 
   return (
-    <Flex
-      justify="center"
-      align="center"
-      my="2"
-      direction="column"
-      h={["auto", "30vh"]}
-    >
-      <svg
-        viewBox="0 0 100 100"
-        width="100%"
-        height="100%"
-        style={{ margin: "-50px 0" }}
-      >
+    <Flex justify="center" align="center" my="2" direction="column" h={["auto", "30vh"]}>
+      <svg viewBox="0 0 100 100" width="100%" height="100%" style={{ margin: "-50px 0" }}>
         {nutritionKeys.map((k) => {
           const goalMet = nutrition[k] > goal[k];
 
@@ -108,9 +86,7 @@ export function Meter({
                   />
                   <path
                     // This is a tick mark contained within the circle shown at end of the line
-                    d={`M ${circlePoint[k].x - 0.5},${
-                      circlePoint[k].y + 0.8
-                    } l -0.8,-0.8 m 0.8,0.8 l 1.8,-1.5`}
+                    d={`M ${circlePoint[k].x - 0.5},${circlePoint[k].y + 0.8} l -0.8,-0.8 m 0.8,0.8 l 1.8,-1.5`}
                     stroke="white"
                     strokeLinejoin="round"
                     strokeLinecap="round"
@@ -127,15 +103,8 @@ export function Meter({
           y={common.cy + 5}
           fontSize={theme.fontSizes.xs}
           style={{
-            transform: isAndroid_FIXME_USE_SVG_HEART_INSTEAD
-              ? `translateX(-1.5px)`
-              : undefined,
-            opacity: Math.max(
-              goal.calories === 0
-                ? 0
-                : Math.min(nutrition.calories / goal.calories, 1),
-              0.1
-            ),
+            transform: isAndroid_FIXME_USE_SVG_HEART_INSTEAD ? `translateX(-1.5px)` : undefined,
+            opacity: Math.max(goal.calories === 0 ? 0 : Math.min(nutrition.calories / goal.calories, 1), 0.1),
           }}
         >
           {nutrition.calories > goal.calories ? "💘" : "❤️"}

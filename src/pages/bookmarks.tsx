@@ -51,9 +51,7 @@ export default function BookmarksPage() {
       threshold: 0.25,
     });
 
-    return query.trim() === ""
-      ? processedBookmarks
-      : f.search(query.trim()).map((x) => x.item);
+    return query.trim() === "" ? processedBookmarks : f.search(query.trim()).map((x) => x.item);
   }, [query, bookmarks]);
 
   const handleSearch: React.FormEventHandler<HTMLInputElement> = (e) => {
@@ -62,37 +60,17 @@ export default function BookmarksPage() {
 
   return (
     <Page heading="Your Bookmarks">
-      <Grid
-        as="form"
-        templateColumns="auto"
-        gap={2}
-        alignItems="end"
-        onSubmit={(e) => e.preventDefault()}
-      >
+      <Grid as="form" templateColumns="auto" gap={2} alignItems="end" onSubmit={(e) => e.preventDefault()}>
         <FormControl>
           <FormLabel htmlFor="search">Search bookmarks</FormLabel>
 
-          <Input
-            id="search"
-            value={query}
-            placeholder="Search"
-            type="search"
-            onChange={handleSearch}
-          />
+          <Input id="search" value={query} placeholder="Search" type="search" onChange={handleSearch} />
         </FormControl>
       </Grid>
       <Box mt="4">
         {filteredBookmarks.map(({ meal, index, date }, bookmarkIndex) => (
-          <Box
-            key={`${date}-${bookmarkIndex}`}
-            {...{ [`data-${MEAL_INDEX_DATA_ATTR}`]: bookmarkIndex }}
-          >
-            <MealNutrition
-              meal={meal}
-              onRepeat={onRepeat}
-              onBookmark={onBookmark}
-              bookmarked
-            />
+          <Box key={`${date}-${bookmarkIndex}`} {...{ [`data-${MEAL_INDEX_DATA_ATTR}`]: bookmarkIndex }}>
+            <MealNutrition meal={meal} onRepeat={onRepeat} onBookmark={onBookmark} bookmarked />
           </Box>
         ))}
       </Box>
@@ -107,9 +85,7 @@ const MEAL_INDEX_DATA_ATTR = "mealindex";
 function getMealIndexFromMenuButton(e: MouseEvent<HTMLButtonElement>) {
   const itemIndex = getClosestDatasetKey(e, MEAL_INDEX_DATA_ATTR);
   if (itemIndex === null || itemIndex === undefined) {
-    throw new Error(
-      "This shouldn't have happened.\nCouldn't find proper meal position."
-    );
+    throw new Error("This shouldn't have happened.\nCouldn't find proper meal position.");
   }
   const index = Number(itemIndex);
 

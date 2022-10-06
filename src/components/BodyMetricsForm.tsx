@@ -1,25 +1,9 @@
-import {
-  FormControl,
-  FormLabel,
-  RadioGroup,
-  Radio,
-  Input,
-  Box,
-  Grid,
-  Select,
-  Button,
-} from "@chakra-ui/react";
+import { FormControl, FormLabel, RadioGroup, Radio, Input, Box, Grid, Select, Button } from "@chakra-ui/react";
 import React, { memo } from "react";
 
 import { BodyMetrics } from "../store";
 
-function BodyMetricForm({
-  metrics,
-  onChange,
-}: {
-  metrics: BodyMetrics;
-  onChange: (n: BodyMetrics) => void;
-}) {
+function BodyMetricForm({ metrics, onChange }: { metrics: BodyMetrics; onChange: (n: BodyMetrics) => void }) {
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
@@ -36,21 +20,9 @@ function BodyMetricForm({
 
   return (
     <form onSubmit={onSubmit}>
-      <FormControl
-        px={1}
-        as="fieldset"
-        display="flex"
-        flexDirection="column"
-        justifyContent="space-between"
-        my="2"
-      >
+      <FormControl px={1} as="fieldset" display="flex" flexDirection="column" justifyContent="space-between" my="2">
         <FormLabel as="legend">Gender</FormLabel>
-        <RadioGroup
-          display="flex"
-          justifyContent="space-between"
-          name="gender"
-          defaultValue={metrics.gender}
-        >
+        <RadioGroup display="flex" justifyContent="space-between" name="gender" defaultValue={metrics.gender}>
           <Radio name="gender" value="female">
             🙍‍♀️ Female
           </Radio>
@@ -103,9 +75,7 @@ function BodyMetricForm({
           <option value="1.375">Light exercise (1-3 days per week)</option>
           <option value="1.55">Moderate exercise (3-5 days per week)</option>
           <option value="1.725">Heavy exercise (6-7 days per week)</option>
-          <option value="1.9">
-            Very heavy exercise (twice per day, extra heavy workouts)
-          </option>
+          <option value="1.9">Very heavy exercise (twice per day, extra heavy workouts)</option>
         </Select>
       </FormControl>
       <Box px={1} pt={6}>

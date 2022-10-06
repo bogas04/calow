@@ -26,11 +26,7 @@ import { Page } from "../components/layouts";
 import NutritionBar from "../components/NutritionBar";
 import { Store, ACTIONS, useStore } from "../store";
 import { readFile } from "../util/dom";
-import {
-  computeCaloricNeeds,
-  computeMacroFromCalories,
-  macroCombination,
-} from "../util/nutrition";
+import { computeCaloricNeeds, computeMacroFromCalories, macroCombination } from "../util/nutrition";
 import { capitalize, roundToTens } from "../util/primitives";
 
 type GoalTypes = keyof typeof macroCombination;
@@ -43,10 +39,7 @@ export default function SettingsPage() {
   const [isSliderDisabled, setIsSliderDisabled] = useState(true);
 
   const { body, goal, logs } = store;
-  const { bmr, caloricNeeds } = useMemo(
-    () => computeCaloricNeeds(body),
-    [body]
-  );
+  const { bmr, caloricNeeds } = useMemo(() => computeCaloricNeeds(body), [body]);
   const daysOfData = Object.keys(logs).length;
 
   useEffect(() => {
@@ -55,34 +48,21 @@ export default function SettingsPage() {
     dispatch({
       type: ACTIONS.SET_GOAL,
       payload: {
-        nutrition: computeMacroFromCalories(
-          calories,
-          macroCombination[diet].macros
-        ),
+        nutrition: computeMacroFromCalories(calories, macroCombination[diet].macros),
         diet,
       },
     });
   }, [goalCalories, goalType]);
 
-  const goalInfo = getGoalInfo(
-    goal.nutrition.calories || caloricNeeds.calories,
-    caloricNeeds.calories
-  );
+  const goalInfo = getGoalInfo(goal.nutrition.calories || caloricNeeds.calories, caloricNeeds.calories);
   const goalDiet = goalType || goal.diet;
 
-  const hasComputedCaloricNeeds =
-    caloricNeeds.calories !== 0 || !!body.height || !!body.weight;
+  const hasComputedCaloricNeeds = caloricNeeds.calories !== 0 || !!body.height || !!body.weight;
 
   return (
     <Page heading="Settings">
       <Box mb="12" as="section">
-        <Heading
-          size="lg"
-          mb="4"
-          display="flex"
-          justifyContent="space-between"
-          alignItems="center"
-        >
+        <Heading size="lg" mb="4" display="flex" justifyContent="space-between" alignItems="center">
           Maintenance Needs
           {hasComputedCaloricNeeds && (
             <IconButton
@@ -96,18 +76,12 @@ export default function SettingsPage() {
         </Heading>
         <FormControl>
           <FormHelperText>
-            These are your daily caloric needs in order to maintain your body
-            weight, based on your body metrics.
+            These are your daily caloric needs in order to maintain your body weight, based on your body metrics.
           </FormHelperText>
         </FormControl>
 
         <Collapse in={expand || !hasComputedCaloricNeeds}>
-          <BodyMetricsForm
-            metrics={body}
-            onChange={(payload) =>
-              dispatch({ type: ACTIONS.SET_BODY, payload })
-            }
-          />
+          <BodyMetricsForm metrics={body} onChange={(payload) => dispatch({ type: ACTIONS.SET_BODY, payload })} />
         </Collapse>
         {hasComputedCaloricNeeds && (
           <Flex mt="4" align="center" justify={["center", "flex-start"]}>
@@ -118,13 +92,7 @@ export default function SettingsPage() {
 
       {hasComputedCaloricNeeds && (
         <Box mb="12" as="section">
-          <Heading
-            size="lg"
-            my="4"
-            justifyContent="space-between"
-            alignItems="center"
-            display="flex"
-          >
+          <Heading size="lg" my="4" justifyContent="space-between" alignItems="center" display="flex">
             Your Goal
             <Tag size="sm" textTransform="uppercase" color={goalInfo.color}>
               {goalInfo.text}
@@ -133,20 +101,12 @@ export default function SettingsPage() {
           <Text fontSize="sm">{goalInfo.description}</Text>
 
           <FormControl mt={4} mb={4}>
-            <FormLabel
-              fontSize="md"
-              display="flex"
-              alignItems="center"
-              pr="0"
-              mt="2"
-              justifyContent="space-between"
-            >
+            <FormLabel fontSize="md" display="flex" alignItems="center" pr="0" mt="2" justifyContent="space-between">
               <Text fontWeight="bold">Water</Text>
               <Text>{goal.water} mL</Text>
             </FormLabel>
             <FormHelperText>
-              For {body.gender}s, recommended water intake (excluding water
-              content of foods) is {goal.water} mL
+              For {body.gender}s, recommended water intake (excluding water content of foods) is {goal.water} mL
             </FormHelperText>
           </FormControl>
 
@@ -159,9 +119,7 @@ export default function SettingsPage() {
                 size="sm"
                 variant="flushed"
                 width="auto"
-                onChange={(e) =>
-                  setGoalType(e.currentTarget.value as GoalTypes)
-                }
+                onChange={(e) => setGoalType(e.currentTarget.value as GoalTypes)}
                 defaultValue={goalDiet}
               >
                 {(Object.keys(macroCombination) as GoalTypes[]).map((k) => (
@@ -171,9 +129,7 @@ export default function SettingsPage() {
                 ))}
               </Select>
             </Flex>
-            <FormHelperText my={2}>
-              {macroCombination[goalDiet].description}
-            </FormHelperText>
+            <FormHelperText my={2}>{macroCombination[goalDiet].description}</FormHelperText>
             <FormHelperText>
               <Box>
                 {Object.keys(macroCombination[goalDiet].macros).map(
@@ -188,13 +144,7 @@ export default function SettingsPage() {
           </FormControl>
 
           <FormControl my={4}>
-            <FormLabel
-              display="flex"
-              alignItems="center"
-              pr="0"
-              mt="2"
-              justifyContent="space-between"
-            >
+            <FormLabel display="flex" alignItems="center" pr="0" mt="2" justifyContent="space-between">
               <Text fontSize="md" textTransform="capitalize" fontWeight="bold">
                 Calories
               </Text>
@@ -232,22 +182,12 @@ export default function SettingsPage() {
             </Box>
           </Collapse>
           <Flex mt="4" justify={["center", "flex-start"]} align="center">
-            <NutritionBar
-              nutrition={goal.nutrition}
-              showLegend
-              border={false}
-            />
+            <NutritionBar nutrition={goal.nutrition} showLegend border={false} />
           </Flex>
         </Box>
       )}
       <Box mb="12" as="section">
-        <Heading
-          size="lg"
-          display="flex"
-          my="4"
-          justifyContent="space-between"
-          alignItems="center"
-        >
+        <Heading size="lg" display="flex" my="4" justifyContent="space-between" alignItems="center">
           Your Data
           <IconButton
             isRound
@@ -259,9 +199,7 @@ export default function SettingsPage() {
         </Heading>
 
         <FormControl>
-          <FormHelperText mb="6">
-            All your data is stored locally on your device.
-          </FormHelperText>
+          <FormHelperText mb="6">All your data is stored locally on your device.</FormHelperText>
         </FormControl>
         <Collapse in={showDataOptions}>
           <Flex direction={["column", "row"]}>
@@ -288,11 +226,7 @@ export default function SettingsPage() {
             </Button>
             <Button
               colorScheme="teal"
-              onClick={() =>
-                document
-                  .querySelector<HTMLInputElement>("#import-file-input")
-                  ?.click()
-              }
+              onClick={() => document.querySelector<HTMLInputElement>("#import-file-input")?.click()}
             >
               Import from <Code variant="ghost">.json</Code>
             </Button>
@@ -336,11 +270,7 @@ export default function SettingsPage() {
               colorScheme="red"
               onClick={() => {
                 if (
-                  window.confirm(
-                    `Are you sure? You'll lose data of ${daysOfData} day${
-                      daysOfData === 1 ? "" : "s"
-                    }.`
-                  )
+                  window.confirm(`Are you sure? You'll lose data of ${daysOfData} day${daysOfData === 1 ? "" : "s"}.`)
                 ) {
                   dispatch({ type: ACTIONS.RESET });
                 }

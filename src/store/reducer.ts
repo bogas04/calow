@@ -163,9 +163,7 @@ export const reducer: Reducer<Store, Action> = (state, action) => {
 
       const dateKey = getDateKey(time);
       const logs = state.logs[dateKey] || [];
-      const newLogs = logs.map((x, i) =>
-        i === index ? action.payload.entry : x
-      );
+      const newLogs = logs.map((x, i) => (i === index ? action.payload.entry : x));
 
       return {
         ...state,
@@ -201,10 +199,7 @@ export const reducer: Reducer<Store, Action> = (state, action) => {
     case ACTIONS.ADD_MEAL_ENTRY_ITEM: {
       const newAddedItems = state.mealEntry.addedItems.concat(action.payload);
 
-      const newTotalWeight = newAddedItems.reduce(
-        (w, item) => (item.weight || 0) + w,
-        0
-      );
+      const newTotalWeight = newAddedItems.reduce((w, item) => (item.weight || 0) + w, 0);
 
       return {
         ...state,
@@ -217,14 +212,9 @@ export const reducer: Reducer<Store, Action> = (state, action) => {
       };
     }
     case ACTIONS.DELETE_MEAL_ENTRY_ITEM: {
-      const newAddedItems = state.mealEntry.addedItems.filter((_, i) =>
-        i === action.payload ? false : true
-      );
+      const newAddedItems = state.mealEntry.addedItems.filter((_, i) => (i === action.payload ? false : true));
 
-      const newTotalWeight = newAddedItems.reduce(
-        (w, item) => (item.weight || 0) + w,
-        0
-      );
+      const newTotalWeight = newAddedItems.reduce((w, item) => (item.weight || 0) + w, 0);
 
       return {
         ...state,
@@ -241,10 +231,7 @@ export const reducer: Reducer<Store, Action> = (state, action) => {
         i === action.payload.index ? action.payload.item : x
       );
 
-      const newTotalWeight = newAddedItems.reduce(
-        (w, item) => (item.weight || 0) + w,
-        0
-      );
+      const newTotalWeight = newAddedItems.reduce((w, item) => (item.weight || 0) + w, 0);
 
       return {
         ...state,
@@ -282,8 +269,7 @@ export const reducer: Reducer<Store, Action> = (state, action) => {
     }
     case ACTIONS.REMOVE_BOOKMARK: {
       const bookmarks = state.bookmarks.filter(
-        (x) =>
-          !(x.index === action.payload.index && x.date === action.payload.date)
+        (x) => !(x.index === action.payload.index && x.date === action.payload.date)
       );
 
       return {

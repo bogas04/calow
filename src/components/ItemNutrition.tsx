@@ -1,12 +1,5 @@
 import Link from "next/link";
-import {
-  Flex,
-  Box,
-  BoxProps,
-  Heading,
-  Text,
-  IconButton,
-} from "@chakra-ui/react";
+import { Flex, Box, BoxProps, Heading, Text, IconButton } from "@chakra-ui/react";
 import React, { memo, useState } from "react";
 import { ItemEntry } from "../store";
 import NutritionBar from "./NutritionBar";
@@ -63,11 +56,7 @@ function ItemNutrition({ item, size = "lg", ...props }: ItemNutritionProps) {
           {item.weight}g
         </Text>
       </Box>
-      <ExpandedItemNutritionModal
-        item={item}
-        onClose={closeMicroNutrientsModal}
-        isOpen={showMicroNutrientsModal}
-      />
+      <ExpandedItemNutritionModal item={item} onClose={closeMicroNutrientsModal} isOpen={showMicroNutrientsModal} />
     </>
   );
 }

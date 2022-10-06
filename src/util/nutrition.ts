@@ -1,10 +1,4 @@
-import {
-  BodyMetrics,
-  inititalNutrition,
-  MealEntry,
-  Nutrition,
-  nutritionKeys,
-} from "../store";
+import { BodyMetrics, inititalNutrition, MealEntry, Nutrition, nutritionKeys } from "../store";
 
 export function mapNutrition<T = number>(
   nutrition: Nutrition,
@@ -19,49 +13,31 @@ export function mapNutrition<T = number>(
   );
 }
 
-export function createNutrition(
-  fn: (nutritionKey: keyof Nutrition, nutritionValue: number) => number
-) {
+export function createNutrition(fn: (nutritionKey: keyof Nutrition, nutritionValue: number) => number) {
   return mapNutrition(inititalNutrition, fn);
 }
 
-export function computeWeightedNutrition(
-  nutritionPer100Grams: Nutrition,
-  newWeight: number
-) {
-  return mapNutrition(
-    nutritionPer100Grams,
-    (_, value) => (value * newWeight) / 100
-  );
+export function computeWeightedNutrition(nutritionPer100Grams: Nutrition, newWeight: number) {
+  return mapNutrition(nutritionPer100Grams, (_, value) => (value * newWeight) / 100);
 }
 
 export function addNutrition(n1: Nutrition, n2: Nutrition) {
   return mapNutrition(n1, (key) => n1[key] + n2[key]);
 }
 
-export function computeCaloricNeeds({
-  height,
-  weight,
-  gender,
-  age,
-  activity,
-}: BodyMetrics): { bmr: number; caloricNeeds: Nutrition } {
+export function computeCaloricNeeds({ height, weight, gender, age, activity }: BodyMetrics): {
+  bmr: number;
+  caloricNeeds: Nutrition;
+} {
   // Harris–Benedict BMR 1990: https://en.wikipedia.org/wiki/Harris%E2%80%93Benedict_equation
-  const bmr =
-    10 * Number(weight) +
-    6.25 * Number(height) -
-    5 * Number(age) +
-    (gender === "male" ? 5 : -161);
+  const bmr = 10 * Number(weight) + 6.25 * Number(height) - 5 * Number(age) + (gender === "male" ? 5 : -161);
 
   const calories = Math.ceil(bmr * activity);
 
   return { bmr, caloricNeeds: computeMacroFromCalories(calories) };
 }
 
-export function computeMacroFromCalories(
-  calories: number,
-  multiplier = macroCombination.neutral.macros
-): Nutrition {
+export function computeMacroFromCalories(calories: number, multiplier = macroCombination.neutral.macros): Nutrition {
   return {
     calories,
     carbohydrates: Math.ceil((multiplier.carbohydrates * calories) / 4),
@@ -129,13 +105,11 @@ export const macroCombination = {
       protein: 0.15,
       fat: 0.2,
     },
-    description:
-      "A high carbohydrate diet is easiest to maintain, however stay wary of refined carbohydrates.",
+    description: "A high carbohydrate diet is easiest to maintain, however stay wary of refined carbohydrates.",
   },
   fat: {
     name: "High fat",
-    description:
-      "A high fat diet can help in feeling fuller with small portions.",
+    description: "A high fat diet can help in feeling fuller with small portions.",
     macros: {
       carbohydrates: 0.45,
       protein: 0.2,

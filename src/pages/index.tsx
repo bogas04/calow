@@ -35,8 +35,7 @@ export default function HomePage() {
   const [date, setDate] = useState(TODAY);
   const router = useRouter();
   const [isInfoModalOpen, setInfoModalOpen] = useState(false);
-  const { dispatch, bookmarks, goal, nutrition, micro, water, log } =
-    useStore(date);
+  const { dispatch, bookmarks, goal, nutrition, micro, water, log } = useStore(date);
   const isSelectedDateToday = date > TODAY - DAY;
 
   const onAddWater = () => {
@@ -62,11 +61,9 @@ export default function HomePage() {
 
     if (
       window.confirm(
-        `Are you sure you want to delete "${meal.name}" with ${
-          meal.items.length
-        } item${meal.items.length === 1 ? "" : "s"} and ${
-          meal.nutrition.calories
-        } kCal?`
+        `Are you sure you want to delete "${meal.name}" with ${meal.items.length} item${
+          meal.items.length === 1 ? "" : "s"
+        } and ${meal.nutrition.calories} kCal?`
       )
     ) {
       dispatch({
@@ -134,19 +131,8 @@ export default function HomePage() {
 
   return (
     <Page h="100%">
-      <Flex
-        direction={["column", "row"]}
-        justify={["space-between", "space-between"]}
-        h="100%"
-      >
-        <Box
-          borderRightWidth={[0, 1]}
-          borderRightColor="gray.300"
-          pr={[0, "8"]}
-          flex="0.3"
-          mr={[0, "16"]}
-          mb="2"
-        >
+      <Flex direction={["column", "row"]} justify={["space-between", "space-between"]} h="100%">
+        <Box borderRightWidth={[0, 1]} borderRightColor="gray.300" pr={[0, "8"]} flex="0.3" mr={[0, "16"]} mb="2">
           <Meter nutrition={nutrition} goal={goal.nutrition} />
           <Flex justify="flex-end" mt="-10" mb="-2" w="90%">
             <IconButton
@@ -164,15 +150,7 @@ export default function HomePage() {
           </Flex>
 
           {isWaterEnabled && (
-            <Grid
-              overflow="auto"
-              mx={[-4]}
-              p="4"
-              autoColumns="1fr"
-              autoFlow="column"
-              gap={2}
-              my={4}
-            >
+            <Grid overflow="auto" mx={[-4]} p="4" autoColumns="1fr" autoFlow="column" gap={2} my={4}>
               <Icon
                 minW={10}
                 color={goal.water > water ? "gray.400" : "gray.800"}
@@ -292,9 +270,7 @@ const FABProps: ChakraProps = {
 function getMealIndexFromMenuButton(e: MouseEvent<HTMLButtonElement>) {
   const itemIndex = getClosestDatasetKey(e, MEAL_INDEX_DATA_ATTR);
   if (itemIndex === null || itemIndex === undefined) {
-    throw new Error(
-      "This shouldn't have happened.\nCouldn't find proper meal position."
-    );
+    throw new Error("This shouldn't have happened.\nCouldn't find proper meal position.");
   }
   const index = Number(itemIndex);
 
@@ -303,14 +279,6 @@ function getMealIndexFromMenuButton(e: MouseEvent<HTMLButtonElement>) {
 
 const MEAL_INDEX_DATA_ATTR = "mealindex";
 
-function isBookmarked(
-  bookmarks: Store["bookmarks"],
-  date: number,
-  index: number
-) {
-  return (
-    typeof bookmarks.find(
-      (x) => x.date === getDateKey(date) && x.index === index
-    ) !== "undefined"
-  );
+function isBookmarked(bookmarks: Store["bookmarks"], date: number, index: number) {
+  return typeof bookmarks.find((x) => x.date === getDateKey(date) && x.index === index) !== "undefined";
 }

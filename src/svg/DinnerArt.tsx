@@ -2,26 +2,12 @@ function DinnerArt(props: React.HTMLAttributes<SVGElement>) {
   return (
     <svg width="100%" height="100%" viewBox="0 0 903.77 657.14" {...props}>
       <defs>
-        <linearGradient
-          id="a"
-          x1={736}
-          y1={734.18}
-          x2={736}
-          y2={307.18}
-          gradientUnits="userSpaceOnUse"
-        >
+        <linearGradient id="a" x1={736} y1={734.18} x2={736} y2={307.18} gradientUnits="userSpaceOnUse">
           <stop offset={0} stopColor="gray" stopOpacity={0.25} />
           <stop offset={0.54} stopColor="gray" stopOpacity={0.12} />
           <stop offset={1} stopColor="gray" stopOpacity={0.1} />
         </linearGradient>
-        <linearGradient
-          id="b"
-          x1={381.42}
-          y1={718.18}
-          x2={381.42}
-          y2={312.18}
-          xlinkHref="#a"
-        />
+        <linearGradient id="b" x1={381.42} y1={718.18} x2={381.42} y2={312.18} xlinkHref="#a" />
       </defs>
       <ellipse cx={63.87} cy={514.57} rx={45} ry={16} opacity={0.1} />
       <ellipse cx={790.85} cy={580.72} rx={45} ry={16} opacity={0.1} />
@@ -56,128 +42,28 @@ function DinnerArt(props: React.HTMLAttributes<SVGElement>) {
       />
       <path fill="#40414d" d="M265.44 402.64H279.03V597.5H265.44z" />
       <path fill="#40414d" d="M562.26 402.64H575.85V597.5H562.26z" />
-      <path
-        d="M260.25 386.78h314a22 22 0 0122 22v2.92h-358v-2.92a22 22 0 0122-22z"
-        fill="#dfe6f5"
-      />
-      <path
-        d="M259.25 386.78h314a22 22 0 0122 22v2.92h-358v-2.92a22 22 0 0122-22z"
-        opacity={0.1}
-      />
-      <path
-        d="M260.25 382.24h314a22 22 0 0122 22v2.92h-358v-2.92a22 22 0 0122-22z"
-        fill="#dfe6f5"
-      />
-      <circle
-        cx={417.25}
-        cy={339.19}
-        r={27.19}
-        fill="#ffd77c"
-        stroke="#ffab50"
-        strokeMiterlimit={10}
-      />
-      <circle
-        cx={417.25}
-        cy={339.19}
-        r={21.55}
-        fill="#ffd77c"
-        stroke="#ffab50"
-        strokeMiterlimit={10}
-      />
-      <circle
-        cx={417.25}
-        cy={339.19}
-        r={16.42}
-        fill="#ffd77c"
-        stroke="#ffab50"
-        strokeMiterlimit={10}
-      />
-      <circle
-        cx={417.25}
-        cy={339.19}
-        r={9.23}
-        fill="#ffd77c"
-        stroke="#ffab50"
-        strokeMiterlimit={10}
-      />
-      <circle
-        cx={401.39}
-        cy={353.92}
-        r={27.19}
-        fill="#ffd77c"
-        stroke="#ffab50"
-        strokeMiterlimit={10}
-      />
-      <circle
-        cx={401.39}
-        cy={353.92}
-        r={21.55}
-        fill="#ffd77c"
-        stroke="#ffab50"
-        strokeMiterlimit={10}
-      />
-      <circle
-        cx={401.39}
-        cy={353.92}
-        r={16.42}
-        fill="#ffd77c"
-        stroke="#ffab50"
-        strokeMiterlimit={10}
-      />
-      <circle
-        cx={401.39}
-        cy={353.92}
-        r={9.23}
-        fill="#ffd77c"
-        stroke="#ffab50"
-        strokeMiterlimit={10}
-      />
-      <circle
-        cx={433.11}
-        cy={353.92}
-        r={27.19}
-        fill="#ffd77c"
-        stroke="#ffab50"
-        strokeMiterlimit={10}
-      />
-      <circle
-        cx={433.11}
-        cy={353.92}
-        r={21.55}
-        fill="#ffd77c"
-        stroke="#ffab50"
-        strokeMiterlimit={10}
-      />
-      <circle
-        cx={433.11}
-        cy={353.92}
-        r={16.42}
-        fill="#ffd77c"
-        stroke="#ffab50"
-        strokeMiterlimit={10}
-      />
-      <circle
-        cx={433.11}
-        cy={353.92}
-        r={9.23}
-        fill="#ffd77c"
-        stroke="#ffab50"
-        strokeMiterlimit={10}
-      />
-      <path
-        d="M360.6 346h113.29v5.32a40 40 0 01-40 40H400.6a40 40 0 01-40-40V346z"
-        fill="#6c63ff"
-      />
+      <path d="M260.25 386.78h314a22 22 0 0122 22v2.92h-358v-2.92a22 22 0 0122-22z" fill="#dfe6f5" />
+      <path d="M259.25 386.78h314a22 22 0 0122 22v2.92h-358v-2.92a22 22 0 0122-22z" opacity={0.1} />
+      <path d="M260.25 382.24h314a22 22 0 0122 22v2.92h-358v-2.92a22 22 0 0122-22z" fill="#dfe6f5" />
+      <circle cx={417.25} cy={339.19} r={27.19} fill="#ffd77c" stroke="#ffab50" strokeMiterlimit={10} />
+      <circle cx={417.25} cy={339.19} r={21.55} fill="#ffd77c" stroke="#ffab50" strokeMiterlimit={10} />
+      <circle cx={417.25} cy={339.19} r={16.42} fill="#ffd77c" stroke="#ffab50" strokeMiterlimit={10} />
+      <circle cx={417.25} cy={339.19} r={9.23} fill="#ffd77c" stroke="#ffab50" strokeMiterlimit={10} />
+      <circle cx={401.39} cy={353.92} r={27.19} fill="#ffd77c" stroke="#ffab50" strokeMiterlimit={10} />
+      <circle cx={401.39} cy={353.92} r={21.55} fill="#ffd77c" stroke="#ffab50" strokeMiterlimit={10} />
+      <circle cx={401.39} cy={353.92} r={16.42} fill="#ffd77c" stroke="#ffab50" strokeMiterlimit={10} />
+      <circle cx={401.39} cy={353.92} r={9.23} fill="#ffd77c" stroke="#ffab50" strokeMiterlimit={10} />
+      <circle cx={433.11} cy={353.92} r={27.19} fill="#ffd77c" stroke="#ffab50" strokeMiterlimit={10} />
+      <circle cx={433.11} cy={353.92} r={21.55} fill="#ffd77c" stroke="#ffab50" strokeMiterlimit={10} />
+      <circle cx={433.11} cy={353.92} r={16.42} fill="#ffd77c" stroke="#ffab50" strokeMiterlimit={10} />
+      <circle cx={433.11} cy={353.92} r={9.23} fill="#ffd77c" stroke="#ffab50" strokeMiterlimit={10} />
+      <path d="M360.6 346h113.29v5.32a40 40 0 01-40 40H400.6a40 40 0 01-40-40V346z" fill="#6c63ff" />
       <path
         d="M611.78 467.42a45.31 45.31 0 01-45.29 44.18H544a45.42 45.42 0 0010 1.14h22.66A45.32 45.32 0 00622 467.42z"
         transform="translate(-148.11 -121.43)"
         opacity={0.1}
       />
-      <path
-        transform="rotate(90 556.555 544.505)"
-        fill="#40414d"
-        d="M563.1 532H576.69V826.56H563.1z"
-      />
+      <path transform="rotate(90 556.555 544.505)" fill="#40414d" d="M563.1 532H576.69V826.56H563.1z" />
       <path fill="#40414d" d="M152.17 503.59H164.06V611.77H152.17z" />
       <path fill="#40414d" d="M246.08 503.59H257.97V611.77H246.08z" />
       <path
@@ -185,10 +71,7 @@ function DinnerArt(props: React.HTMLAttributes<SVGElement>) {
         transform="translate(-148.11 -121.43)"
         fill="#f6c6cd"
       />
-      <path
-        d="M142.66 485.75h124.82v10.9a10.5 10.5 0 01-10.5 10.5h-96.32a18 18 0 01-18-18v-3.4z"
-        fill="#40414d"
-      />
+      <path d="M142.66 485.75h124.82v10.9a10.5 10.5 0 01-10.5 10.5h-96.32a18 18 0 01-18-18v-3.4z" fill="#40414d" />
       <path
         d="M285.89 480h2.64a7 7 0 017 7v141.58h-4a12.66 12.66 0 01-12.66-12.66V487a7 7 0 017.02-7z"
         transform="rotate(-12.72 -331.62 1157.932)"
@@ -244,10 +127,7 @@ function DinnerArt(props: React.HTMLAttributes<SVGElement>) {
         transform="translate(-148.11 -121.43)"
         opacity={0.1}
       />
-      <path
-        fill="#f8bdc5"
-        d="M608.54 290.95H619.15V298.90999999999997H608.54z"
-      />
+      <path fill="#f8bdc5" d="M608.54 290.95H619.15V298.90999999999997H608.54z" />
       <path
         d="M757.1 541s-16.85 13.24-30.69 16.38a102.16 102.16 0 00-23.75 8.31l-31.83 16.18a19.34 19.34 0 00-10.54 15.23c-.91 9 2.71 20.84 24.31 27.88l68.07 56.58 21.22-17.68-72.49-55.68 55.7-34.48z"
         transform="translate(-148.11 -121.43)"

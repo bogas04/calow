@@ -60,9 +60,7 @@ export default function ItemsPage() {
     return filtered.sort((a, b) => {
       switch (sortBy) {
         case "calories/weight": {
-          return (
-            b.nutrition.calories / b.weight - a.nutrition.calories / a.weight
-          );
+          return b.nutrition.calories / b.weight - a.nutrition.calories / a.weight;
         }
         case "name": {
           if (a.name < b.name) {
@@ -81,14 +79,11 @@ export default function ItemsPage() {
         }
         case "fat/calories": {
           return (
-            b.nutrition.fat / (b.weight * b.nutrition.calories) -
-            a.nutrition.fat / (a.weight * a.nutrition.calories)
+            b.nutrition.fat / (b.weight * b.nutrition.calories) - a.nutrition.fat / (a.weight * a.nutrition.calories)
           );
         }
         case "protein/weight": {
-          return (
-            b.nutrition.protein / b.weight - a.nutrition.protein / a.weight
-          );
+          return b.nutrition.protein / b.weight - a.nutrition.protein / a.weight;
         }
         case "protein/calories": {
           return (
@@ -102,23 +97,11 @@ export default function ItemsPage() {
 
   return (
     <Page heading="Your Items">
-      <Grid
-        as="form"
-        templateColumns="auto 100px"
-        gap={2}
-        alignItems="end"
-        onSubmit={(e) => e.preventDefault()}
-      >
+      <Grid as="form" templateColumns="auto 100px" gap={2} alignItems="end" onSubmit={(e) => e.preventDefault()}>
         <FormControl>
           <FormLabel htmlFor="search">Search for items.</FormLabel>
 
-          <Input
-            id="search"
-            value={query}
-            placeholder="Search"
-            type="search"
-            onChange={handleSearch}
-          />
+          <Input id="search" value={query} placeholder="Search" type="search" onChange={handleSearch} />
         </FormControl>
         <Flex justify="end">
           <Menu>
@@ -127,10 +110,7 @@ export default function ItemsPage() {
             </MenuButton>
             <MenuList>
               {(Object.keys(sortByTitles) as SortByKeys[]).map((k) => (
-                <MenuItem
-                  onClick={() => setSortBy((s) => (s === k ? "name" : k))}
-                  key={k}
-                >
+                <MenuItem onClick={() => setSortBy((s) => (s === k ? "name" : k))} key={k}>
                   {sortBy === k && <CheckIcon mr="1" />}
                   By {sortByTitles[k].title}
                 </MenuItem>
@@ -144,15 +124,7 @@ export default function ItemsPage() {
           <Skeleton h="2" mt="6" mb="6" w="30%" />
 
           {[...new Array(4)].map((_, i) => (
-            <Box
-              key={i}
-              borderWidth="1px"
-              borderStyle="solid"
-              borderColor="gray.200"
-              borderRadius={8}
-              my="4"
-              p="6"
-            >
+            <Box key={i} borderWidth="1px" borderStyle="solid" borderColor="gray.200" borderRadius={8} my="4" p="6">
               <Flex direction="row" mb="6">
                 <Skeleton w="30px" h="30px" rounded="50%" mr="4" />
                 <Skeleton flex="0.8" h="4" rounded="md" />
@@ -186,13 +158,7 @@ export default function ItemsPage() {
               </Flex>
               {sortByTitles[sortBy].description && (
                 <Collapse in={showInfo} startingHeight={45}>
-                  <Text
-                    bg="gray.50"
-                    p="2"
-                    fontSize="sm"
-                    rounded="md"
-                    onClick={() => setShowInfo(!showInfo)}
-                  >
+                  <Text bg="gray.50" p="2" fontSize="sm" rounded="md" onClick={() => setShowInfo(!showInfo)}>
                     {sortByTitles[sortBy].description}
                   </Text>
                 </Collapse>

@@ -43,9 +43,4 @@ export const inititalNutrition = {
   protein: 0,
 } as Nutrition;
 
-export const nutritionKeys = ([
-  "calories",
-  "protein",
-  "carbohydrates",
-  "fat",
-] as unknown) as [keyof Nutrition];
+export const nutritionKeys = ["calories", "protein", "carbohydrates", "fat"] as unknown as [keyof Nutrition];

@@ -1,12 +1,6 @@
 import { Flex, Grid, Text } from "@chakra-ui/react";
 import { memo } from "react";
-import {
-  Nutrition,
-  nutritionColors,
-  nutritionKeys,
-  nutritionShortNames,
-  nutritionShortUnits,
-} from "../store";
+import { Nutrition, nutritionColors, nutritionKeys, nutritionShortNames, nutritionShortUnits } from "../store";
 
 export interface NutritionBarProps {
   nutrition: Nutrition;
@@ -14,11 +8,7 @@ export interface NutritionBarProps {
   showLegend?: boolean;
 }
 
-function NutritionBar({
-  nutrition,
-  border = true,
-  showLegend = !border,
-}: NutritionBarProps) {
+function NutritionBar({ nutrition, border = true, showLegend = !border }: NutritionBarProps) {
   return (
     <Grid
       gridTemplateColumns="repeat(4, auto)"
@@ -35,13 +25,7 @@ function NutritionBar({
       {nutritionKeys.map((k, i) => {
         const value = nutrition[k];
         return (
-          <Flex
-            direction="column"
-            key={i}
-            textTransform="capitalize"
-            justify="center"
-            align="flex-start"
-          >
+          <Flex direction="column" key={i} textTransform="capitalize" justify="center" align="flex-start">
             <Text color={nutritionColors[k]} fontWeight="600" fontSize="xs">
               {Number.isInteger(value) ? value : value.toFixed(2)}
               {nutritionShortUnits[k]}

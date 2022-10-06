@@ -1,19 +1,9 @@
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useReducer,
-  useRef,
-} from "react";
+import { createContext, useContext, useEffect, useReducer, useRef } from "react";
 import { getMany, update } from "idb-keyval";
 import useSWR from "swr";
 
 import { ACTIONS, Action, defaultState, reducer } from "./reducer";
-import {
-  computeMacroNutritionFromLog,
-  computeMicroNutritionFromLog,
-  createNutrition,
-} from "../util/nutrition";
+import { computeMacroNutritionFromLog, computeMicroNutritionFromLog, createNutrition } from "../util/nutrition";
 import { getDateKey } from "../util/time";
 
 import { ItemEntry } from "./types";
@@ -30,12 +20,7 @@ export function useStoreReducer() {
   useEffect(() => {
     const bootstrap = async () => {
       try {
-        const [body, goal, logs, bookmarks = []] = (await getMany([
-          "body",
-          "goal",
-          "logs",
-          "bookmarks",
-        ])) as [
+        const [body, goal, logs, bookmarks = []] = (await getMany(["body", "goal", "logs", "bookmarks"])) as [
           Store["body"],
           Store["goal"],
           Store["logs"],
@@ -91,11 +76,7 @@ export function useStoreReducer() {
  * along with a confirmation message in case new value is empty and old value is not,
  * i.e. deletion of a key.
  */
-function useSyncedKey<K extends SavedKeys>(
-  key: K,
-  newValue: Store[K],
-  isReady: boolean
-) {
+function useSyncedKey<K extends SavedKeys>(key: K, newValue: Store[K], isReady: boolean) {
   useEffect(() => {
     /**
      * If we've not yet read from the databse
@@ -144,8 +125,7 @@ export function useStore(time?: number) {
   };
 }
 
-const fetcher = (info: RequestInfo, options?: RequestInit) =>
-  fetch(info, options).then((res) => res.json());
+const fetcher = (info: RequestInfo, options?: RequestInit) => fetch(info, options).then((res) => res.json());
 
 export function useItems() {
   const key = "AIzaSyAumEHcudhBHlcCASiBmUrjTjBsV75KQDs";
@@ -178,9 +158,7 @@ export function useItems() {
       carbohydrates: 5,
       fat: 6,
     };
-    const lastKnownNutritionIndex = Math.max(
-      ...Object.values(knownNutritionIndices)
-    );
+    const lastKnownNutritionIndex = Math.max(...Object.values(knownNutritionIndices));
 
     const unknowNutritionIndexMap: {
       [
@@ -189,9 +167,7 @@ export function useItems() {
       ]: /** name of nutrition */
       string;
     } = data.values.slice(0, 1)[0].reduce((acc, microName, index) => {
-      return index > lastKnownNutritionIndex
-        ? { ...acc, [index]: microName.toLowerCase() }
-        : {};
+      return index > lastKnownNutritionIndex ? { ...acc, [index]: microName.toLowerCase() } : {};
     }, {});
 
     items = data.values.slice(1).reduce<ItemEntry[]>((acc, value, i) => {
@@ -209,9 +185,7 @@ export function useItems() {
         name: value[knownNutritionIndices.name],
         icon: value[knownNutritionIndices.icon] || undefined,
         weight: 100,
-        nutrition: createNutrition((key) =>
-          Number(value[knownNutritionIndices[key]])
-        ),
+        nutrition: createNutrition((key) => Number(value[knownNutritionIndices[key]])),
         micro,
       };
 
@@ -270,11 +244,9 @@ const deletionMessages: Record<SavedKeys, string> = {
  * Helper object that has isEmpty functions for saved keys
  */
 const isEmpty: { [key in SavedKeys]: (v?: Store[key]) => boolean } = {
-  body: (body?: Store["body"]) =>
-    (body || defaultState.body).height === defaultState.body.height,
+  body: (body?: Store["body"]) => (body || defaultState.body).height === defaultState.body.height,
   goal: (goal?: Store["goal"]) =>
-    (goal || defaultState.goal).nutrition.calories ===
-    defaultState.goal.nutrition.calories,
+    (goal || defaultState.goal).nutrition.calories === defaultState.goal.nutrition.calories,
   logs: (logs?: Store["logs"]) => Object.keys(logs || {}).length === 0,
   bookmarks: (bookmarks?: Store["bookmarks"]) => bookmarks?.length == -0,
 };
