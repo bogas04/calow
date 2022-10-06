@@ -62,8 +62,8 @@ export default function SearchPage() {
 
   return (
     <Page heading="Search Meals">
-      <Grid as="form" templateColumns="auto 100px" gap={2} alignItems="end" onSubmit={(e) => e.preventDefault()} mb={6}>
-        <FormControl>
+      <Grid as="form" templateColumns="auto" gap={2} alignItems="end" onSubmit={(e) => e.preventDefault()} mb={6}>
+        <FormControl width="full">
           <FormLabel htmlFor="search">Search for meals</FormLabel>
 
           <Input id="search" value={query} placeholder="Search" type="search" onChange={handleSearch} />
