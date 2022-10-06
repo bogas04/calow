@@ -52,7 +52,7 @@ export default function BookmarksPage() {
     });
 
     return query.trim() === "" ? processedBookmarks : f.search(query.trim()).map((x) => x.item);
-  }, [query, bookmarks]);
+  }, [bookmarks, query, logs]);
 
   const handleSearch: React.FormEventHandler<HTMLInputElement> = (e) => {
     setQuery(e.currentTarget.value);

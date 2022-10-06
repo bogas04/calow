@@ -39,7 +39,7 @@ function MealNameModal({ defaultName, isOpen, onClose, onSubmit }: MealNameModal
           <ModalHeader>🍛 Give your meal a name</ModalHeader>
           <ModalBody>
             <FormControl>
-              <FormLabel>Meal's Name</FormLabel>
+              <FormLabel>Meal&apos;s Name</FormLabel>
               <Input name="mealname" type="text" defaultValue={defaultName} isRequired placeholder="Enter meal name" />
             </FormControl>
           </ModalBody>

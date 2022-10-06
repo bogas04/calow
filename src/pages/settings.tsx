@@ -52,7 +52,7 @@ export default function SettingsPage() {
         diet,
       },
     });
-  }, [goalCalories, goalType]);
+  }, [dispatch, goal.diet, goal.nutrition.calories, goalCalories, goalType]);
 
   const goalInfo = getGoalInfo(goal.nutrition.calories || caloricNeeds.calories, caloricNeeds.calories);
   const goalDiet = goalType || goal.diet;
@@ -123,7 +123,7 @@ export default function SettingsPage() {
                 defaultValue={goalDiet}
               >
                 {(Object.keys(macroCombination) as GoalTypes[]).map((k) => (
-                  <Box as="option" value={k}>
+                  <Box as="option" value={k} key={macroCombination[k].name}>
                     {macroCombination[k].name}
                   </Box>
                 ))}

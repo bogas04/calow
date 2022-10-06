@@ -179,7 +179,7 @@ export default function HomePage() {
             <Box h={["auto", "30vh"]}>
               <FormControl>
                 <FormHelperText textAlign="center" mb="2">
-                  You've no entries for the day.
+                  You&apos;ve no entries for the day.
                 </FormHelperText>
               </FormControl>
               <EmptyArt />

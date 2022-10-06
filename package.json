@@ -6,6 +6,7 @@
   "scripts": {
     "start": "next",
     "build": "rm -rf .next && next build && next export -o docs && touch docs/.nojekyll",
+    "lint": "next lint",
     "test": "tsc --noEmit",
     "analyze": "ANALYZE=\"true\" next build"
   },
@@ -37,6 +38,8 @@
     "@next/bundle-analyzer": "^12.3.1",
     "@types/node": "^18.8.1",
     "@types/react": "^18.0.21",
+    "eslint": "8.24.0",
+    "eslint-config-next": "12.3.1",
     "prettier": "^2.7.1"
   },
   "prettier": {

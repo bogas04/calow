@@ -67,7 +67,7 @@ export default function MealEntryPage() {
         type: ACTIONS.RESET_MEAL_ENTRY_ITEMS,
       });
     };
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     const index = Number(router.query.index);
@@ -84,7 +84,7 @@ export default function MealEntryPage() {
         },
       });
     }
-  }, [router.query.index, log]);
+  }, [router.query.index, log, name, addedItems.length, dispatch]);
 
   useEffect(() => {
     if (router.query.shared_meal) {
@@ -115,7 +115,7 @@ export default function MealEntryPage() {
         alert("Oops!. Please add details manually\n" + (err as Error).message);
       }
     }
-  }, [router.query.shared_meal]);
+  }, [dispatch, router.query.shared_meal, toast]);
 
   // Compute total nutrition of current meal
   const mealNutrition = addedItems.reduce(
@@ -257,8 +257,8 @@ export default function MealEntryPage() {
       </Heading>
       <FormControl>
         <FormHelperText mb="2">
-          You're having {portionWeight} grams of total meal of {totalWeight} grams. This is the total nutritional value
-          of the meal.
+          You&apos;re having {portionWeight} grams of total meal of {totalWeight} grams. This is the total nutritional
+          value of the meal.
         </FormHelperText>
       </FormControl>
       <NutritionBar border={false} nutrition={mealNutrition} />

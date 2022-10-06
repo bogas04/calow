@@ -8,7 +8,7 @@ export interface LoadingContainerProps extends BoxProps {
   loadingText?: string;
 }
 
-export const LoadingContainer = memo((props: LoadingContainerProps) => {
+export const LoadingContainer = memo(function LoadingConatiner(props: LoadingContainerProps) {
   const { children, isLoading, loadingText = "Updating...", ...rest } = props;
 
   const afterStyle = {
