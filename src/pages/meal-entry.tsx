@@ -1,4 +1,4 @@
-import { AddIcon } from "@chakra-ui/icons";
+import { AddIcon, CloseIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
@@ -266,7 +266,14 @@ export default function MealEntryPage() {
 
   const list = addedItems.map((item, i) => (
     <Flex key={i} direction="column" p="2" mb="1">
-      <Heading display="grid" size="sm" mb="2" gridGap={2} gridTemplateColumns="auto 75px 10px" alignItems="center">
+      <Heading
+        display="grid"
+        size="sm"
+        mb="2"
+        gridGap={2}
+        gridTemplateColumns="auto 75px 10px 15px"
+        alignItems="center"
+      >
         <Text>
           {item.icon || "🍛"} {item.name}
         </Text>
@@ -285,15 +292,18 @@ export default function MealEntryPage() {
         />
         <Flex alignItems="center" justifyContent="center">
           <Text fontWeight="100">g</Text>
-          {/* <IconButton
-            size="sm"
-            rounded="full"
-            onClick={() => deleteItem(i)}
-            icon={<DeleteIcon />}
-            aria-label="Remove item"
-            variant="ghost"
-          /> */}
         </Flex>
+
+        <IconButton
+          height="full"
+          size="sm"
+          color="gray.500"
+          rounded="full"
+          onClick={() => deleteItem(i)}
+          icon={<CloseIcon />}
+          aria-label="Remove item"
+          variant="ghost"
+        />
       </Heading>
       <NutritionBar border={false} nutrition={item.nutrition} />
     </Flex>
