@@ -7,29 +7,24 @@ import {
   FormHelperText,
   Grid,
   Heading,
-  HStack,
   IconButton,
   Input,
-  ListItem,
   Text,
-  UnorderedList,
   useToast,
 } from "@chakra-ui/react";
-import { motion } from "framer-motion";
 import Fuse from "fuse.js";
 import { useRouter } from "next/router";
-import React, { ChangeEventHandler, MouseEventHandler, useEffect, useMemo, useState } from "react";
+import React, { ChangeEventHandler, useEffect, useMemo, useState } from "react";
 
 import CustomItemModal, { CustomItemModalProps } from "../components/CustomItemModal";
 import { Page } from "../components/layouts";
+import { IngredientSuggestions, SearchSuggestions } from "../components/MealEntryComponents";
 import MealNameModal from "../components/MealNameModal";
 import NutritionBar from "../components/NutritionBar";
 import { ACTIONS, inititalNutrition, ItemEntry, MealEntry, useItems, useStore } from "../store";
 import DinnerArt from "../svg/DinnerArt";
 import { computeMicroNutritionFromLog, computeWeightedNutrition, mapNutrition } from "../util/nutrition";
 import { computeArithmeticExpression } from "../util/primitives";
-
-const FramerHStack = motion(HStack);
 
 export default function MealEntryPage() {
   const {
@@ -59,6 +54,7 @@ export default function MealEntryPage() {
   }, [searchQuery, items]);
 
   const shouldShowSearchResults = searchQuery !== "" && !searchResults.find((x) => x.name === searchQuery);
+  const shouldShowIngredientsSuggestions = !shouldShowSearchResults && searchQuery.length === 0;
 
   useEffect(() => {
     // on page unload, reset the state
@@ -145,8 +141,7 @@ export default function MealEntryPage() {
 
   const onSearchQueryChange: ChangeEventHandler<HTMLInputElement> = (e) => setSearchQuery(e.currentTarget.value);
 
-  const onSearchResultClick: MouseEventHandler<HTMLButtonElement> = (e) => {
-    const searchResultName = e.currentTarget.dataset.name;
+  const onSearchResultClick = (searchResultName?: string) => {
     if (searchResultName) {
       setSearchQuery(searchResultName);
     }
@@ -429,41 +424,8 @@ export default function MealEntryPage() {
         borderTop={"1px solid"}
         borderTopColor="gray.200"
       >
-        {shouldShowSearchResults && (
-          <FramerHStack
-            as={UnorderedList}
-            listStyleType="none"
-            display="flex"
-            overflow="auto"
-            w="100%"
-            m="0"
-            px="4"
-            py="2"
-            spacing={4}
-            borderBottom={"1px solid"}
-            borderBottomColor="gray.200"
-            initial={{ translateY: 100 }}
-            bg="gray.50"
-            animate={{ translateY: 0 }}
-            transition={{ duration: 0.1 }}
-          >
-            {searchResults.map((s) => (
-              <ListItem key={s.name}>
-                <Button
-                  colorScheme="gray"
-                  fontWeight="normal"
-                  variant="outline"
-                  size="sm"
-                  onClick={onSearchResultClick}
-                  data-name={s.name}
-                >
-                  {s.icon} {s.name}
-                </Button>
-              </ListItem>
-            ))}
-          </FramerHStack>
-        )}
-
+        {shouldShowSearchResults && <SearchSuggestions results={searchResults} onAdd={onSearchResultClick} />}
+        {shouldShowIngredientsSuggestions && <IngredientSuggestions onAdd={addItem} />}
         <Box my="3" w="100%" px="4">
           {form}
         </Box>

@@ -23,6 +23,18 @@ export const getDateKey = (time: number) => {
   return `${String(d.getDate()).padStart(2, "0")}/${String(d.getMonth() + 1).padStart(2, "0")}/${d.getFullYear()}`;
 };
 
+/**
+ * Returns a comparator function accepted by Array.prototype.sort based for an array of dateKey strings
+ */
+export const compareDate =
+  (ascending = true) =>
+  (dateKey1: string, dateKey2: string) => {
+    const yymmdd1 = dateKey1.split("/").reverse().join("/");
+    const yymmdd2 = dateKey2.split("/").reverse().join("/");
+
+    return yymmdd1.localeCompare(yymmdd2) * (ascending ? 1 : -1);
+  };
+
 export const formatDateKey = (key: string) => {
   const [date, month, year] = key.split("/").map(Number);
   const d = new Date();
