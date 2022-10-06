@@ -27,6 +27,7 @@ import NutritionBar from "../components/NutritionBar";
 import { ACTIONS, inititalNutrition, ItemEntry, MealEntry, useItems, useStore } from "../store";
 import DinnerArt from "../svg/DinnerArt";
 import { computeMicroNutritionFromLog, computeWeightedNutrition, mapNutrition } from "../util/nutrition";
+import { computeArithmeticExpression } from "../util/primitives";
 
 const FramerHStack = motion(HStack);
 
@@ -156,7 +157,7 @@ export default function MealEntryPage() {
     e.preventDefault();
     const form = e.currentTarget;
     const name = form.item.value;
-    const weight = Number(form.weight.value);
+    const weight = computeArithmeticExpression(form.weight.value);
 
     const item = items.find((i) => i.name === name);
     if (!item) {
