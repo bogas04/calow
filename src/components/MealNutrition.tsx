@@ -99,7 +99,7 @@ function MealNutrition({ meal, onRepeat, onDelete, onEdit, onBookmark, bookmarke
               {onBookmark && (
                 <MenuItem onClick={onBookmark}>
                   <Box mr={2}>{bookmarked ? <RemoveBookmarkIcon /> : <AddBookmarkIcon />}</Box>
-                  {bookmarked ? "Remove Bookmark" : "Add Bookmark"}
+                  {bookmarked ? "Unbookmark" : "Bookmark"}
                 </MenuItem>
               )}
             </MenuList>
