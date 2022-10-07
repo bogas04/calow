@@ -1,9 +1,10 @@
-import { Text, UnorderedList, ListItem, Button, HStack } from "@chakra-ui/react";
+import { Button, Flex, Heading, HStack, ListItem, Text, UnorderedList } from "@chakra-ui/react";
 import { motion } from "framer-motion";
-import { memo, useMemo, MouseEventHandler } from "react";
+import { memo, MouseEventHandler, useMemo } from "react";
 import { BiHistory } from "react-icons/bi";
-import { ItemEntry, useStore } from "../store";
+import { ItemEntry, MealEntry, useStore } from "../store";
 import { compareDate } from "../util/time";
+import NutritionBar from "./NutritionBar";
 
 const FramerHStack = motion(HStack);
 
@@ -133,5 +134,71 @@ export const SearchSuggestions = memo(function SearchSuggestions({
         </ListItem>
       ))}
     </FramerHStack>
+  );
+});
+
+export const RecentMeals = memo(function RecentMeals({ onAdd }: { onAdd(meal: MealEntry): void }) {
+  const { logs } = useStore();
+
+  const recentlyAddedMeals = useMemo(() => {
+    const map =
+      // get all logs
+      Object.keys(logs)
+        // sort them by date (descending)
+        .sort(compareDate(false))
+        // flat out all meals in order
+        .flatMap((date) => logs[date].reverse())
+        // pick first 10
+        .slice(0, 10)
+        // convert it into a map
+        .reduce((map, item) => {
+          if (map.has(item.name)) {
+            return map;
+          }
+          map.set(item.name, item);
+          return map;
+        }, new Map<string, MealEntry>());
+
+    return Array.from(map.values());
+  }, [logs]);
+
+  const handleClick: MouseEventHandler<HTMLButtonElement> = (e) => {
+    if (e.currentTarget) {
+      const meal = recentlyAddedMeals[Number(e.currentTarget.dataset.index)];
+      onAdd(meal);
+    }
+  };
+  return (
+    <Flex width="full" justify="flex-start" flexDir="column">
+      <Heading size="md" px="5">
+        Recently added meals
+      </Heading>
+      <UnorderedList listStyleType="none" display="flex" overflow="auto" flexDirection="row" ml="-4" pl="12">
+        {recentlyAddedMeals.map((meal, i) => (
+          <ListItem key={i} mt="4">
+            <Button
+              data-index={i}
+              onClick={handleClick}
+              display="flex"
+              flexDir="column"
+              height={24}
+              width={220}
+              variant="ghost"
+              alignItems="center"
+              justifyContent="center"
+              px="4"
+              py="4"
+              transform={"scale(0.8)"}
+              transformOrigin="left"
+            >
+              <Text mb="2">
+                {meal.name} ({meal.portionWeight}g)
+              </Text>
+              <NutritionBar nutrition={meal.nutrition} />
+            </Button>
+          </ListItem>
+        ))}
+      </UnorderedList>
+    </Flex>
   );
 });

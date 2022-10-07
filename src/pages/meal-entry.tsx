@@ -14,23 +14,13 @@ import {
 } from "@chakra-ui/react";
 import Fuse from "fuse.js";
 import { useRouter } from "next/router";
-import React, {
-  ChangeEventHandler,
-  FocusEvent,
-  FocusEventHandler,
-  memo,
-  MouseEventHandler,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { ChangeEventHandler, FocusEventHandler, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { BsCalculator } from "react-icons/bs";
 import { CalculatorModal } from "../components/CalculatorModal";
 
 import CustomItemModal, { CustomItemModalProps } from "../components/CustomItemModal";
 import { Page } from "../components/layouts";
-import { IngredientSuggestions, SearchSuggestions } from "../components/MealEntryComponents";
+import { IngredientSuggestions, SearchSuggestions, RecentMeals } from "../components/MealEntryComponents";
 import MealNameModal from "../components/MealNameModal";
 import NutritionBar from "../components/NutritionBar";
 import { ACTIONS, inititalNutrition, ItemEntry, MealEntry, useItems, useStore } from "../store";
@@ -75,31 +65,38 @@ export default function MealEntryPage() {
   const shouldShowSearchResults = searchQuery !== "" && !searchResults.find((x) => x.name === searchQuery);
   const shouldShowIngredientsSuggestions = !shouldShowSearchResults && searchQuery.length === 0;
 
+  const resetItems = useCallback(() => dispatch({ type: ACTIONS.RESET_MEAL_ENTRY_ITEMS }), [dispatch]);
+
+  const copyMealToCurrent = useCallback(
+    (meal: MealEntry) => {
+      if (meal && meal.name !== name && meal.items.length !== addedItems.length) {
+        dispatch({
+          type: ACTIONS.SET_MEAL_ENTRY_ITEMS,
+          payload: {
+            name: meal.name,
+            addedItems: meal.items,
+            totalWeight: meal.totalWeight,
+            portionWeight: meal.portionWeight,
+          },
+        });
+      }
+    },
+    [addedItems.length, dispatch, name]
+  );
+
   useEffect(() => {
     // on page unload, reset the state
     return () => {
-      dispatch({
-        type: ACTIONS.RESET_MEAL_ENTRY_ITEMS,
-      });
+      resetItems();
     };
-  }, [dispatch]);
+  }, [resetItems]);
 
   useEffect(() => {
     const index = Number(router.query.index);
     const meal = log[index];
 
-    if (meal && meal.name !== name && meal.items.length !== addedItems.length) {
-      dispatch({
-        type: ACTIONS.SET_MEAL_ENTRY_ITEMS,
-        payload: {
-          name: meal.name,
-          addedItems: meal.items,
-          totalWeight: meal.totalWeight,
-          portionWeight: meal.portionWeight,
-        },
-      });
-    }
-  }, [router.query.index, log, name, addedItems.length, dispatch]);
+    copyMealToCurrent(meal);
+  }, [copyMealToCurrent, log, router.query.index]);
 
   useEffect(() => {
     if (router.query.shared_meal) {
@@ -150,7 +147,6 @@ export default function MealEntryPage() {
       payload: { index, item },
     });
   const deleteItem = (index: number) => dispatch({ type: ACTIONS.DELETE_MEAL_ENTRY_ITEM, payload: index });
-  const resetItems = () => dispatch({ type: ACTIONS.RESET_MEAL_ENTRY_ITEMS });
   const setPortionWeight = (weight: number) =>
     dispatch({
       type: ACTIONS.SET_MEAL_ENTRY_PORTION_WEIGHT,
@@ -428,14 +424,19 @@ export default function MealEntryPage() {
   );
 
   const emptyArt = (
-    <Flex p="6" flex="1" direction="column" justify="center" align="center">
-      <FormControl>
-        <FormHelperText>Add Items of your meal by using the form below.</FormHelperText>
-      </FormControl>
-      <Box my="6" h={["100%", "20vh"]}>
-        <DinnerArt />
+    <>
+      <Flex p="6" flex="1" direction="column" justify="center" align="center">
+        <FormControl>
+          <FormHelperText>Add Items of your meal by using the form below.</FormHelperText>
+        </FormControl>
+        <Box my="6" h={["100%", "20vh"]}>
+          <DinnerArt />
+        </Box>
+      </Flex>
+      <Box mx={["-4", "-16", "-32"]}>
+        <RecentMeals onAdd={copyMealToCurrent} />
       </Box>
-    </Flex>
+    </>
   );
 
   return (
