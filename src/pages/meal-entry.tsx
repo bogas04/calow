@@ -14,7 +14,19 @@ import {
 } from "@chakra-ui/react";
 import Fuse from "fuse.js";
 import { useRouter } from "next/router";
-import React, { ChangeEventHandler, useEffect, useMemo, useState } from "react";
+import React, {
+  ChangeEventHandler,
+  FocusEvent,
+  FocusEventHandler,
+  memo,
+  MouseEventHandler,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { BsCalculator } from "react-icons/bs";
+import { CalculatorModal } from "../components/CalculatorModal";
 
 import CustomItemModal, { CustomItemModalProps } from "../components/CustomItemModal";
 import { Page } from "../components/layouts";
@@ -36,12 +48,19 @@ export default function MealEntryPage() {
   const toast = useToast();
   const router = useRouter();
   const [showMealNameModal, setShowMealModal] = useState(false);
+  const [showCalculatorModal, setShowCalculatorModal] = useState(false);
   const [showCustomItemModal, setShowCustomItemModal] = useState(false);
+  const [shouldShowCalculator, setShouldShowCalculator] = useState(false);
   const [customItemDetails, setCustomItemDetails] = useState({
     name: "",
     weight: 0,
   });
   const [searchQuery, setSearchQuery] = useState("");
+  const lastFocusedInput = useRef<HTMLInputElement | null>(null);
+  const setLastFocusedInput: FocusEventHandler<HTMLInputElement> = (e) => {
+    setShouldShowCalculator(false);
+    lastFocusedInput.current = e.currentTarget;
+  };
 
   const searchResults = useMemo(() => {
     const f = new Fuse(items, { keys: ["name"], threshold: 0.25 });
@@ -275,6 +294,8 @@ export default function MealEntryPage() {
         </Text>
         <Input
           inputMode="numeric"
+          onBlur={setLastFocusedInput}
+          onFocus={() => setShouldShowCalculator(true)}
           variant="flushed"
           autoComplete="off"
           width={"1.2"}
@@ -307,7 +328,7 @@ export default function MealEntryPage() {
 
   const form = (
     <form onSubmit={handleAddItem} style={{ justifyContent: "space-between", flex: 1 }}>
-      <Grid templateColumns="1fr 1fr 0.2fr" gap={2}>
+      <Grid templateColumns="1fr 1fr 0.4fr" gap={2}>
         <Input
           isRequired
           autoFocus
@@ -324,20 +345,32 @@ export default function MealEntryPage() {
           type="text"
           isRequired
           inputMode="numeric"
+          onBlur={setLastFocusedInput}
+          onFocus={() => setShouldShowCalculator(true)}
           name="weight"
           variant="filled"
           autoComplete="off"
           size="sm"
           placeholder="Weight in grams"
         />
-        <IconButton
-          aria-label="Add item"
-          size="sm"
-          type="submit"
-          icon={<AddIcon />}
-          variant="outline"
-          colorScheme="green"
-        />
+        <Flex gap={2}>
+          <IconButton
+            aria-label="Calculator"
+            size="sm"
+            variant="outline"
+            icon={<BsCalculator />}
+            onClick={(e) => setShowCalculatorModal(true)}
+            colorScheme={shouldShowCalculator ? "blue" : "blackAlpha"}
+          />
+          <IconButton
+            aria-label="Add item"
+            size="sm"
+            type="submit"
+            icon={<AddIcon />}
+            variant="outline"
+            colorScheme="green"
+          />
+        </Flex>
       </Grid>
     </form>
   );
@@ -351,6 +384,8 @@ export default function MealEntryPage() {
             w="30%"
             fontSize="xs"
             inputMode="numeric"
+            onBlur={setLastFocusedInput}
+            onFocus={() => setShouldShowCalculator(true)}
             autoComplete="off"
             textAlign="center"
             value={portionWeight}
@@ -370,6 +405,8 @@ export default function MealEntryPage() {
             textAlign="center"
             variant="flushed"
             inputMode="numeric"
+            onBlur={setLastFocusedInput}
+            onFocus={() => setShouldShowCalculator(true)}
             autoComplete="off"
             value={totalWeight}
             onChange={(e: React.FormEvent<HTMLInputElement>) => setTotalWeight(Number(e.currentTarget.value))}
@@ -446,6 +483,30 @@ export default function MealEntryPage() {
         onClose={() => setShowCustomItemModal(false)}
         name={customItemDetails.name}
         onAdd={handleAddCustomItem}
+      />
+      <CalculatorModal
+        isOpen={showCalculatorModal && lastFocusedInput.current !== null}
+        getTitle={() => lastFocusedInput.current?.placeholder}
+        getDefaultValue={() => lastFocusedInput.current?.value}
+        onClose={() => setShowCalculatorModal(false)}
+        onSubmit={(value) => {
+          if (lastFocusedInput.current) {
+            /**
+             * react won't let us mutate lastFocusedInput.current.value, so we've to do this:
+             * https://stackoverflow.com/a/46012210
+             */
+            const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+              window.HTMLInputElement.prototype,
+              "value"
+            )?.set;
+
+            if (nativeInputValueSetter) {
+              nativeInputValueSetter.call(lastFocusedInput.current, value);
+              var ev2 = new Event("input", { bubbles: true });
+              lastFocusedInput.current.dispatchEvent(ev2);
+            }
+          }
+        }}
       />
     </Flex>
   );
