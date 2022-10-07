@@ -12,9 +12,10 @@ export const LoadingContainer = memo(function LoadingConatiner(props: LoadingCon
   const { children, isLoading, loadingText = "Updating...", ...rest } = props;
 
   const afterStyle = {
+    content: isLoading ? `"${loadingText}"` : '""',
+    zIndex: isLoading ? 1 : -1,
     position: "absolute",
     inset: 0,
-    content: isLoading ? `"${loadingText}"` : '""',
     paddingTop: "40%",
     display: "flex",
     justifyContent: "center",
