@@ -21,8 +21,8 @@ export const IngredientSuggestions = memo(function IngredientSuggestions({ onAdd
       Object.keys(logs)
         // sort them by date (descending)
         .sort(compareDate(false))
-        // flat out all items
-        .flatMap((date) => logs[date].reverse().flatMap((log) => log.items))
+        // flat out all items (make sure we make a copy of array)
+        .flatMap((date) => [...logs[date]].reverse().flatMap((log) => log.items))
         // remove items that are already in current list
         .filter((item) => !currentlyAddedItemNames.includes(item.name))
         // pick first 10
@@ -146,8 +146,8 @@ export const RecentMeals = memo(function RecentMeals({ onAdd }: { onAdd(meal: Me
       Object.keys(logs)
         // sort them by date (descending)
         .sort(compareDate(false))
-        // flat out all meals in order
-        .flatMap((date) => logs[date].reverse())
+        // flat out all meals in order (make sure we make a copy of array)
+        .flatMap((date) => [...logs[date]].reverse())
         // pick first 10
         .slice(0, 10)
         // convert it into a map
