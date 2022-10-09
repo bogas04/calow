@@ -33,6 +33,7 @@ function CustomItemModal({ name, isOpen, onClose, onAdd }: CustomItemModalProps)
     const protein = Number(form.protein.value);
     const fat = Number(form.fat.value);
     const carbohydrates = Number(form.carbohydrates.value);
+    const fiber = Number(form.fiber.value);
 
     onAdd({
       name,
@@ -46,6 +47,7 @@ function CustomItemModal({ name, isOpen, onClose, onAdd }: CustomItemModalProps)
         },
         (_, value) => (value * 100) / weight
       ),
+      micro: { fiber: (fiber * 100) / weight },
     });
   }
 
@@ -76,13 +78,16 @@ function CustomItemModal({ name, isOpen, onClose, onAdd }: CustomItemModalProps)
                 grams.
               </FormHelperText>
             </FormControl>
-            {nutritionKeys.map((k) => (
+            {[...nutritionKeys, "fiber"].map((k) => (
               <FormControl key={k} my="2">
                 <FormLabel textTransform="capitalize">{k}</FormLabel>
                 <Input
                   name={k}
                   textTransform="capitalize"
-                  placeholder={`${k} in ${nutritionUnits[k]}`}
+                  placeholder={
+                    // @ts-expect-error
+                    `${k} in ${nutritionUnits[k] || "grams"}`
+                  }
                   inputMode="numeric"
                 />
               </FormControl>
