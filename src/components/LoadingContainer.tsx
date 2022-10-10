@@ -26,16 +26,7 @@ export const LoadingContainer = memo(function LoadingConatiner(props: LoadingCon
 
   return (
     <Box position="relative" _after={afterStyle} {...rest}>
-      <Box
-        opacity={isLoading ? "0.2" : "1"}
-        style={{
-          contentVisibility: "auto",
-          // @ts-expect-error
-          containIntrinsicSize: "1000px",
-        }}
-      >
-        {children}
-      </Box>
+      <Box opacity={isLoading ? "0.2" : "1"}>{children}</Box>
     </Box>
   );
 });
