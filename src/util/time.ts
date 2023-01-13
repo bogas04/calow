@@ -18,6 +18,8 @@ export function getTimeDifference(from: number, to: number = Date.now()) {
   return unit === "seconds" ? "now" : rtf.format((from < to ? -1 : 1) * Math.floor(difference), unit);
 }
 
+export const getDateFromDateKey = (key: string) => new Date(key.split("/").reverse().join("/"));
+
 export const getDateKey = (time: number) => {
   const d = new Date(time);
   return `${String(d.getDate()).padStart(2, "0")}/${String(d.getMonth() + 1).padStart(2, "0")}/${d.getFullYear()}`;

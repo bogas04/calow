@@ -1,40 +1,46 @@
 import {
-  Flex,
-  Grid,
   Box,
-  Link as ChakraLink,
-  FormHelperText,
-  FormControl,
-  IconButton,
   ChakraProps,
+  Flex,
+  FormControl,
+  FormHelperText,
+  Grid,
   Icon,
+  IconButton,
+  Link as ChakraLink,
 } from "@chakra-ui/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState, MouseEventHandler, MouseEvent, useDeferredValue } from "react";
+import { MouseEvent, MouseEventHandler, useDeferredValue, useState } from "react";
 
 import { CgGlassAlt as WaterGlassIcon } from "react-icons/cg";
-import { getDateKey, getShortMonth } from "../util/time";
-import { getClosestDatasetKey } from "../util/dom";
 import { ACTIONS, inititalNutrition, Store, useStore } from "../store";
 import EmptyArt from "../svg/EmptyArt";
+import { getClosestDatasetKey } from "../util/dom";
+import { getDateFromDateKey, getDateKey, getShortMonth } from "../util/time";
 
-import { Meter } from "../components/Meter";
-import { Page } from "../components/layouts";
-import DateBar from "../components/DateBar";
-import { TODAY, DAY } from "../constants/date";
-import MealNutrition from "../components/MealNutrition";
-import NutritionBar from "../components/NutritionBar";
-import { BsDropletFill, BsDropletHalf } from "react-icons/bs";
 import { InfoIcon } from "@chakra-ui/icons";
+import { BiStats } from "react-icons/bi";
+import { BsDropletFill, BsDropletHalf } from "react-icons/bs";
+import DateBar from "../components/DateBar";
 import ExpandedItemNutritionModal from "../components/ExpandedItemNutritionModal";
+import { Page } from "../components/layouts";
 import { LoadingContainer } from "../components/LoadingContainer";
+import MealNutrition from "../components/MealNutrition";
+import { Meter } from "../components/Meter";
+import NutritionBar from "../components/NutritionBar";
+import { DAY, TODAY } from "../constants/date";
 
 // Disabled due to low usage.
 const isWaterEnabled = false;
 export default function HomePage() {
-  const [date, setDate] = useState(TODAY);
   const router = useRouter();
+  const [date, setDate] = useState(() => {
+    if (typeof router.query.date === "undefined") {
+      return TODAY;
+    }
+    return getDateFromDateKey(router.query.date as string).getTime();
+  });
   const [isInfoModalOpen, setInfoModalOpen] = useState(false);
   const { dispatch, bookmarks, goal, nutrition, micro, water, log: actualLog } = useStore(date);
   const isSelectedDateToday = date > TODAY - DAY;
@@ -154,6 +160,14 @@ export default function HomePage() {
               rounded="full"
               icon={<InfoIcon />}
               onClick={onInfoClick}
+            />
+            <IconButton
+              aria-label="Micronutrient information"
+              color="gray.400"
+              variant="ghost"
+              rounded="full"
+              icon={<BiStats />}
+              onClick={() => router.push("/journal")}
             />
           </Flex>
 
