@@ -433,9 +433,9 @@ export default function MealEntryPage() {
           <DinnerArt />
         </Box>
       </Flex>
-      <Box mx={["-4", "-16", "-32"]}>
+      {/* <Box mx={["-4", "-16", "-32"]}>
         <RecentMeals onAdd={copyMealToCurrent} />
-      </Box>
+      </Box> */}
     </>
   );
 
