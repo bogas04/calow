@@ -7,7 +7,7 @@ import MealNutrition from "../components/MealNutrition";
 
 import { ACTIONS, MealEntry, useStore } from "../store";
 import { getClosestDatasetKey } from "../util/dom";
-import { formatDateKey } from "../util/time";
+import { compareDate, formatDateKey } from "../util/time";
 
 export default function SearchPage() {
   const { logs, dispatch } = useStore();
@@ -40,6 +40,7 @@ export default function SearchPage() {
     return fuse
       .search(query)
       .map((i) => i.item)
+      .sort((a, b) => compareDate(false)(a.date, b.date))
       .slice(0, 15);
   }, [query, logs]);
 
