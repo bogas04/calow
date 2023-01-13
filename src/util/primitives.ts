@@ -33,3 +33,35 @@ export const computeArithmeticExpression = (expression: string) => {
     .split("!")
     .reduce((total, x) => total + Number(x), 0);
 };
+
+/**
+ * 
+  takes an array of objects and sorts it by the count of a key
+  Example:
+  [
+    {name: 'a'},
+    {name: 'b'},
+    {name: 'b'},
+    {name: 'c'},
+    {name: 'c'},
+    {name: 'c'},
+  ]
+
+  Output:
+  [
+    {name: 'c'},
+    {name: 'b'},
+    {name: 'a'},
+  ]
+ */
+export function sortByKey<T extends Record<string, any>>(arr: T[], key: keyof T, ascending = false): T[] {
+  const rankedMap = new Map<string, { item: T; count: number }>();
+  arr.forEach((item) => {
+    const fromMap = rankedMap.get(item[key]);
+    rankedMap.set(item[key], { count: (fromMap?.count ?? 0) + 1, item });
+  });
+
+  return Array.from(rankedMap.values())
+    .sort((a, b) => (a.count - b.count) * (ascending ? 1 : -1))
+    .map((x) => x.item);
+}

@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { memo, MouseEventHandler, useMemo } from "react";
 import { BiHistory } from "react-icons/bi";
 import { ItemEntry, MealEntry, useStore } from "../store";
+import { sortByKey } from "../util/primitives";
 import { compareDate } from "../util/time";
 import NutritionBar from "./NutritionBar";
 
@@ -16,7 +17,7 @@ export const IngredientSuggestions = memo(function IngredientSuggestions({ onAdd
 
   const recentlyUsedIngredients = useMemo(() => {
     const currentlyAddedItemNames = addedItems.map((x) => x.name);
-    const map =
+    const allItems =
       // get all logs
       Object.keys(logs)
         // sort them by date (descending)
@@ -24,17 +25,19 @@ export const IngredientSuggestions = memo(function IngredientSuggestions({ onAdd
         // flat out all items (make sure we make a copy of array)
         .flatMap((date) => [...logs[date]].reverse().flatMap((log) => log.items))
         // remove items that are already in current list
-        .filter((item) => !currentlyAddedItemNames.includes(item.name))
-        // pick first 10
-        .slice(0, 10)
-        // convert it into a map
-        .reduce((map, item) => {
-          if (map.has(item.name)) {
-            return map;
-          }
-          map.set(item.name, item);
+        .filter((item) => !currentlyAddedItemNames.includes(item.name));
+
+    const map = sortByKey(allItems, "name", false)
+      // pick first 10
+      .slice(0, 10)
+      // convert it into a map
+      .reduce((map, item) => {
+        if (map.has(item.name)) {
           return map;
-        }, new Map<string, ItemEntry>());
+        }
+        map.set(item.name, item);
+        return map;
+      }, new Map<string, ItemEntry>());
 
     return Array.from(map.values());
   }, [addedItems, logs]);
