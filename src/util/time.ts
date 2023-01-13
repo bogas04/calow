@@ -47,7 +47,14 @@ export const formatDateKey = (key: string) => {
 const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 export function formatShortDate(date: Date) {
-  return `${date.getDate()}, ${months[date.getMonth()]}`;
+  return `${date.getDate()} ${months[date.getMonth()]}, '${String(date.getFullYear()).split("").slice(2).join("")}`;
+}
+
+export function formatTimeOfDay(date: Date) {
+  return date.toLocaleTimeString("en-IN", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 }
 
 export function getShortMonth(month: number) {

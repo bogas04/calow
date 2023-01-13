@@ -24,7 +24,7 @@ import { BiBookmarkMinus as RemoveBookmarkIcon, BiBookmarkPlus as AddBookmarkIco
 import { BsThreeDots, BsThreeDotsVertical as ThreeDotsIcon } from "react-icons/bs";
 import { MealEntry } from "../store";
 import { mapNutrition } from "../util/nutrition";
-import { getTimeDifference } from "../util/time";
+import { formatTimeOfDay } from "../util/time";
 import ExpandedItemNutritionModal from "./ExpandedItemNutritionModal";
 import ItemNutrition from "./ItemNutrition";
 import NutritionBar from "./NutritionBar";
@@ -126,7 +126,7 @@ function MealNutrition({ meal, onRepeat, onDelete, onEdit, onBookmark, bookmarke
         </Text>
         <Box w="1px" h="20px" bg="gray.500" mx="2" />
         <Text fontSize="xs" color="gray.600" fontWeight="300">
-          {getTimeDifference(meal.timestamp)}
+          {formatTimeOfDay(new Date(meal.timestamp))}
         </Text>
       </Flex>
       <Collapse in={showItemDetails}>
