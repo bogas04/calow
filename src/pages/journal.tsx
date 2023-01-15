@@ -82,7 +82,7 @@ export default function Journal() {
         </div>
       </Flex>
 
-      <Box position="relative" flex={1} mt="20" pl="2">
+      <Box position="relative" flex={1} mt="12" pl="2" bg="gray.50">
         <Box position="absolute" top={0} zIndex={999} w="100%">
           <Box w="100%" borderBottom="dotted" h="2" borderColor={nutritionColors[selectedMacro]} mt={-2} />
           <Text textAlign={"right"} fontSize="9">
@@ -159,13 +159,17 @@ const BarGraph = memo(function BarGraph({
     <Flex justify="space-between" align="flex-end" height={200} width="95%">
       {macrosForLogs.map(({ nutrition, dateKey }) => {
         const multiplier = nutrition[selectedMacro] / goal.nutrition[selectedMacro];
+        const mealDate = getDateFromDateKey(dateKey);
+        const dateString = mealDate ? formatShortDateWithoutYear(mealDate) : null;
         return (
           <Link key={dateKey} href={`/?date=${dateKey}`}>
             <Box display="flex" alignItems="flex-end" justifyContent="space-between" w="100%" position="relative">
               <Box key={dateKey} bg={nutritionColors[selectedMacro]} w="3" h={Math.min(multiplier * 200, 250)} />
-              <Text fontSize="xs" position="absolute" bottom={-5} left={-2}>
-                {getDateFromDateKey(dateKey).getDate()} {getShortMonth(getDateFromDateKey(dateKey).getMonth())}
-              </Text>
+              {dateString ? (
+                <Text fontSize="xs" position="absolute" bottom={-5} left={-2}>
+                  {dateString}
+                </Text>
+              ) : null}
             </Box>
           </Link>
         );

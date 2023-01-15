@@ -18,7 +18,15 @@ export function getTimeDifference(from: number, to: number = Date.now()) {
   return unit === "seconds" ? "now" : rtf.format((from < to ? -1 : 1) * Math.floor(difference), unit);
 }
 
-export const getDateFromDateKey = (key: string) => new Date(key.split("/").reverse().join("/"));
+export const getDateFromDateKey = (key: string) => {
+  if (typeof key !== "string") return null;
+  const yyyymmdd = key.split("/").reverse().join("/");
+
+  if (isNaN(Date.parse(yyyymmdd))) {
+    return null;
+  }
+  return new Date(yyyymmdd);
+};
 
 export const getDateKey = (time: number) => {
   const d = new Date(time);

@@ -20,13 +20,14 @@ import { CalculatorModal } from "../components/CalculatorModal";
 
 import CustomItemModal, { CustomItemModalProps } from "../components/CustomItemModal";
 import { Page } from "../components/layouts";
-import { IngredientSuggestions, SearchSuggestions, RecentMeals } from "../components/MealEntryComponents";
+import { IngredientSuggestions, SearchSuggestions } from "../components/MealEntryComponents";
 import MealNameModal from "../components/MealNameModal";
 import NutritionBar from "../components/NutritionBar";
 import { ACTIONS, inititalNutrition, ItemEntry, MealEntry, useItems, useStore } from "../store";
 import DinnerArt from "../svg/DinnerArt";
 import { computeMicroNutritionFromLog, computeWeightedNutrition, mapNutrition } from "../util/nutrition";
 import { computeArithmeticExpression } from "../util/primitives";
+import { formatShortDate, getDateFromDateKey } from "../util/time";
 
 export default function MealEntryPage() {
   const {
@@ -64,6 +65,8 @@ export default function MealEntryPage() {
 
   const shouldShowSearchResults = searchQuery !== "" && !searchResults.find((x) => x.name === searchQuery);
   const shouldShowIngredientsSuggestions = !shouldShowSearchResults && searchQuery.length === 0;
+
+  const forDate = getDateFromDateKey(router.query.forDate as string);
 
   const resetItems = useCallback(() => dispatch({ type: ACTIONS.RESET_MEAL_ENTRY_ITEMS }), [dispatch]);
 
@@ -254,7 +257,10 @@ export default function MealEntryPage() {
 
   function handleDone() {
     if (addedItems.length === 1) {
-      saveAndRedirect({ name: addedItems[0].name, timestamp: Date.now() });
+      saveAndRedirect({
+        name: addedItems[0].name,
+        timestamp: forDate?.getTime() || Date.now(),
+      });
       return;
     }
     setShowMealModal(true);
@@ -439,9 +445,11 @@ export default function MealEntryPage() {
     </>
   );
 
+  const title = forDate === null ? "Add Entry" : `Add Entry for ${formatShortDate(forDate)}`;
+
   return (
     <Flex h="100%" direction="column">
-      <Page heading="Add Entry" display="flex" flex="1" flexDirection="column" overflow="auto">
+      <Page heading={title} display="flex" flex="1" flexDirection="column" overflow="auto">
         <Flex justify="center" mb="2">
           <NutritionBar nutrition={portionNutrition} />
         </Flex>

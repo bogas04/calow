@@ -13,11 +13,11 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { MouseEvent, MouseEventHandler, useDeferredValue, useMemo, useState } from "react";
 
-import { CgGlassAlt as WaterGlassIcon } from "react-icons/cg";
+import { CgCalendarToday, CgGlassAlt as WaterGlassIcon } from "react-icons/cg";
 import { ACTIONS, inititalNutrition, Store, useStore } from "../store";
 import EmptyArt from "../svg/EmptyArt";
 import { getClosestDatasetKey } from "../util/dom";
-import { getDateFromDateKey, getDateKey, getShortMonth } from "../util/time";
+import { getDateFromDateKey, getDateKey } from "../util/time";
 
 import { InfoIcon } from "@chakra-ui/icons";
 import { BiStats } from "react-icons/bi";
@@ -39,7 +39,7 @@ export default function HomePage() {
     if (typeof router.query.date === "undefined") {
       return TODAY;
     }
-    return getDateFromDateKey(router.query.date as string).getTime();
+    return getDateFromDateKey(router.query.date as string)?.getTime() || TODAY;
   }, [router.query.date]);
   const setDate = (date: number) => {
     router.push({ query: { date: getDateKey(date) } });
@@ -240,20 +240,25 @@ export default function HomePage() {
             </Link>
           </Grid>
         ) : (
-          <ChakraLink
-            as="button"
-            {...FABProps}
-            {...FABContainerProps}
-            bg="purple.300"
-            flexDirection="column"
-            title="Show today's log"
-            onClick={() => setDate(TODAY)}
-          >
-            {new Date().getDate()}
-            <Box fontSize="xs" mt={-2}>
-              {getShortMonth(new Date().getMonth())}
-            </Box>
-          </ChakraLink>
+          <Grid {...FABContainerProps} autoFlow="row" gap={2}>
+            <IconButton
+              variant="ghost"
+              {...FABProps}
+              height="10"
+              width="10"
+              type="button"
+              bg="blue.600"
+              aria-label="Add water glass"
+              onClick={() => setDate(TODAY)}
+              justifySelf="center"
+              icon={<CgCalendarToday size={"25"} />}
+            />
+            <Link href={{ pathname: "/meal-entry", query: { forDate: getDateKey(date) } }}>
+              <ChakraLink {...FABProps} title="Add log item" userSelect="none">
+                +
+              </ChakraLink>
+            </Link>
+          </Grid>
         )}
       </Flex>
 
