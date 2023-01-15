@@ -22,6 +22,7 @@ import {
 import { memo, useCallback, useState } from "react";
 import { BiBookmarkMinus as RemoveBookmarkIcon, BiBookmarkPlus as AddBookmarkIcon } from "react-icons/bi";
 import { BsThreeDots, BsThreeDotsVertical as ThreeDotsIcon } from "react-icons/bs";
+import { CgDetailsMore } from "react-icons/cg";
 import { MealEntry } from "../store";
 import { mapNutrition } from "../util/nutrition";
 import { formatTimeOfDay } from "../util/time";
@@ -56,6 +57,14 @@ function MealNutrition({ meal, onRepeat, onDelete, onEdit, onBookmark, bookmarke
         <Heading size="md">{meal.name}</Heading>
 
         <Flex justify="flex-end" align="center">
+          <IconButton
+            isRound
+            size="sm"
+            variant="ghost"
+            aria-label={"Show micro nutrients"}
+            onClick={openMicroNutrientsModal}
+            icon={<CgDetailsMore />}
+          />
           <IconButton
             isRound
             size="sm"
@@ -107,17 +116,8 @@ function MealNutrition({ meal, onRepeat, onDelete, onEdit, onBookmark, bookmarke
         </Flex>
       </Flex>
 
-      <Flex justify="space-between" align="flex-start">
-        <NutritionBar nutrition={meal.nutrition} border={false} />
-        <IconButton
-          variant="ghost"
-          rounded="full"
-          color="gray.500"
-          icon={<BsThreeDots />}
-          aria-label="Micronutrients"
-          onClick={openMicroNutrientsModal}
-        />
-      </Flex>
+      <NutritionBar nutrition={meal.nutrition} border={false} />
+
       <Flex align="center" flex="1" mt="2" mb="6">
         <Text fontSize="xs" color="gray.600" fontWeight="300">
           {meal.portionWeight === meal.totalWeight
