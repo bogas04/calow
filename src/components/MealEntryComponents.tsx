@@ -122,8 +122,8 @@ export const SearchSuggestions = memo(function SearchSuggestions({
       animate={{ translateY: 0 }}
       transition={{ duration: 0.1 }}
     >
-      {results.map((s) => (
-        <ListItem key={s.name}>
+      {results.map((s, i) => (
+        <ListItem key={i}>
           <Button
             colorScheme="gray"
             fontWeight="normal"
