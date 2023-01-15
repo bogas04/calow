@@ -1,22 +1,12 @@
-import { Badge, Box, Button, Flex, Heading, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Text } from "@chakra-ui/react";
 import Link from "next/link";
 import { memo, useMemo, useState } from "react";
 import { Page } from "../components/layouts";
-import MealNutrition from "../components/MealNutrition";
 import NutritionBar from "../components/NutritionBar";
-import {
-  Nutrition,
-  nutritionColors,
-  nutritionKeys,
-  nutritionShortNames,
-  nutritionShortUnits,
-  Store,
-  useStore,
-} from "../store";
+import { Nutrition, nutritionColors, nutritionKeys, nutritionShortUnits, Store, useStore } from "../store";
 import { computeMacroNutritionFromLog, createNutrition, mapNutrition } from "../util/nutrition";
 import {
   compareDate,
-  formatShortDate,
   formatShortDateWithoutYear,
   formatTimeOfDay,
   getDateFromDateKey,
