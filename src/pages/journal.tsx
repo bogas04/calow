@@ -70,20 +70,16 @@ export default function Journal() {
             </>
           )}
         </Flex>
-        <Flex mt={4} flexDirection="column" gap={3}>
-          <Box>
-            <Text fontWeight="semibold" fontSize={14}>
-              Weekly Average
-            </Text>
+        <div className="my-4 grid gap-2">
+          <div>
+            <p className="font-semibold text-sm">Weekly Average</p>
             <NutritionBar nutrition={weeklyAverage} showLegend={true} border={false} />
-          </Box>
-          <Box>
-            <Text fontWeight="semibold" fontSize={14}>
-              Goal
-            </Text>
+          </div>
+          <div>
+            <p className="font-semibold text-sm">Goal</p>
             <NutritionBar nutrition={goal.nutrition} showLegend={true} border={false} />
-          </Box>
-        </Flex>
+          </div>
+        </div>
       </Flex>
 
       <Box position="relative" flex={1} mt="20" pl="2">
