@@ -485,7 +485,7 @@ export default function MealEntryPage() {
         isOpen={showMealNameModal}
         onClose={() => setShowMealModal(false)}
         defaultName={name}
-        onSubmit={saveAndRedirect}
+        onSubmit={(data) => saveAndRedirect({ ...data, timestamp: forDate?.getTime() || Date.now() })}
       />
       <CustomItemModal
         isOpen={showCustomItemModal}
