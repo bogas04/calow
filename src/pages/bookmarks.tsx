@@ -5,7 +5,7 @@ import MealNutrition from "../components/MealNutrition";
 import { ACTIONS, useStore } from "../store";
 import { getClosestDatasetKey } from "../util/dom";
 import { useRouter } from "next/router";
-import Fuse from "fuse.js";
+import Fuzzy from "@leeoniya/ufuzzy";
 
 export default function BookmarksPage() {
   const [query, setQuery] = useState("");
@@ -46,12 +46,18 @@ export default function BookmarksPage() {
       meal: logs[x.date][x.index],
     }));
 
-    const f = new Fuse(processedBookmarks, {
-      keys: ["meal.name"],
-      threshold: 0.25,
-    });
+    if (query.trim() === "") {
+      return processedBookmarks;
+    }
 
-    return query.trim() === "" ? processedBookmarks : f.search(query.trim()).map((x) => x.item);
+    const uf = new Fuzzy();
+
+    const bookmarksIds = uf.filter(
+      processedBookmarks.map((b) => b.meal.name),
+      query.trim()
+    );
+
+    return bookmarksIds.map((bid) => processedBookmarks[bid]);
   }, [bookmarks, query, logs]);
 
   const handleSearch: React.FormEventHandler<HTMLInputElement> = (e) => {
