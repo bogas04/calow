@@ -11,7 +11,7 @@ import {
 } from "@chakra-ui/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { MouseEvent, MouseEventHandler, useDeferredValue, useState } from "react";
+import { MouseEvent, MouseEventHandler, useDeferredValue, useMemo, useState } from "react";
 
 import { CgGlassAlt as WaterGlassIcon } from "react-icons/cg";
 import { ACTIONS, inititalNutrition, Store, useStore } from "../store";
@@ -35,12 +35,16 @@ import { DAY, TODAY } from "../constants/date";
 const isWaterEnabled = false;
 export default function HomePage() {
   const router = useRouter();
-  const [date, setDate] = useState(() => {
+  const date = useMemo(() => {
     if (typeof router.query.date === "undefined") {
       return TODAY;
     }
     return getDateFromDateKey(router.query.date as string).getTime();
-  });
+  }, [router.query.date]);
+  const setDate = (date: number) => {
+    router.push({ query: { date: getDateKey(date) } });
+  };
+
   const [isInfoModalOpen, setInfoModalOpen] = useState(false);
   const { dispatch, bookmarks, goal, nutrition, micro, water, log: actualLog } = useStore(date);
   const isSelectedDateToday = date > TODAY - DAY;
