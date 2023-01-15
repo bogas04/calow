@@ -52,6 +52,9 @@ export function formatShortDate(date: Date) {
   return `${date.getDate()} ${months[date.getMonth()]}, '${String(date.getFullYear()).split("").slice(2).join("")}`;
 }
 
+export function formatShortDateWithoutYear(date: Date) {
+  return `${date.getDate()} ${months[date.getMonth()]}`;
+}
 export function formatTimeOfDay(date: Date) {
   return date.toLocaleTimeString("en-IN", {
     hour: "2-digit",
