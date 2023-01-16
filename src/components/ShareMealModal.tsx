@@ -129,15 +129,21 @@ function createShareableMealLink(_mealToBeShared: MealEntry) {
     return finalUrl;
   }
 
+  const microMultiplier = 100 / mealToBeShared.portionWeight;
+  const microPer100 = Object.fromEntries(
+    Object.entries(mealToBeShared.micro || {}).map(([k, v]) => [k, v * microMultiplier])
+  );
+
   // we compress entire meal into one item in itself
   mealToBeShared.items = [
     {
       name: mealToBeShared.name,
       nutrition: mealToBeShared.nutrition,
-      micro: mealToBeShared.micro,
+      micro: microPer100,
       weight: mealToBeShared.portionWeight,
     },
   ];
+  mealToBeShared.totalWeight = mealToBeShared.portionWeight;
 
   return createLink(JSON.stringify(mealToBeShared));
 }
