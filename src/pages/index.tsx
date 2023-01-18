@@ -189,7 +189,9 @@ export default function HomePage() {
             </Grid>
           )}
 
-          <DateBar date={date} onChange={setDate} />
+          <div className="my-4">
+            <DateBar date={date} onChange={setDate} />
+          </div>
         </Box>
 
         <LoadingContainer isLoading={isLogLoading} py={["1", "10"]} pb="40%" flex="0.7">
