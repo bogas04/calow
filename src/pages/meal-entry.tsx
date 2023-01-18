@@ -14,7 +14,17 @@ import {
 } from "@chakra-ui/react";
 import Fuse from "fuse.js";
 import { useRouter } from "next/router";
-import React, { ChangeEventHandler, FocusEventHandler, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  ChangeEventHandler,
+  FocusEventHandler,
+  InputHTMLAttributes,
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { BsCalculator } from "react-icons/bs";
 import { CalculatorModal } from "../components/CalculatorModal";
 
@@ -27,7 +37,7 @@ import { ACTIONS, inititalNutrition, ItemEntry, MealEntry, useItems, useStore } 
 import DinnerArt from "../svg/DinnerArt";
 import { computeMicroNutritionFromLog, computeWeightedNutrition, mapNutrition } from "../util/nutrition";
 import { computeArithmeticExpression } from "../util/primitives";
-import { formatShortDate, getDateFromDateKey } from "../util/time";
+import { formatShortDate, getDateFromDateKey, getDateKey } from "../util/time";
 
 export default function MealEntryPage() {
   const {
@@ -66,7 +76,8 @@ export default function MealEntryPage() {
   const shouldShowSearchResults = searchQuery !== "" && !searchResults.find((x) => x.name === searchQuery);
   const shouldShowIngredientsSuggestions = !shouldShowSearchResults && searchQuery.length === 0;
 
-  const forDate = getDateFromDateKey(router.query.forDate as string);
+  const forDateKey = router.query.forDate as string;
+  const forDate = getDateFromDateKey(forDateKey);
 
   const resetItems = useCallback(() => dispatch({ type: ACTIONS.RESET_MEAL_ENTRY_ITEMS }), [dispatch]);
 
@@ -445,11 +456,9 @@ export default function MealEntryPage() {
     </>
   );
 
-  const title = forDate === null ? "Add Entry" : `Add Entry for ${formatShortDate(forDate)}`;
-
   return (
     <Flex h="100%" direction="column">
-      <Page heading={title} display="flex" flex="1" flexDirection="column" overflow="auto">
+      <Page heading={<MealEntryHeading />} display="flex" flex="1" flexDirection="column" overflow="auto">
         <Flex justify="center" mb="2">
           <NutritionBar nutrition={portionNutrition} />
         </Flex>
@@ -523,3 +532,37 @@ export default function MealEntryPage() {
 
 MealEntryPage.pageTitle = "Add Entry";
 MealEntryPage.hideFooter = true;
+
+const MealEntryHeading = memo(function MealEntryHeading() {
+  const router = useRouter();
+  const forDateKey = router.query.forDate as string;
+  const forDate = getDateFromDateKey(forDateKey);
+
+  return (
+    <div className="my-6 flex justify-between">
+      <h1 className="text-3xl font-bold">Add Entry</h1>
+      <input
+        className="rounded-lg bg-gray-200 px-2"
+        type="date"
+        defaultValue={(forDate === null ? getDateKey(Date.now()) : forDateKey)
+          .split("/")
+          .reverse()
+          // input[type=date] expects yyyy-mm-dd but we use dd/mm/yyyy
+          .join("-")}
+        onChange={(e) => {
+          router.push({
+            pathname: router.pathname,
+            query: {
+              ...router.query,
+              forDate: e.target.value
+                // input[type=date] provides yyyy-mm-dd but we use dd/mm/yyyy
+                .split("-")
+                .reverse()
+                .join("/"),
+            },
+          });
+        }}
+      />
+    </div>
+  );
+});
