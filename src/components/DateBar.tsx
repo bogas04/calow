@@ -1,30 +1,25 @@
-import { Flex, Button } from "@chakra-ui/react";
 import { memo } from "react";
 import { DAY, TODAY } from "../constants/date";
 
 import { formatShortDate } from "../util/time";
 
 function DateBar({ date, onChange }: { date: number; onChange: (newDate: number) => void }) {
+  const commonStyles = "rounded-lg py-1 px-4 text-sm flex-1 ";
   return (
-    <Flex align="center" justify="space-between" mb="3">
-      <Button size="sm" variant="ghost" onClick={() => onChange(date - DAY)} flex="1" mr="1">
-        {formatShortDate(new Date(date - DAY))}
-      </Button>
-      <Button size="sm" variant="solid" flex="1" mx="1">
-        {formatShortDate(new Date(date))}
-      </Button>
-      <Button
-        ml="1"
-        flex="1"
-        size="sm"
-        variant="ghost"
-        transition="0ms"
-        visibility={date + DAY > TODAY ? "hidden" : "visible"}
-        onClick={() => onChange(Math.min(date + DAY, TODAY))}
-      >
-        {formatShortDate(new Date(date + DAY))}
-      </Button>
-    </Flex>
+    <>
+      <div className="grid grid-cols-3 grid-rows-1 gap-3" key={date}>
+        <button className={commonStyles + "bg-slate-50"} onClick={() => onChange(date - DAY)}>
+          {formatShortDate(new Date(date - DAY))}
+        </button>
+        <button className={commonStyles + "z-10 bg-slate-200"}>{formatShortDate(new Date(date))}</button>
+        <button
+          className={commonStyles + `bg-slate-50 ${date + DAY > TODAY ? "invisible" : "visible"}`}
+          onClick={() => onChange(Math.min(date + DAY, TODAY))}
+        >
+          {formatShortDate(new Date(date + DAY))}
+        </button>
+      </div>
+    </>
   );
 }
 export default memo(DateBar);
