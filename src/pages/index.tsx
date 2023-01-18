@@ -113,7 +113,7 @@ export default function HomePage() {
       },
     });
 
-    router.push("/meal-entry");
+    router.push({ pathname: "/meal-entry", query: { forDate: getDateKey(date) } });
   };
 
   const onBookmark: MouseEventHandler<HTMLButtonElement> = (e) => {
@@ -141,7 +141,7 @@ export default function HomePage() {
       },
     });
 
-    router.push(`/meal-entry?edit=1&index=${index}`);
+    router.push({ pathname: "/meal-entry", query: { edit: 1, index, forDate: getDateKey(date) } });
   };
 
   function onInfoClick() {
@@ -208,7 +208,7 @@ export default function HomePage() {
               <MealNutrition
                 meal={meal}
                 onDelete={onDelete}
-                onEdit={isSelectedDateToday ? onEdit : undefined}
+                onEdit={onEdit}
                 onRepeat={onRepeat}
                 onBookmark={onBookmark}
                 bookmarked={isBookmarked(bookmarks, date, index)}
@@ -233,7 +233,7 @@ export default function HomePage() {
                 icon={<WaterGlassIcon size="20" />}
               />
             )}
-            <Link href="/meal-entry">
+            <Link href={{ pathname: "/meal-entry", query: { forDate: getDateKey(date) } }}>
               <ChakraLink {...FABProps} title="Add log item" userSelect="none">
                 +
               </ChakraLink>
