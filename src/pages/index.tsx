@@ -113,7 +113,7 @@ export default function HomePage() {
       },
     });
 
-    router.push({ pathname: "/meal-entry", query: { forDate: getDateKey(date) } });
+    router.push("/meal-entry");
   };
 
   const onBookmark: MouseEventHandler<HTMLButtonElement> = (e) => {
