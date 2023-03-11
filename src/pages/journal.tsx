@@ -1,6 +1,6 @@
 import { Box, Button, Flex, Text } from "@chakra-ui/react";
 import Link from "next/link";
-import { memo, useMemo, useState } from "react";
+import { memo, useMemo, useReducer, useState } from "react";
 import { Page } from "../components/layouts";
 import NutritionBar from "../components/NutritionBar";
 import { Nutrition, nutritionColors, nutritionKeys, nutritionShortUnits, Store, useStore } from "../store";
@@ -14,21 +14,37 @@ import {
   getShortMonth,
 } from "../util/time";
 
+const getLastDateKeys = (from = new Date(), limit = 7) =>
+  [...Array(limit).keys()]
+    .map((x) => {
+      const d = new Date(from.getTime());
+      d.setDate(d.getDate() - x);
+      return getDateKey(d.getTime());
+    })
+    .reverse();
+
 export default function Journal() {
   const { logs, goal } = useStore();
   const [selectedMacro, setSelectedMacro] = useState<keyof Nutrition>("calories");
+  const [date, updateDate] = useReducer((state: Date, action: "next" | "previous") => {
+    return {
+      next: () => {
+        const newDate = new Date(state.getTime());
+        newDate.setDate(state.getDate() + 7);
+        return newDate;
+      },
+      previous: () => {
+        const newDate = new Date(state.getTime());
+        newDate.setDate(state.getDate() - 7);
+        return newDate;
+      },
+    }[action]();
+  }, new Date());
 
-  const sortedLogsKeys = useMemo(
-    () =>
-      Object.keys(logs)
-        // sort them by date (descending)
-        .sort(compareDate(false))
-        .slice(0, 7)
-        .sort(compareDate(true)),
-    [logs]
-  );
+  const sortedLogsKeys = useMemo(() => getLastDateKeys(date), [date]);
+
   const macrosForLogs = useMemo(
-    () => sortedLogsKeys.map((log) => ({ nutrition: computeMacroNutritionFromLog(logs[log]), dateKey: log })),
+    () => sortedLogsKeys.map((log) => ({ nutrition: computeMacroNutritionFromLog(logs[log] || []), dateKey: log })),
     [logs, sortedLogsKeys]
   );
 
@@ -45,7 +61,7 @@ export default function Journal() {
 
   const topMealsForMacro = useMemo(() => {
     return sortedLogsKeys
-      .flatMap((key) => logs[key])
+      .flatMap((key) => logs[key] || [])
       .sort((a, b) => b.nutrition[selectedMacro] - a.nutrition[selectedMacro])
       .slice(0, 5);
   }, [sortedLogsKeys, logs, selectedMacro]);
@@ -72,11 +88,11 @@ export default function Journal() {
         </Flex>
         <div className="my-4 grid gap-2">
           <div>
-            <p className="font-semibold text-sm">Weekly Average</p>
+            <p className="text-sm font-semibold">Weekly Average</p>
             <NutritionBar nutrition={weeklyAverage} showLegend={true} border={false} />
           </div>
           <div>
-            <p className="font-semibold text-sm">Goal</p>
+            <p className="text-sm font-semibold">Goal</p>
             <NutritionBar nutrition={goal.nutrition} showLegend={true} border={false} />
           </div>
         </div>
@@ -91,6 +107,15 @@ export default function Journal() {
         </Box>
         <BarGraph macrosForLogs={macrosForLogs} selectedMacro={selectedMacro} goal={goal} />
       </Box>
+
+      <div className="mt-12 flex justify-between">
+        <Button variant="outline" onClick={() => updateDate("previous")}>
+          Previous Week
+        </Button>
+        <Button variant="outline" onClick={() => updateDate("next")}>
+          Next Week
+        </Button>
+      </div>
 
       <Flex justify={"space-between"} mt="8" mb="4">
         {nutritionKeys.map((n) => (
@@ -160,13 +185,15 @@ const BarGraph = memo(function BarGraph({
       {macrosForLogs.map(({ nutrition, dateKey }) => {
         const multiplier = nutrition[selectedMacro] / goal.nutrition[selectedMacro];
         const mealDate = getDateFromDateKey(dateKey);
+        const isToday = mealDate ? getDateKey(mealDate.getTime()) === getDateKey(Date.now()) : false;
+
         const dateString = mealDate ? formatShortDateWithoutYear(mealDate) : null;
         return (
           <Link key={dateKey} href={`/?date=${dateKey}`}>
             <Box display="flex" alignItems="flex-end" justifyContent="space-between" w="100%" position="relative">
               <Box key={dateKey} bg={nutritionColors[selectedMacro]} w="3" h={Math.min(multiplier * 200, 250)} />
               {dateString ? (
-                <Text fontSize="xs" position="absolute" bottom={-5} left={-2}>
+                <Text fontSize="xs" position="absolute" bottom={-5} left={-2} fontWeight={isToday ? "bold" : undefined}>
                   {dateString}
                 </Text>
               ) : null}
