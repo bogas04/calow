@@ -18,7 +18,7 @@ export interface ItemEntry {
 }
 
 // Right now our data source is free flowing
-interface MicroNutrition<T = number> extends Record<string, T> {}
+export interface MicroNutrition<T = number> extends Record<string, T> {}
 
 // We'll use this when we've clear keys defined in our data source
 export interface KnownMicroNutrition<T> {
@@ -48,6 +48,8 @@ export interface KnownMicroNutrition<T> {
   phosphorus?: T;
   /** RDA > 19 years: 4700mg */
   potassium?: T;
+  /** RDA > 19 years; 10g */
+  "saturated fats"?: T;
   /** RDA > 19 years: 55mcg */
   selenium?: T;
   /** RDA > 19 years: 2300mg */

@@ -176,7 +176,7 @@ export default function HomePage() {
           </Flex>
 
           <Flex fontWeight="bold" justify="center" align="center" mb="6">
-            <NutritionBar nutrition={nutrition} />
+            <NutritionBar nutrition={nutrition} micro={micro} />
           </Flex>
 
           {isWaterEnabled && (
@@ -284,6 +284,7 @@ HomePage.pageTitle = "Home";
 
 const FABContainerProps: ChakraProps = {
   position: "fixed",
+  zIndex: 10,
   right: 0,
   bottom: 0,
   mx: 4,
