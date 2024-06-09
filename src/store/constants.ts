@@ -49,6 +49,6 @@ export const importantMicros = ["fiber", "saturated fats"];
 
 /** hard coded for my family but can be put to settings */
 export const microGoals = {
-  fiber: 25,
+  fiber: 50,
   "saturated fats": 10,
 } as const;

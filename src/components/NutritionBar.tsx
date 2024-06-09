@@ -64,7 +64,7 @@ function NutritionBar({ micro, nutrition, border = true, showLegend = !border }:
               if (value) {
                 return (
                   <>
-                    <div className="tex-xs flex items-center gap-1">
+                    <div className="flex items-center gap-1 text-xs">
                       <p className="text-center text-gray-800">{value.toFixed(2)}g</p>
                       <p className="capitalize text-gray-500">{x}</p>
                     </div>
