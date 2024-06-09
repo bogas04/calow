@@ -116,7 +116,7 @@ function MealNutrition({ meal, onRepeat, onDelete, onEdit, onBookmark, bookmarke
         </Flex>
       </Flex>
 
-      <NutritionBar nutrition={meal.nutrition} border={false} />
+      <NutritionBar nutrition={meal.nutrition} border={false} micro={meal.micro} />
 
       <Flex align="center" flex="1" mt="2" mb="6">
         <Text fontSize="xs" color="gray.600" fontWeight="300">
