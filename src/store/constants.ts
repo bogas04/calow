@@ -44,3 +44,11 @@ export const inititalNutrition = {
 } as Nutrition;
 
 export const nutritionKeys = ["calories", "protein", "carbohydrates", "fat"] as unknown as [keyof Nutrition];
+
+export const importantMicros = ["fiber", "saturated fats"];
+
+/** hard coded for my family but can be put to settings */
+export const microGoals = {
+  fiber: 25,
+  "saturated fats": 10,
+} as const;

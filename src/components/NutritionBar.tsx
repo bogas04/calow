@@ -3,6 +3,7 @@ import { memo } from "react";
 import {
   MicroNutrition,
   Nutrition,
+  importantMicros,
   nutritionColors,
   nutritionKeys,
   nutritionShortNames,
@@ -46,28 +47,37 @@ function NutritionBar({ micro, nutrition, border = true, showLegend = !border }:
           );
         })}
       </Grid>
-      {micro && chosenMicros.some((x) => micro[x]) ? (
-        <div className="-mt-5  flex justify-center gap-4 overflow-x-auto rounded-b-3xl bg-gray-100 pt-7 pb-2">
-          {chosenMicros.map((x) => {
-            const value = micro[x];
+      {micro && importantMicros.some((x) => micro[x]) ? (
+        <div
+          className={
+            border
+              ? "-mt-5 flex justify-center gap-4 rounded-b-3xl bg-gray-100 pt-7 pb-2"
+              : "-mt-5 flex gap-2 overflow-x-auto pt-7 pb-2"
+          }
+        >
+          {importantMicros
+            .filter((x) => micro[x])
+            .map((x, i, { length }) => {
+              const isLast = length - 1 === i;
+              const value = micro[x];
 
-            if (value) {
-              return (
-                <div className="flex items-center gap-1" key={x}>
-                  <p className="text-center text-sm text-gray-800">{value}g</p>
-                  <p className="text-sm capitalize text-gray-500">{x}</p>
-                </div>
-              );
-            }
-            return undefined;
-          })}
+              if (value) {
+                return (
+                  <>
+                    <div className="flex items-center gap-1">
+                      <p className="text-center text-sm text-gray-800">{value}g</p>
+                      <p className="text-sm capitalize text-gray-500">{x}</p>
+                    </div>
+                    {!border ? (isLast ? "" : "/") : null}
+                  </>
+                );
+              }
+              return undefined;
+            })}
         </div>
       ) : null}
     </div>
   );
 }
-
-/** Important to me and my partner, but we can consider adding a setting for these */
-const chosenMicros = ["fiber", "saturated fats"];
 
 export default memo(NutritionBar);
