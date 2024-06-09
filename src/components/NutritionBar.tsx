@@ -15,16 +15,23 @@ export interface NutritionBarProps {
   border?: boolean;
   showLegend?: boolean;
   micro?: MicroNutrition;
+  transparentBg?: boolean;
 }
 
-function NutritionBar({ micro, nutrition, border = true, showLegend = !border }: NutritionBarProps) {
+function NutritionBar({
+  micro,
+  nutrition,
+  border = true,
+  showLegend = !border,
+  transparentBg = false,
+}: NutritionBarProps) {
   return (
     <div className="flex flex-col">
       <Grid
         gridTemplateColumns="repeat(4, auto)"
-        zIndex={1}
+        zIndex={0}
         gridGap={border ? 4 : 6}
-        bg="white"
+        bg={transparentBg ? "transparent" : "white"}
         {...(border
           ? {
               boxShadow: "md",
