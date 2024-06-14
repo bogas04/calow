@@ -40,7 +40,7 @@ function ItemNutrition({ item, size = "lg", ...props }: ItemNutritionProps) {
           </Heading>
         </Flex>
         <Flex justify="space-between" align="flex-start">
-          <NutritionBar border={false} nutrition={item.nutrition} transparentBg />
+          <NutritionBar border={false} nutrition={item.nutrition} transparentBg micro={item.micro} />
           {item.micro && (
             <IconButton
               variant="ghost"

@@ -137,13 +137,16 @@ function MealNutrition({ meal, onRepeat, onDelete, onEdit, onBookmark, bookmarke
               name: "Nutritional Value / 100 grams",
               weight: 100,
               nutrition: mapNutrition(meal.nutrition, (_, value) => (value * 100) / meal.portionWeight),
+              micro: Object.fromEntries(
+                Object.entries(meal.micro || {}).map(([key, value]) => [key, (value * 100) / meal.portionWeight])
+              ),
             }}
             bg="blue.50"
             rounded="md"
           />
 
           {meal.items.map((item, itemIndex) => (
-            <ItemNutrition item={item} size="sm" key={itemIndex} />
+            <ItemNutrition item={item} size="sm" key={itemIndex} micro={item.micro} />
           ))}
         </Box>
       </Collapse>
