@@ -146,7 +146,7 @@ function MealNutrition({ meal, onRepeat, onDelete, onEdit, onBookmark, bookmarke
           />
 
           {meal.items.map((item, itemIndex) => (
-            <ItemNutrition item={item} size="sm" key={itemIndex} micro={item.micro} />
+            <ItemNutrition item={item} size="sm" key={itemIndex} />
           ))}
         </Box>
       </Collapse>
