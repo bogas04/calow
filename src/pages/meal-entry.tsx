@@ -288,7 +288,7 @@ export default function MealEntryPage() {
           value of the meal.
         </FormHelperText>
       </FormControl>
-      <NutritionBar border={false} nutrition={mealNutrition} />
+      <NutritionBar border={false} nutrition={mealNutrition} transparentBg />
     </Flex>
   );
 
@@ -335,7 +335,7 @@ export default function MealEntryPage() {
           variant="ghost"
         />
       </Heading>
-      <NutritionBar border={false} nutrition={item.nutrition} />
+      <NutritionBar border={false} nutrition={item.nutrition} micro={item.micro} />
     </Flex>
   ));
 
