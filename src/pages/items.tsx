@@ -60,6 +60,12 @@ export default function ItemsPage() {
 
     return filtered.sort((a, b) => {
       switch (sortBy) {
+        case "saturated fat/weight": {
+          return (b.micro?.["saturated fats"] ?? 0) / b.weight - (a.micro?.["saturated fats"] ?? 0) / a.weight;
+        }
+        case "fiber/weight": {
+          return (b.micro?.["fiber"] ?? 0) / b.weight - (a.micro?.["fiber"] ?? 0) / a.weight;
+        }
         case "calories/weight": {
           return b.nutrition.calories / b.weight - a.nutrition.calories / a.weight;
         }
@@ -190,6 +196,17 @@ ItemsPage.pageTitle = "Items";
 
 const sortByTitles = {
   name: { title: "Name", description: "", source: "" },
+  "fiber/weight": {
+    title: "Fiber",
+    description:
+      "Fiber is very important for gut microbiome and heart. Daily 25g for women and 30g for men is recommended.",
+    source: "",
+  },
+  "saturated fat/weight": {
+    title: "Saturated Fats",
+    description: "Saturated fats are unhealthy when consumed more than 10g daily",
+    source: "",
+  },
   "calories/weight": { title: "Calories", description: "", source: "" },
   "protein/weight": {
     title: "Protein per Weight",
