@@ -263,7 +263,7 @@ export default function MealEntryPage() {
     setShowMealModal(false);
 
     resetItems();
-    router.push("/");
+    router.back();
   }
 
   function handleDone() {
