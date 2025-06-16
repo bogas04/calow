@@ -1,4 +1,4 @@
-import { Button, Flex, Heading, HStack, ListItem, Text, UnorderedList } from "@chakra-ui/react";
+import { Button, Flex, Heading, HStack, IconButton, Input, ListItem, Text, UnorderedList } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 import { memo, MouseEventHandler, useMemo } from "react";
 import { BiHistory } from "react-icons/bi";
@@ -6,6 +6,7 @@ import { ItemEntry, MealEntry, useStore } from "../store";
 import { sortByKey } from "../util/primitives";
 import { compareDate } from "../util/time";
 import NutritionBar from "./NutritionBar";
+import { CloseIcon } from "@chakra-ui/icons";
 
 const FramerHStack = motion(HStack);
 
@@ -205,3 +206,54 @@ export const RecentMeals = memo(function RecentMeals({ onAdd }: { onAdd(meal: Me
     </Flex>
   );
 });
+
+export const AddedItem = ({
+  item,
+  index,
+  onDelete,
+  onChange,
+  onBlur,
+  onFocus,
+}: {
+  item: ItemEntry;
+  index: number;
+  onDelete: VoidFunction;
+  onChange: React.ChangeEventHandler<HTMLInputElement>;
+  onBlur: React.ChangeEventHandler<HTMLInputElement>;
+  onFocus: React.ChangeEventHandler<HTMLInputElement>;
+}) => {
+  return (
+    <div className="flex flex-col p-3 bg-slate-100 rounded-lg">
+      <div className="flex gap-2 items-center text-sm mb-2 font-semibold">
+        <span className="text-xl flex-1">
+          {item.icon || "🍛"} {item.name}
+        </span>
+        <input
+          inputMode="numeric"
+          onBlur={onBlur}
+          onFocus={onFocus}
+          name="weight"
+          autoComplete="off"
+          className="w-[100px] text-center border border-gray-200 focus:border-blue-500 focus:outline-none text-lg rounded-md"
+          value={item.weight}
+          placeholder="Weight"
+          data-item-index={index}
+          onChange={onChange}
+        />
+        <div className="flex items-center justify-center">
+          <span className="font-light">g</span>
+        </div>
+      </div>
+      <NutritionBar border={false} nutrition={item.nutrition} micro={item.micro} transparentBg />
+      <div className="flex items-center mt-1">
+        <button
+          className="h-full text-md text-gray-800 hover:bg-gray-100 flex items-center justify-center border border-gray-200 bg-white px-2 rounded-lg"
+          onClick={onDelete}
+          aria-label="Remove item"
+        >
+          Remove
+        </button>
+      </div>
+    </div>
+  );
+};

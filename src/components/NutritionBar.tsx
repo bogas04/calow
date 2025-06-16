@@ -16,6 +16,8 @@ export interface NutritionBarProps {
   showLegend?: boolean;
   micro?: MicroNutrition;
   transparentBg?: boolean;
+  /** should values be rounded */
+  round?: boolean;
 }
 
 function NutritionBar({
@@ -24,6 +26,7 @@ function NutritionBar({
   border = true,
   showLegend = !border,
   transparentBg = false,
+  round = false,
 }: NutritionBarProps) {
   return (
     <div className="flex flex-col">
@@ -45,11 +48,11 @@ function NutritionBar({
           const value = nutrition[k];
           return (
             <Flex direction="column" key={i} textTransform="capitalize" justify="center" align="flex-start">
-              <Text color={nutritionColors[k]} fontWeight="600" fontSize="xs">
-                {Number.isInteger(value) ? value : value.toFixed(2)}
+              <p className="font-bold text-md" style={{ color: nutritionColors[k] }}>
+                {Number.isInteger(value) ? value : value.toFixed(round ? 0 : 2)}
                 {nutritionShortUnits[k]}
-              </Text>
-              {showLegend && <Text fontSize="xs">{nutritionShortNames[k]}</Text>}
+              </p>
+              {showLegend && <Text fontSize="sm">{nutritionShortNames[k]}</Text>}
             </Flex>
           );
         })}
@@ -71,8 +74,8 @@ function NutritionBar({
               if (value) {
                 return (
                   <>
-                    <div className="flex items-center gap-1 text-xs">
-                      <p className="text-center text-gray-800">{value.toFixed(2)}g</p>
+                    <div className="flex items-center gap-1 text-sm font-semibold">
+                      <p className="text-center text-gray-800">{value.toFixed(round ? 0 : 2)}g</p>
                       <p className="capitalize text-gray-500">{x}</p>
                     </div>
                     {!border ? (isLast ? "" : "/") : null}
