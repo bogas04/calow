@@ -1,4 +1,4 @@
-import { Button, Flex, Heading, HStack, IconButton, Input, ListItem, Text, UnorderedList } from "@chakra-ui/react";
+import { Button, Flex, Heading, HStack, ListItem, Text, UnorderedList } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 import { memo, MouseEventHandler, useMemo } from "react";
 import { BiHistory } from "react-icons/bi";
