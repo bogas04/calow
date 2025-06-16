@@ -30,7 +30,7 @@ import { CalculatorModal } from "../components/CalculatorModal";
 
 import CustomItemModal, { CustomItemModalProps } from "../components/CustomItemModal";
 import { Page } from "../components/layouts";
-import { IngredientSuggestions, SearchSuggestions } from "../components/MealEntryComponents";
+import { AddedItem, IngredientSuggestions, SearchSuggestions } from "../components/MealEntryComponents";
 import MealNameModal from "../components/MealNameModal";
 import NutritionBar from "../components/NutritionBar";
 import { ACTIONS, inititalNutrition, ItemEntry, MealEntry, useItems, useStore } from "../store";
@@ -293,50 +293,19 @@ export default function MealEntryPage() {
   );
 
   const list = addedItems.map((item, i) => (
-    <Flex key={i} direction="column" p="2" mb="1">
-      <Heading
-        display="grid"
-        size="sm"
-        mb="2"
-        gridGap={2}
-        gridTemplateColumns="auto 75px 10px 15px"
-        alignItems="center"
-      >
-        <Text>
-          {item.icon || "🍛"} {item.name}
-        </Text>
-        <Input
-          inputMode="numeric"
-          onBlur={setLastFocusedInput}
-          onFocus={() => setShouldShowCalculator(true)}
-          variant="flushed"
-          autoComplete="off"
-          width={"1.2"}
-          textAlign="center"
-          value={item.weight}
-          placeholder="Weight"
-          size="sm"
-          data-item-index={i}
-          onChange={handleItemWeightChange}
-          mr="2"
-        />
-        <Flex alignItems="center" justifyContent="center">
-          <Text fontWeight="100">g</Text>
-        </Flex>
-
-        <IconButton
-          height="full"
-          size="sm"
-          color="gray.500"
-          rounded="full"
-          onClick={() => deleteItem(i)}
-          icon={<CloseIcon />}
-          aria-label="Remove item"
-          variant="ghost"
-        />
-      </Heading>
-      <NutritionBar border={false} nutrition={item.nutrition} micro={item.micro} />
-    </Flex>
+    <AddedItem
+      key={i}
+      item={item}
+      index={i}
+      onDelete={() => {
+        if (window.confirm(`Are you sure you want to delete ${item.name} ${item.weight}g?`)) {
+          deleteItem(i);
+        }
+      }}
+      onBlur={setLastFocusedInput}
+      onFocus={() => setShouldShowCalculator(true)}
+      onChange={handleItemWeightChange}
+    />
   ));
 
   const form = (
@@ -464,7 +433,7 @@ export default function MealEntryPage() {
         </Flex>
         <Flex flex="1" direction="column" justify="space-between">
           {addedItems.length === 0 && emptyArt}
-          <Flex direction="column">
+          <Flex direction="column" gap={4}>
             {total}
             {list}
           </Flex>
