@@ -177,6 +177,14 @@ export default function MealEntryPage() {
     document.querySelector<HTMLInputElement>('input[name="weight"]')?.focus();
   };
 
+  const currentEntry: MealEntry = {
+    nutrition: portionNutrition,
+    items: addedItems,
+    timestamp: Date.now(),
+    name,
+    portionWeight,
+    totalWeight,
+  };
   function handleAddItem(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = e.currentTarget;
@@ -237,15 +245,7 @@ export default function MealEntryPage() {
   };
 
   function saveAndRedirect({ name, timestamp = Date.now() }: { name: string; timestamp?: number }) {
-    const entry: MealEntry = {
-      nutrition: portionNutrition,
-      items: addedItems,
-      timestamp,
-      name,
-      portionWeight,
-      totalWeight,
-    };
-
+    const entry = { ...currentEntry, timestamp, name };
     entry.micro = computeMicroNutritionFromLog([entry]);
 
     dispatch(
@@ -429,7 +429,7 @@ export default function MealEntryPage() {
     <Flex h="100%" direction="column">
       <Page heading={<MealEntryHeading />} display="flex" flex="1" flexDirection="column" overflow="auto">
         <Flex justify="center" mb="2">
-          <NutritionBar nutrition={portionNutrition} />
+          <NutritionBar nutrition={portionNutrition} micro={computeMicroNutritionFromLog([currentEntry])} />
         </Flex>
         <Flex flex="1" direction="column" justify="space-between">
           {addedItems.length === 0 && emptyArt}

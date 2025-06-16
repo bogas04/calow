@@ -29,7 +29,7 @@ function NutritionBar({
   round = true,
 }: NutritionBarProps) {
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col min-w-[220px]">
       <Grid
         gridTemplateColumns="repeat(4, auto)"
         zIndex={0}
