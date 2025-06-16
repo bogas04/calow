@@ -221,8 +221,12 @@ export const AddedItem = ({
   onBlur: React.ChangeEventHandler<HTMLInputElement>;
   onFocus: React.ChangeEventHandler<HTMLInputElement>;
 }) => {
+  const computedMicro = Object.fromEntries(
+    Object.entries(item.micro ?? {}).map(([key, value]) => [key, (value * item.weight) / 100])
+  );
+
   return (
-    <div className="flex flex-col p-3 bg-slate-100 rounded-lg">
+    <div className="flex flex-col p-3 bg-slate-100 border border-slate-200 rounded-lg">
       <div className="flex gap-2 items-center text-sm mb-2 font-semibold">
         <span className="text-xl flex-1">
           {item.icon || "🍛"} {item.name}
@@ -243,7 +247,7 @@ export const AddedItem = ({
           <span className="font-light">g</span>
         </div>
       </div>
-      <NutritionBar border={false} nutrition={item.nutrition} micro={item.micro} transparentBg />
+      <NutritionBar border={false} nutrition={item.nutrition} micro={computedMicro} transparentBg />
       <div className="flex items-center mt-1">
         <button
           className="h-full text-md text-gray-800 hover:bg-gray-100 flex items-center justify-center border border-gray-200 bg-white px-2 rounded-lg"
