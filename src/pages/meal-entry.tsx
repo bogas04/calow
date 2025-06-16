@@ -177,14 +177,6 @@ export default function MealEntryPage() {
     document.querySelector<HTMLInputElement>('input[name="weight"]')?.focus();
   };
 
-  const currentEntry: MealEntry = {
-    nutrition: portionNutrition,
-    items: addedItems,
-    timestamp: Date.now(),
-    name,
-    portionWeight,
-    totalWeight,
-  };
   function handleAddItem(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = e.currentTarget;
@@ -245,7 +237,14 @@ export default function MealEntryPage() {
   };
 
   function saveAndRedirect({ name, timestamp = Date.now() }: { name: string; timestamp?: number }) {
-    const entry = { ...currentEntry, timestamp, name };
+    const entry: MealEntry = {
+      nutrition: portionNutrition,
+      items: addedItems,
+      timestamp,
+      name,
+      portionWeight,
+      totalWeight,
+    };
     entry.micro = computeMicroNutritionFromLog([entry]);
 
     dispatch(
@@ -295,19 +294,54 @@ export default function MealEntryPage() {
   );
 
   const list = addedItems.map((item, i) => (
-    <AddedItem
-      key={i}
-      item={item}
-      index={i}
-      onDelete={() => {
-        if (window.confirm(`Are you sure you want to delete ${item.name} ${item.weight}g?`)) {
-          deleteItem(i);
-        }
-      }}
-      onBlur={setLastFocusedInput}
-      onFocus={() => setShouldShowCalculator(true)}
-      onChange={handleItemWeightChange}
-    />
+    <Flex key={i} direction="column" p="2" mb="1">
+      <Heading
+        display="grid"
+        size="sm"
+        mb="2"
+        gridGap={2}
+        gridTemplateColumns="auto 75px 10px 15px"
+        alignItems="center"
+      >
+        <Text>
+          {item.icon || "🍛"} {item.name}
+        </Text>
+        <Input
+          inputMode="numeric"
+          onBlur={setLastFocusedInput}
+          onFocus={() => setShouldShowCalculator(true)}
+          variant="flushed"
+          autoComplete="off"
+          width={"1.2"}
+          textAlign="center"
+          value={item.weight}
+          placeholder="Weight"
+          size="sm"
+          data-item-index={i}
+          onChange={handleItemWeightChange}
+          mr="2"
+        />
+        <Flex alignItems="center" justifyContent="center">
+          <Text fontWeight="100">g</Text>
+        </Flex>
+
+        <IconButton
+          height="full"
+          size="sm"
+          color="gray.500"
+          rounded="full"
+          onClick={() => {
+            if (window.confirm(`Are you sure you want to remove ${item.name} ${item.weight}g?`)) {
+              deleteItem(i);
+            }
+          }}
+          icon={<CloseIcon />}
+          aria-label="Remove item"
+          variant="ghost"
+        />
+      </Heading>
+      <NutritionBar border={false} nutrition={item.nutrition} micro={item.micro} />
+    </Flex>
   ));
 
   const form = (
@@ -431,7 +465,19 @@ export default function MealEntryPage() {
     <Flex h="100%" direction="column">
       <Page heading={<MealEntryHeading />} display="flex" flex="1" flexDirection="column" overflow="auto">
         <Flex justify="center" mb="2">
-          <NutritionBar nutrition={portionNutrition} micro={computeMicroNutritionFromLog([currentEntry])} />
+          <NutritionBar
+            nutrition={portionNutrition}
+            micro={computeMicroNutritionFromLog([
+              {
+                nutrition: portionNutrition,
+                items: addedItems,
+                timestamp: Date.now(),
+                name,
+                portionWeight,
+                totalWeight,
+              },
+            ])}
+          />
         </Flex>
         <Flex flex="1" direction="column" justify="space-between">
           {addedItems.length === 0 && emptyArt}

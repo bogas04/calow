@@ -176,7 +176,7 @@ export default function HomePage() {
           </Flex>
 
           <Flex fontWeight="bold" justify="center" align="center" mb="6">
-            <NutritionBar nutrition={nutrition} micro={micro} round />
+            <NutritionBar nutrition={nutrition} micro={micro} />
           </Flex>
 
           {isWaterEnabled && (
