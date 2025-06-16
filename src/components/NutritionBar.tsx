@@ -26,7 +26,7 @@ function NutritionBar({
   border = true,
   showLegend = !border,
   transparentBg = false,
-  round = false,
+  round = true,
 }: NutritionBarProps) {
   return (
     <div className="flex flex-col">
