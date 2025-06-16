@@ -271,8 +271,10 @@ export default function MealEntryPage() {
       setShowMealModal(true);
       return;
     }
+    const { icon, name } = addedItems[0];
+
     saveAndRedirect({
-      name: addedItems[0].name,
+      name: icon ? `${icon} ${name}` : name,
       timestamp: forDate?.getTime() || Date.now(),
     });
   }
@@ -463,6 +465,7 @@ export default function MealEntryPage() {
         isOpen={showMealNameModal}
         onClose={() => setShowMealModal(false)}
         defaultName={name}
+        defaultIcon={"🍛"}
         onSubmit={(data) => saveAndRedirect({ ...data, timestamp: forDate?.getTime() || Date.now() })}
       />
       <CustomItemModal
