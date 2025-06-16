@@ -30,7 +30,7 @@ import { CalculatorModal } from "../components/CalculatorModal";
 
 import CustomItemModal, { CustomItemModalProps } from "../components/CustomItemModal";
 import { Page } from "../components/layouts";
-import { AddedItem, IngredientSuggestions, SearchSuggestions } from "../components/MealEntryComponents";
+import { IngredientSuggestions, SearchSuggestions } from "../components/MealEntryComponents";
 import MealNameModal from "../components/MealNameModal";
 import NutritionBar from "../components/NutritionBar";
 import { ACTIONS, inititalNutrition, ItemEntry, MealEntry, useItems, useStore } from "../store";
@@ -481,7 +481,7 @@ export default function MealEntryPage() {
         </Flex>
         <Flex flex="1" direction="column" justify="space-between">
           {addedItems.length === 0 && emptyArt}
-          <Flex direction="column" gap={4}>
+          <Flex direction="column">
             {total}
             {list}
           </Flex>
