@@ -6,7 +6,6 @@ import { ItemEntry, MealEntry, useStore } from "../store";
 import { sortByKey } from "../util/primitives";
 import { compareDate } from "../util/time";
 import NutritionBar from "./NutritionBar";
-import { CloseIcon } from "@chakra-ui/icons";
 
 const FramerHStack = motion(HStack);
 
