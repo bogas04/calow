@@ -267,14 +267,14 @@ export default function MealEntryPage() {
   }
 
   function handleDone() {
-    if (addedItems.length === 1) {
-      saveAndRedirect({
-        name: addedItems[0].name,
-        timestamp: forDate?.getTime() || Date.now(),
-      });
+    if (addedItems.length !== 1) {
+      setShowMealModal(true);
       return;
     }
-    setShowMealModal(true);
+    saveAndRedirect({
+      name: addedItems[0].name,
+      timestamp: forDate?.getTime() || Date.now(),
+    });
   }
 
   const total = portionWeight !== totalWeight && (
