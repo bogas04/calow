@@ -205,18 +205,20 @@ export default function HomePage() {
               <EmptyArt />
             </Box>
           )}
-          {log.map((meal, index) => (
-            <Box key={index} {...{ [`data-${MEAL_INDEX_DATA_ATTR}`]: index }}>
-              <MealNutrition
-                meal={meal}
-                onDelete={onDelete}
-                onEdit={onEdit}
-                onRepeat={onRepeat}
-                onBookmark={onBookmark}
-                bookmarked={isBookmarked(bookmarks, date, index)}
-              />
-            </Box>
-          ))}
+          <div className="gap-4 flex flex-col">
+            {log.map((meal, index) => (
+              <Box key={index} {...{ [`data-${MEAL_INDEX_DATA_ATTR}`]: index }}>
+                <MealNutrition
+                  meal={meal}
+                  onDelete={onDelete}
+                  onEdit={onEdit}
+                  onRepeat={onRepeat}
+                  onBookmark={onBookmark}
+                  bookmarked={isBookmarked(bookmarks, date, index)}
+                />
+              </Box>
+            ))}
+          </div>
         </LoadingContainer>
 
         {isSelectedDateToday ? (
