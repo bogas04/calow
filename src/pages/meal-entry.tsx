@@ -271,8 +271,10 @@ export default function MealEntryPage() {
       setShowMealModal(true);
       return;
     }
+    const { icon, name } = addedItems[0];
+
     saveAndRedirect({
-      name: addedItems[0].name,
+      name: icon ? `${icon} ${name}` : name,
       timestamp: forDate?.getTime() || Date.now(),
     });
   }
@@ -329,7 +331,11 @@ export default function MealEntryPage() {
           size="sm"
           color="gray.500"
           rounded="full"
-          onClick={() => deleteItem(i)}
+          onClick={() => {
+            if (window.confirm(`Are you sure you want to remove ${item.name} ${item.weight}g?`)) {
+              deleteItem(i);
+            }
+          }}
           icon={<CloseIcon />}
           aria-label="Remove item"
           variant="ghost"
@@ -460,7 +466,19 @@ export default function MealEntryPage() {
     <Flex h="100%" direction="column">
       <Page heading={<MealEntryHeading />} display="flex" flex="1" flexDirection="column" overflow="auto">
         <Flex justify="center" mb="2">
-          <NutritionBar nutrition={portionNutrition} />
+          <NutritionBar
+            nutrition={portionNutrition}
+            micro={computeMicroNutritionFromLog([
+              {
+                nutrition: portionNutrition,
+                items: addedItems,
+                timestamp: Date.now(),
+                name,
+                portionWeight,
+                totalWeight,
+              },
+            ])}
+          />
         </Flex>
         <Flex flex="1" direction="column" justify="space-between">
           {addedItems.length === 0 && emptyArt}
@@ -494,6 +512,7 @@ export default function MealEntryPage() {
         isOpen={showMealNameModal}
         onClose={() => setShowMealModal(false)}
         defaultName={name}
+        defaultIcon={"🍛"}
         onSubmit={(data) => saveAndRedirect({ ...data, timestamp: forDate?.getTime() || Date.now() })}
       />
       <CustomItemModal
