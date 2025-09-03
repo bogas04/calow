@@ -245,7 +245,6 @@ export default function MealEntryPage() {
       portionWeight,
       totalWeight,
     };
-
     entry.micro = computeMicroNutritionFromLog([entry]);
 
     dispatch(

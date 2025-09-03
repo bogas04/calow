@@ -52,9 +52,9 @@ function MealNutrition({ meal, onRepeat, onDelete, onEdit, onBookmark, bookmarke
   const handleToggle = () => setShowItemDetails(!showItemDetails);
 
   return (
-    <>
+    <div className="border border-zinc-400 bg-zinc-50 rounded-2xl p-4">
       <Flex justify="space-between" align="center" mb="2">
-        <Heading size="md">{meal.name}</Heading>
+        <p className="text-xl font-black">{meal.name}</p>
 
         <Flex justify="flex-end" align="center">
           <IconButton
@@ -116,9 +116,9 @@ function MealNutrition({ meal, onRepeat, onDelete, onEdit, onBookmark, bookmarke
         </Flex>
       </Flex>
 
-      <NutritionBar nutrition={meal.nutrition} border={false} micro={meal.micro} />
+      <NutritionBar nutrition={meal.nutrition} border={false} micro={meal.micro} transparentBg />
 
-      <Flex align="center" flex="1" mt="2" mb="6">
+      <Flex align="center" flex="1" mt="2">
         <Text fontSize="xs" color="gray.600" fontWeight="300">
           {meal.portionWeight === meal.totalWeight
             ? `${meal.totalWeight}g`
@@ -162,7 +162,7 @@ function MealNutrition({ meal, onRepeat, onDelete, onEdit, onBookmark, bookmarke
         isOpen={showMicroNutrientsModal}
       />
       <ShareModal isOpen={showShareModal} onClose={closeShareModal} meal={meal} />
-    </>
+    </div>
   );
 }
 
