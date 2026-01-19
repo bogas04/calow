@@ -36,6 +36,17 @@ export const CalculatorModal = memo(function CalculatorModal({
       onClose();
     }
   };
+
+  function handleSymbol(symbol: "+" | "-", e: React.MouseEvent<HTMLButtonElement>) {
+    const form = e.currentTarget.form;
+    const input = form?.expression as HTMLInputElement;
+
+    if (input) {
+      input.value += symbol;
+      input.focus?.();
+    }
+  }
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered scrollBehavior="outside" motionPreset="slideInBottom">
       <ModalOverlay height="100vh" />
@@ -59,23 +70,17 @@ export const CalculatorModal = memo(function CalculatorModal({
                 autoComplete="off"
               />
             </FormControl>
-            <FormControl mb="5" display="flex" justifyContent="space-between" gap={4}>
+            <FormControl mb="5" display="flex" justifyContent="space-between" gap={4} px="4">
               <Button
                 onClick={(e) => {
-                  const form = e.currentTarget.form;
-                  if (form?.expression) {
-                    form.expression.value += "+";
-                  }
+                  handleSymbol("+", e);
                 }}
               >
                 +
               </Button>
               <Button
                 onClick={(e) => {
-                  const form = e.currentTarget.form;
-                  if (form?.expression) {
-                    form.expression.value += "-";
-                  }
+                  handleSymbol("-", e);
                 }}
               >
                 -
