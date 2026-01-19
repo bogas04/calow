@@ -38,6 +38,7 @@ import DinnerArt from "../svg/DinnerArt";
 import { computeMicroNutritionFromLog, computeWeightedNutrition, mapNutrition } from "../util/nutrition";
 import { computeArithmeticExpression } from "../util/primitives";
 import { formatShortDate, getDateFromDateKey, getDateKey } from "../util/time";
+import { useNumericInputMode } from "../components/useInputMode";
 
 export default function MealEntryPage() {
   const {
@@ -45,6 +46,7 @@ export default function MealEntryPage() {
     mealEntry: { addedItems, totalWeight, portionWeight, name },
     log,
   } = useStore();
+  const numericInputMode = useNumericInputMode();
   const { items } = useItems();
   const toast = useToast();
   const router = useRouter();
@@ -313,7 +315,7 @@ export default function MealEntryPage() {
           {item.icon || "🍛"} {item.name}
         </Text>
         <Input
-          inputMode="numeric"
+          inputMode={numericInputMode}
           onBlur={setLastFocusedInput}
           onFocus={() => setShouldShowCalculator(true)}
           variant="flushed"
@@ -368,7 +370,7 @@ export default function MealEntryPage() {
         <Input
           type="text"
           isRequired
-          inputMode="numeric"
+          inputMode={numericInputMode}
           onBlur={setLastFocusedInput}
           onFocus={() => setShouldShowCalculator(true)}
           name="weight"
@@ -407,7 +409,7 @@ export default function MealEntryPage() {
             variant="flushed"
             w="30%"
             fontSize="xs"
-            inputMode="numeric"
+            inputMode={numericInputMode}
             onBlur={setLastFocusedInput}
             onFocus={() => setShouldShowCalculator(true)}
             autoComplete="off"
@@ -428,7 +430,7 @@ export default function MealEntryPage() {
             fontSize="xs"
             textAlign="center"
             variant="flushed"
-            inputMode="numeric"
+            inputMode={numericInputMode}
             onBlur={setLastFocusedInput}
             onFocus={() => setShouldShowCalculator(true)}
             autoComplete="off"

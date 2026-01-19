@@ -16,6 +16,7 @@ import {
 import { FormEvent, memo } from "react";
 import { ItemEntry, nutritionKeys, nutritionUnits } from "../store";
 import { mapNutrition } from "../util/nutrition";
+import { useNumericInputMode } from "./useInputMode";
 
 export interface CustomItemModalProps {
   name: string;
@@ -25,6 +26,7 @@ export interface CustomItemModalProps {
 }
 
 function CustomItemModal({ name, isOpen, onClose, onAdd }: CustomItemModalProps) {
+  const numericInputMode = useNumericInputMode();
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = e.currentTarget;
@@ -101,7 +103,7 @@ function CustomItemModal({ name, isOpen, onClose, onAdd }: CustomItemModalProps)
                       // @ts-expect-error
                       `${presentationalKey} in ${nutritionUnits[k] || "grams"}`
                     }
-                    inputMode="numeric"
+                    inputMode={numericInputMode}
                   />
                 </FormControl>
               );
