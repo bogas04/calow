@@ -1,7 +1,11 @@
+import { useEffect, useState } from "react";
+
 export function useNumericInputMode() {
-  return typeof window === "undefined"
-    ? "numeric"
-    : /iPhone|iPad|iPod/i.test(navigator.userAgent)
-    ? "decimal"
-    : "numeric";
+  const [inputMode, setInputMode] = useState<"numeric" | "decimal">("numeric");
+
+  useEffect(() => {
+    setInputMode(/iPhone|iPad|iPod/i.test(navigator.userAgent) ? "decimal" : "numeric");
+  }, []);
+
+  return inputMode;
 }
