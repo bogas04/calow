@@ -59,6 +59,28 @@ export const CalculatorModal = memo(function CalculatorModal({
                 autoComplete="off"
               />
             </FormControl>
+            <FormControl mb="5" display="flex" justifyContent="space-between" gap={4}>
+              <Button
+                onClick={(e) => {
+                  const form = e.currentTarget.form;
+                  if (form?.expression) {
+                    form.expression.value += "+";
+                  }
+                }}
+              >
+                +
+              </Button>
+              <Button
+                onClick={(e) => {
+                  const form = e.currentTarget.form;
+                  if (form?.expression) {
+                    form.expression.value += "-";
+                  }
+                }}
+              >
+                -
+              </Button>
+            </FormControl>
             <Button w="full" type="submit" bg="blue.500" color="white" size="lg">
               Calculate
             </Button>
