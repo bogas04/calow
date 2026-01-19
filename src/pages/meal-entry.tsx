@@ -263,6 +263,11 @@ export default function MealEntryPage() {
     setShowMealModal(false);
 
     resetItems();
+    // If there's any position left in history, router.back() otherwise redirect to home
+    if (window.history.length <= 2) {
+      router.push("/");
+      return;
+    }
     router.back();
   }
 
