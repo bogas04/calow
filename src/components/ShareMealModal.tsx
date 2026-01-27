@@ -17,6 +17,7 @@ import {
 } from "@chakra-ui/react";
 import { useMemo, useCallback, memo } from "react";
 import { MealEntry } from "../store";
+import { createShareableMealLink } from "./createShareableMealLink";
 
 export const ShareModal = memo(function ShareModal({
   isOpen,
@@ -41,8 +42,11 @@ export const ShareModal = memo(function ShareModal({
       water: meal.water,
     };
 
+    const baseLink =
+      document.querySelector('meta[property="og:url"')?.getAttribute("content") || "https://bogas04.github.io/calow/";
+
     // create a calow link
-    return createShareableMealLink(meal);
+    return createShareableMealLink(meal, baseLink);
   }, [isOpen, meal]);
 
   const onShare = useCallback(() => {
@@ -114,36 +118,3 @@ export const ShareModal = memo(function ShareModal({
     </Modal>
   );
 });
-
-function createShareableMealLink(_mealToBeShared: MealEntry) {
-  const mealToBeShared = structuredClone(_mealToBeShared);
-  const fullMealJson = JSON.stringify(mealToBeShared);
-  const baseLink =
-    document.querySelector('meta[property="og:url"')?.getAttribute("content") || "https://bogas04.github.io/calow/";
-  const createLink = (stringifiedJson: string) =>
-    `${baseLink}meal-entry?shared_meal=${encodeURIComponent(stringifiedJson)}`;
-
-  const finalUrl = createLink(fullMealJson);
-
-  if (finalUrl.length < 2000) {
-    return finalUrl;
-  }
-
-  const microMultiplier = 100 / mealToBeShared.portionWeight;
-  const microPer100 = Object.fromEntries(
-    Object.entries(mealToBeShared.micro || {}).map(([k, v]) => [k, v * microMultiplier])
-  );
-
-  // we compress entire meal into one item in itself
-  mealToBeShared.items = [
-    {
-      name: mealToBeShared.name,
-      nutrition: mealToBeShared.nutrition,
-      micro: microPer100,
-      weight: mealToBeShared.portionWeight,
-    },
-  ];
-  mealToBeShared.totalWeight = mealToBeShared.portionWeight;
-
-  return createLink(JSON.stringify(mealToBeShared));
-}

@@ -12,15 +12,16 @@ jobs:
     steps:
       - name: 📚 checkout
         uses: actions/checkout@v3
-      - name: 🟢 node
-        uses: actions/setup-node@v3
+      - name: � setup bun
+        uses: oven-sh/setup-bun@v2
         with:
-          node-version: 18
-          registry-url: https://registry.npmjs.org
+          bun-version: latest
       - name: ⬇️ download dependencies
-        run: npm ci
+        run: bun install
+      - name: 🧪 run tests
+        run: bun test
       - name: 🛠 build project
-        run: npm run build
+        run: bun run build
       - name: 🚀 commit and push
         uses: stefanzweifel/git-auto-commit-action@v4
         with:

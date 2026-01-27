@@ -7,7 +7,9 @@
     "start": "next",
     "build": "rm -rf .next && next build && next export -o docs && touch docs/.nojekyll",
     "lint": "next lint",
-    "test": "tsc --noEmit",
+    "test": "bun run test:types && bun run test:unit",
+    "test:types": "tsc --noEmit",
+    "test:unit": "bun test src/**/*.test.ts",
     "analyze": "ANALYZE=\"true\" next build"
   },
   "keywords": [
