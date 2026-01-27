@@ -490,7 +490,7 @@ Meal: ${mealDescription}`;
           <Textarea
             isRequired
             name="mealDescription"
-            placeholder="Describe your meal (e.g., 2 eggs, 1 toast with butter and a coffee)"
+            placeholder="Describe your meal (e.g., 1 oat milk tea, 1 vada pav and half portion poha"
             size="sm"
             variant="filled"
           />
