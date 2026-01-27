@@ -10,6 +10,7 @@ import {
   IconButton,
   Input,
   Text,
+  Textarea,
   useToast,
 } from "@chakra-ui/react";
 import Fuse from "fuse.js";
@@ -17,7 +18,6 @@ import { useRouter } from "next/router";
 import React, {
   ChangeEventHandler,
   FocusEventHandler,
-  InputHTMLAttributes,
   memo,
   useCallback,
   useEffect,
@@ -25,7 +25,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { BsCalculator } from "react-icons/bs";
+import { BsCalculator, BsStars } from "react-icons/bs";
 import { CalculatorModal } from "../components/CalculatorModal";
 import { getMealFromQueryParams } from "../components/shareableMealLink/shareableMealLink";
 import CustomItemModal, { CustomItemModalProps } from "../components/CustomItemModal";
@@ -37,7 +37,7 @@ import { ACTIONS, inititalNutrition, ItemEntry, MealEntry, useItems, useStore } 
 import DinnerArt from "../svg/DinnerArt";
 import { computeMicroNutritionFromLog, computeWeightedNutrition, mapNutrition } from "../util/nutrition";
 import { computeArithmeticExpression } from "../util/primitives";
-import { formatShortDate, getDateFromDateKey, getDateKey } from "../util/time";
+import { getDateFromDateKey, getDateKey } from "../util/time";
 import { useNumericInputMode } from "../components/useInputMode";
 
 export default function MealEntryPage() {
@@ -232,6 +232,33 @@ export default function MealEntryPage() {
     addItem(weightedItem);
     setCustomItemDetails({ name: "", weight: 0 });
     setShowCustomItemModal(false);
+  };
+
+  const handleAskChatGPT = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const mealDescription = (form.elements.namedItem("mealDescription") as HTMLTextAreaElement).value;
+
+    const prompt = `Generate a calorie tracking meal URL
+https://bogas04.github.io/calow/meal-entry?m=3{key:value;i:[...];n:{...}}
+
+Rules:
+- No quotes. Use ":" for key:value, ";" as separator.
+- Use "{}" for objects, "[]" for arrays.
+- Try to add individual items as much as possible
+- Replace spaces with "." in strings.
+- Respond with ONLY the final encoded URL as well as a clickable link
+
+Key Map:
+- n (nutrition): {j:cals;c:carbs;p:prot;f:fat}
+- i (items): [item, item]
+- item: {nm:name;ic:emoji;w:weight;n:nutrition;m:micros}
+- m (micros): {fb:fiber;sf:sat_fat;na:sodium}
+- Root: nm (name), i (items), n (nutrition), pw (portionWeight), tw (totalWeight)
+
+Meal: ${mealDescription}`;
+
+    window.open(`https://chatgpt.com/?q=${encodeURIComponent(prompt)}`, "_blank");
   };
 
   function saveAndRedirect({ name, timestamp = Date.now() }: { name: string; timestamp?: number }) {
@@ -450,19 +477,29 @@ export default function MealEntryPage() {
   );
 
   const emptyArt = (
-    <>
-      <Flex p="6" flex="1" direction="column" justify="center" align="center">
-        <FormControl>
-          <FormHelperText>Add Items of your meal by using the form below.</FormHelperText>
-        </FormControl>
-        <Box my="6" h={["100%", "20vh"]}>
-          <DinnerArt />
-        </Box>
-      </Flex>
-      {/* <Box mx={["-4", "-16", "-32"]}>
-        <RecentMeals onAdd={copyMealToCurrent} />
-      </Box> */}
-    </>
+    <Flex p="6" flex="1" direction="column" justify="center" align="center">
+      <FormControl>
+        <FormHelperText textAlign="center">Add Items of your meal by using the form below.</FormHelperText>
+      </FormControl>
+      <Box my="6" h={["100%", "20vh"]}>
+        <DinnerArt />
+      </Box>
+
+      <form onSubmit={handleAskChatGPT} style={{ width: "100%" }}>
+        <Flex direction="column" w="100%" gap={2}>
+          <Textarea
+            isRequired
+            name="mealDescription"
+            placeholder="Describe your meal (e.g., 2 eggs, 1 toast with butter and a coffee)"
+            size="sm"
+            variant="filled"
+          />
+          <Button size="sm" colorScheme="gray" type="submit" leftIcon={<BsStars />}>
+            Ask ChatGPT
+          </Button>
+        </Flex>
+      </form>
+    </Flex>
   );
 
   return (
