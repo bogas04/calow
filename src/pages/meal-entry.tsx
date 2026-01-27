@@ -27,7 +27,7 @@ import React, {
 } from "react";
 import { BsCalculator } from "react-icons/bs";
 import { CalculatorModal } from "../components/CalculatorModal";
-
+import { getMealFromQueryParams } from "../components/shareableMealLink";
 import CustomItemModal, { CustomItemModalProps } from "../components/CustomItemModal";
 import { Page } from "../components/layouts";
 import { IngredientSuggestions, SearchSuggestions } from "../components/MealEntryComponents";
@@ -115,14 +115,10 @@ export default function MealEntryPage() {
   }, [copyMealToCurrent, log, router.query.index]);
 
   useEffect(() => {
-    if (router.query.shared_meal) {
-      try {
-        const meal = JSON.parse(decodeURIComponent(String(router.query.shared_meal)));
+    try {
+      const meal = getMealFromQueryParams(router.query);
 
-        if (Object.keys(meal).length === 0 || !Array.isArray(meal.items) || typeof meal.totalWeight !== "number") {
-          throw new Error("Invalid meal item");
-        }
-
+      if (meal) {
         dispatch({
           type: ACTIONS.SET_MEAL_ENTRY_ITEMS,
           payload: {
@@ -132,18 +128,18 @@ export default function MealEntryPage() {
             portionWeight: meal.portionWeight,
           },
         });
-      } catch (err) {
-        toast({
-          title: "Oops!",
-          description: "Please add details manually",
-          duration: 5000,
-          status: "error",
-          isClosable: true,
-        });
-        alert("Oops!. Please add details manually\n" + (err as Error).message);
       }
+    } catch (err) {
+      toast({
+        title: "Oops!",
+        description: "Please add details manually",
+        duration: 5000,
+        status: "error",
+        isClosable: true,
+      });
+      alert("Oops!. Please add details manually\n" + (err as Error).message);
     }
-  }, [dispatch, router.query.shared_meal, toast]);
+  }, [dispatch, router.query, toast]);
 
   // Compute total nutrition of current meal
   const mealNutrition = addedItems.reduce(
