@@ -27,7 +27,7 @@ import React, {
 } from "react";
 import { BsCalculator } from "react-icons/bs";
 import { CalculatorModal } from "../components/CalculatorModal";
-import { getMealFromQueryParams } from "../components/shareableMealLink";
+import { getMealFromQueryParams } from "../components/shareableMealLink/shareableMealLink";
 import CustomItemModal, { CustomItemModalProps } from "../components/CustomItemModal";
 import { Page } from "../components/layouts";
 import { IngredientSuggestions, SearchSuggestions } from "../components/MealEntryComponents";

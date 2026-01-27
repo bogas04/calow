@@ -9,7 +9,7 @@
     "lint": "next lint",
     "test": "bun run test:types && bun run test:unit",
     "test:types": "tsc --noEmit",
-    "test:unit": "bun test src/**/*.test.ts",
+    "test:unit": "bun test",
     "analyze": "ANALYZE=\"true\" next build"
   },
   "keywords": [

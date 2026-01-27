@@ -17,7 +17,7 @@ import {
 } from "@chakra-ui/react";
 import { useMemo, useCallback, memo } from "react";
 import { MealEntry } from "../store";
-import { createShareableMealLink } from "./shareableMealLink";
+import { createShareableMealLink } from "./shareableMealLink/shareableMealLink";
 
 export const ShareModal = memo(function ShareModal({
   isOpen,
