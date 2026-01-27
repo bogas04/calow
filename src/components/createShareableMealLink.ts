@@ -1,8 +1,18 @@
 import { MealEntry } from "../store/types";
 
+function createCleanJSON(obj: any): string {
+  return JSON.stringify(obj, (key, value) => {
+    // Skip null and undefined values
+    if (value === null || value === undefined) {
+      return undefined;
+    }
+    return value;
+  });
+}
+
 export function createShareableMealLink(_mealToBeShared: MealEntry, baseLink: string) {
   const mealToBeShared = structuredClone(_mealToBeShared);
-  const fullMealJson = JSON.stringify(mealToBeShared);
+  const fullMealJson = createCleanJSON(mealToBeShared);
   const createLink = (stringifiedJson: string) =>
     `${baseLink}meal-entry?shared_meal=${encodeURIComponent(stringifiedJson)}`;
 
@@ -28,5 +38,5 @@ export function createShareableMealLink(_mealToBeShared: MealEntry, baseLink: st
   ];
   mealToBeShared.totalWeight = mealToBeShared.portionWeight;
 
-  return createLink(JSON.stringify(mealToBeShared));
+  return createLink(createCleanJSON(mealToBeShared));
 }

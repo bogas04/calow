@@ -184,6 +184,38 @@ describe("createShareableMealLink", () => {
 
       assert.ok(result.startsWith(`${customBase}meal-entry?shared_meal=`));
     });
+
+    it("removes null and undefined fields from meal data", () => {
+      const result = createShareableMealLink(mealWithNullableFields, baseLink);
+
+      const urlParams = new URLSearchParams(result.split("?")[1]);
+      const decodedMeal = JSON.parse(urlParams.get("shared_meal")!);
+
+      // Verify null fields are removed from items micro
+      assert.ok(!("calcium" in decodedMeal.items[0].micro));
+      assert.ok(!("delta > 20" in decodedMeal.items[0].micro));
+      assert.ok(!("calcium" in decodedMeal.items[1].micro));
+      assert.ok(!("delta > 20" in decodedMeal.items[1].micro));
+
+      // Verify null fields are removed from meal micro
+      assert.ok(!("calcium" in decodedMeal.micro));
+      assert.ok(!("delta > 20" in decodedMeal.micro));
+
+      // Verify undefined water is removed
+      assert.ok(!("water" in decodedMeal));
+
+      // Verify non-null fields are preserved
+      assert.strictEqual(decodedMeal.items[0].micro.fiber, 25);
+      assert.strictEqual(decodedMeal.items[0].micro["saturated fats"], 0.1);
+      assert.strictEqual(decodedMeal.items[0].micro["sodium "], 24);
+      
+      // Verify the URL doesn't contain null
+      assert.ok(!result.includes("null"));
+
+      // Verify required fields are still present
+      assert.strictEqual(decodedMeal.name, "Meal with Nullable Fields");
+      assert.strictEqual(decodedMeal.items.length, 2);
+    });
   });
 });
 
@@ -533,4 +565,66 @@ const baseLinkMeal: MealEntry = {
   totalWeight: 0,
   portionWeight: 0,
   nutrition: { calories: 0, carbohydrates: 0, fat: 0, protein: 0 },
+};
+
+const mealWithNullableFields: MealEntry = {
+  name: "Meal with Nullable Fields",
+  timestamp: 1769514522903,
+  items: [
+    {
+      name: "Rajma Dal",
+      icon: "🌾",
+      weight: 50,
+      nutrition: {
+        calories: 166.5,
+        carbohydrates: 30,
+        fat: 0.4,
+        protein: 12,
+      },
+      micro: {
+        fiber: 25,
+        calcium: null as any,
+        "saturated fats": 0.1,
+        "sodium ": 24,
+        "calorie delta": 10.2,
+        "delta > 20": null as any,
+      },
+    },
+    {
+      name: "White Rice",
+      icon: "🌾",
+      weight: 50,
+      nutrition: {
+        calories: 182.5,
+        carbohydrates: 40,
+        fat: 0.35,
+        protein: 3.5,
+      },
+      micro: {
+        fiber: 1.3,
+        calcium: null as any,
+        "saturated fats": 0.2,
+        "sodium ": 0,
+        "calorie delta": 10.7,
+        "delta > 20": null as any,
+      },
+    },
+  ],
+  totalWeight: 200,
+  portionWeight: 100,
+  nutrition: {
+    calories: 174.5,
+    carbohydrates: 35,
+    fat: 0.375,
+    protein: 7.75,
+  },
+  micro: {
+    fiber: 6.575,
+    calcium: null as any,
+    "saturated fats": 0.075,
+    "sodium ": 6,
+    "calorie delta": 5.225,
+    "delta > 20": null as any,
+  },
+  water: undefined,
 };
