@@ -10,14 +10,17 @@ The goal of V3 is to provide a **human-readable** format that is safe from third
 
 - **Base Format**: Uses the same minimized keys as V2.
 - **Structure**:
-  - **Objects**: Wrapped in `(` and `)`.
+  - **Objects**: Wrapped in `{` and `}`.
   - **Arrays**: Wrapped in `[` and `]`.
   - **Key-Value Separator**: `:`.
-  - **Item Separator**: `,`.
+  - **Item Separator**: `;`.
   - **Spaces**: Replaced with `.` for readability.
-- **Safety**: Special characters like `_`, `*`, `~`, and `` ` `` are hex-escaped (e.g., `-2A`) to prevent app formatting.
+- **Safety**: 
+  - Entire payload is `encodeURIComponent`'ed to ensure stability.
+  - Formatting triggers like `_`, `*`, `~` are hex-escaped (e.g., `-2A`) inside strings.
+  - Manual escaping for `(` and `)` is applied to prevent chat apps from breaking links prematurely.
 - **Prefix**: The query parameter `m` starts with `3`.
-- **Unicode**: Full support for emojis (kept as-is, browsers URI-encode them).
+- **Unicode**: Full support for emojis.
 
 ### Comparison
 
@@ -48,7 +51,7 @@ For a typical comprehensive meal:
 ### V3: Human Readable & Safe (Active)
 
 - **Query Param**: `m` (prefixed with `3`)
-- **Format**: Readable grammar using `( ) [ ] : ,`.
+- **Format**: Readable grammar using `{ } [ ] : ;`.
 - **Pros**: Human-readable, safe from formatting, supports emojis.
 - **Cons**: Requires a custom parser.
 

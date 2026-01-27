@@ -14,8 +14,12 @@ import {
   IconButton,
   Button,
   Text,
+  RadioGroup,
+  Stack,
+  Radio,
+  FormLabel,
 } from "@chakra-ui/react";
-import { useMemo, useCallback, memo } from "react";
+import { useMemo, useCallback, memo, useState } from "react";
 import { MealEntry } from "../store";
 import { createShareableMealLink } from "./shareableMealLink/shareableMealLink";
 
@@ -25,6 +29,8 @@ export const ShareModal = memo(function ShareModal({
   meal,
 }: Pick<ModalProps, "isOpen" | "onClose"> & { meal: MealEntry }) {
   const toast = useToast();
+  const [version, setVersion] = useState<"v1" | "v2" | "v3">("v2");
+
   const link = useMemo(() => {
     // this is to prevent pre-mature calculation
     if (!isOpen) {
@@ -46,8 +52,8 @@ export const ShareModal = memo(function ShareModal({
       document.querySelector('meta[property="og:url"')?.getAttribute("content") || "https://bogas04.github.io/calow/";
 
     // create a calow link
-    return createShareableMealLink(meal, baseLink);
-  }, [isOpen, meal]);
+    return createShareableMealLink(meal, baseLink, version);
+  }, [isOpen, meal, version]);
 
   const onShare = useCallback(() => {
     const failureToast = () =>
@@ -102,6 +108,18 @@ export const ShareModal = memo(function ShareModal({
         <ModalCloseButton mt="2" />
         <ModalBody pb="5">
           <Text>Here&apos;s a link you can share with your buddy who wants to add this meal to their log.</Text>
+
+          <RadioGroup onChange={(v) => setVersion(v as any)} value={version} my="4">
+            <FormLabel fontSize="sm" color="gray.600">
+              Link Version
+            </FormLabel>
+            <Stack direction="row" spacing={5}>
+              <Radio value="v1">V1 (Legacy JSON)</Radio>
+              <Radio value="v2">V2 (Short)</Radio>
+              <Radio value="v3">V3 (Experimental)</Radio>
+            </Stack>
+          </RadioGroup>
+
           <InputGroup my="4">
             <Input type="text" defaultValue={link} disabled />
             <InputRightAddon px={0} mx={0} bg="gray.50">

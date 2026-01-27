@@ -116,16 +116,18 @@ describe("V2: Shortened Link Creation", () => {
 describe("V3: Human Readable & Safe", () => {
   it("uses the 'm' query parameter with version prefix 3", () => {
     const result = createShareableMealLink(COMPREHENSIVE_MEAL, BASE_LINK, "v3");
-    assert.ok(result.includes("?m=3("));
+    // URLSearchParams automatically decodes when we look into it
+    const encoded = new URLSearchParams(result.split("?")[1]).get("m")!;
+    assert.ok(encoded.startsWith("3{"));
   });
 
-  it("is human readable with : and , and [ ]", () => {
+  it("is human readable with : and ; and [ ]", () => {
     const result = createShareableMealLink(COMPREHENSIVE_MEAL, BASE_LINK, "v3");
     const encoded = new URLSearchParams(result.split("?")[1]).get("m")!;
     // Should see keys like nm: and i:[
     assert.ok(encoded.includes("nm:"));
     assert.ok(encoded.includes("i:["));
-    assert.ok(encoded.includes(","));
+    assert.ok(encoded.includes(";"));
     assert.ok(encoded.includes("j:"));
   });
 

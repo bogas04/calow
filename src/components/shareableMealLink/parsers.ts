@@ -149,7 +149,7 @@ class LinkParserV2 implements LinkParser {
 class LinkParserV3 extends LinkParserV2 {
   override isValid(link: string): boolean {
     const data = Helpers.getQueryParam(link, "m");
-    return !!data && data.startsWith("3(");
+    return !!data && data.startsWith("3{");
   }
 
   override create(meal: MealEntry, baseLink: string): string {
@@ -164,11 +164,11 @@ class LinkParserV3 extends LinkParserV2 {
         if (c === " ") {
           res += ".";
         } else if (code > 0x7f) {
-          // Keep emojis/Unicode - they will be URI encoded by the browser if needed
+          // Keep emojis/Unicode - they will be URI encoded by the browser
           res += c;
           if (code > 0xffff) res += val[++i]; // Handle surrogate pairs
         } else if (!/[a-zA-Z0-9]/.test(c)) {
-          // Escape separators and formatting chars: ( ) [ ] : , - . _ * ~ `
+          // Escape separators and formatting chars: { } [ ] : ; - . _ * ~ ` ( )
           res += "-" + code.toString(16).toUpperCase().padStart(2, "0");
         } else {
           res += c;
@@ -180,24 +180,30 @@ class LinkParserV3 extends LinkParserV2 {
     const stringify = (val: any): string => {
       if (typeof val === "number") return Math.round(val * 100) / 100 + "";
       if (typeof val === "string") return stringifyString(val);
-      if (Array.isArray(val)) return "[" + val.map(stringify).join(",") + "]";
+      if (Array.isArray(val)) return "[" + val.map(stringify).join(";") + "]";
       if (val && typeof val === "object") {
         return (
-          "(" +
+          "{" +
           Object.entries(val)
             .map(([k, v]) => `${k}:${stringify(v)}`)
-            .join(",") +
-          ")"
+            .join(";") +
+          "}"
         );
       }
       return "";
     };
 
-    let url = `${baseLink}meal-entry?m=3${stringify(transform(mealToShare))}`;
+    const createUrl = (m: MealEntry) => {
+      const payload = "3" + stringify(transform(m));
+      // Manual encoding for ( ) as they are often NOT escaped by encodeURIComponent but break WhatsApp
+      return `${baseLink}meal-entry?m=${encodeURIComponent(payload).replace(/\(/g, "%28").replace(/\)/g, "%29")}`;
+    };
+
+    let url = createUrl(mealToShare);
 
     if (url.length >= 2000) {
       mealToShare = Helpers.compressMeal(meal);
-      url = `${baseLink}meal-entry?m=3${stringify(transform(mealToShare))}`;
+      url = createUrl(mealToShare);
     }
     return url;
   }
@@ -226,17 +232,17 @@ class LinkParserV3 extends LinkParserV2 {
     };
 
     const parseValue = (s: string): { val: any; rest: string } => {
-      if (s.startsWith("(")) {
+      if (s.startsWith("{")) {
         const obj: any = {};
         let rest = s.substring(1);
-        while (rest && !rest.startsWith(")")) {
+        while (rest && !rest.startsWith("}")) {
           const keyMatch = rest.match(/^([^:]+):/);
           if (!keyMatch) break;
           const key = keyMatch[1];
           const { val, rest: r } = parseValue(rest.substring(key.length + 1));
           obj[key] = val;
           rest = r;
-          if (rest.startsWith(",")) rest = rest.substring(1);
+          if (rest.startsWith(";")) rest = rest.substring(1);
         }
         return { val: obj, rest: rest.substring(1) };
       }
@@ -247,7 +253,7 @@ class LinkParserV3 extends LinkParserV2 {
           const { val, rest: r } = parseValue(rest);
           arr.push(val);
           rest = r;
-          if (rest.startsWith(",")) rest = rest.substring(1);
+          if (rest.startsWith(";")) rest = rest.substring(1);
         }
         return { val: arr, rest: rest.substring(1) };
       }
@@ -256,7 +262,7 @@ class LinkParserV3 extends LinkParserV2 {
       let endIdx = 0;
       for (; endIdx < s.length; endIdx++) {
         const c = s[endIdx];
-        if (c === "," || c === ":" || c === ")" || c === "]" || c === "[" || c === "(") break;
+        if (c === ";" || c === ":" || c === "}" || c === "]" || c === "[" || c === "{") break;
       }
       const raw = s.substring(0, endIdx);
       const rest = s.substring(endIdx);
