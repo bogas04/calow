@@ -4,19 +4,20 @@ Calow uses a versioned system to encode meal data into URLs for sharing. This do
 
 ## Current Version (V3)
 
-The goal of V3 is to minimize the "noise" created by standard JSON encoding in URLs (like `{"":}`). It uses a custom grammar that maps naturally to URL-safe characters.
+The goal of V3 is to provide a **human-readable** format that is safe from third-party app formatting (like WhatsApp `_italics_` or `*bold*`).
 
-### Encoding Grammar
+### Encoding
 
-- **Objects**: Wrapped in `(` and `)`.
-- **Arrays**: Wrapped in `!` and `*`.
-- **Key-Value Separator**: `~`.
-- **Item Separator**: `_`.
-- **String Encoding**:
-  - Spaces are replaced with `.`.
-  - Emojis and non-ASCII characters are stripped for maximum URL compatibility.
-  - Special characters are escaped using a dash-hex format (e.g., `&` becomes `-26`).
-- **Prefix**: The query parameter `m` starts with `3` to identify the version (e.g., `?m=3(...)`).
+- **Base Format**: Uses the same minimized keys as V2.
+- **Structure**:
+  - **Objects**: Wrapped in `(` and `)`.
+  - **Arrays**: Wrapped in `[` and `]`.
+  - **Key-Value Separator**: `:`.
+  - **Item Separator**: `,`.
+  - **Spaces**: Replaced with `.` for readability.
+- **Safety**: Special characters like `_`, `*`, `~`, and `` ` `` are hex-escaped (e.g., `-2A`) to prevent app formatting.
+- **Prefix**: The query parameter `m` starts with `3`.
+- **Unicode**: Full support for emojis (kept as-is, browsers URI-encode them).
 
 ### Comparison
 
@@ -24,7 +25,7 @@ For a typical comprehensive meal:
 
 - **V1**: ~1050 chars
 - **V2**: ~800 chars
-- **V3**: ~350 chars (**~65% reduction from V1**)
+- **V3**: ~360 chars (**~65% reduction from V1**)
 
 ---
 
@@ -44,11 +45,11 @@ For a typical comprehensive meal:
 - **Pros**: Shorter than V1.
 - **Cons**: Still uses JSON syntax (`{`, `"`, `:`) which gets escaped into noisy sequences like `%7B`, `%22`, `%3A`.
 
-### V3: Compact Serialization (Active)
+### V3: Human Readable & Safe (Active)
 
 - **Query Param**: `m` (prefixed with `3`)
-- **Format**: Custom grammar avoiding JSON delimiters.
-- **Pros**: Optimal length for URLs, minimal escaping overhead.
+- **Format**: Readable grammar using `( ) [ ] : ,`.
+- **Pros**: Human-readable, safe from formatting, supports emojis.
 - **Cons**: Requires a custom parser.
 
 ---

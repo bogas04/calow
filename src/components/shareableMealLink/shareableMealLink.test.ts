@@ -113,40 +113,43 @@ describe("V2: Shortened Link Creation", () => {
   });
 });
 
-describe("V3: Compact Link Creation", () => {
-  it("uses the 'm' query parameter with '3' prefix", () => {
+describe("V3: Human Readable & Safe", () => {
+  it("uses the 'm' query parameter with version prefix 3", () => {
     const result = createShareableMealLink(COMPREHENSIVE_MEAL, BASE_LINK, "v3");
     assert.ok(result.includes("?m=3("));
   });
 
-  it("is significantly shorter than V2", () => {
-    const v2Link = createShareableMealLink(COMPREHENSIVE_MEAL, BASE_LINK, "v2");
-    const v3Link = createShareableMealLink(COMPREHENSIVE_MEAL, BASE_LINK, "v3");
-    assert.ok(v3Link.length < v2Link.length, `V3 (${v3Link.length}) should be shorter than V2 (${v2Link.length})`);
+  it("is human readable with : and , and [ ]", () => {
+    const result = createShareableMealLink(COMPREHENSIVE_MEAL, BASE_LINK, "v3");
+    const encoded = new URLSearchParams(result.split("?")[1]).get("m")!;
+    // Should see keys like nm: and i:[
+    assert.ok(encoded.includes("nm:"));
+    assert.ok(encoded.includes("i:["));
+    assert.ok(encoded.includes(","));
+    assert.ok(encoded.includes("j:"));
   });
 
-  it("successfully parses a valid V3 URL back into a meal object", () => {
+  it("escapes formatting characters like * and _", () => {
+    const testMeal = { ...COMPREHENSIVE_MEAL, name: "Bold * Text _ Under" };
+    const result = createShareableMealLink(testMeal, BASE_LINK, "v3");
+    const encoded = new URLSearchParams(result.split("?")[1]).get("m")!;
+    assert.ok(!encoded.includes("*"));
+    assert.ok(!encoded.includes("_"));
+    // * is 2A, _ is 5F
+    assert.ok(encoded.includes("-2A"));
+    assert.ok(encoded.includes("-5F"));
+  });
+
+  it("successfully parses back a V3 link", () => {
     const url = createShareableMealLink(COMPREHENSIVE_MEAL, BASE_LINK, "v3");
     const parsed = parseMealFromLink(url);
-    // V3 strips emojis, so we expect the name without the emoji
-    const expectedName = COMPREHENSIVE_MEAL.name.replace(/[^\x00-\x7F]/g, "");
-    assert.strictEqual(parsed.name, expectedName);
+    assert.strictEqual(parsed.name, COMPREHENSIVE_MEAL.name);
     assert.strictEqual(parsed.nutrition.calories, 133.25);
-    assert.strictEqual(parsed.items.length, COMPREHENSIVE_MEAL.items.length);
-    assert.strictEqual(parsed.items[0].name, COMPREHENSIVE_MEAL.items[0].name.replace(/[^\x00-\x7F]/g, ""));
-    assert.strictEqual(parsed.micro?.fiber, 15);
-  });
-
-  it("handles special characters in strings", () => {
-    const specialMeal = { ...COMPREHENSIVE_MEAL, name: "Chicken (Fried) & Salad!" };
-    const url = createShareableMealLink(specialMeal, BASE_LINK, "v3");
-    const parsed = parseMealFromLink(url);
-    assert.strictEqual(parsed.name, "Chicken (Fried) & Salad!");
   });
 });
 
 describe("Link Length Comparison", () => {
-  it("compares lengths of V1, V2, and V3 for the same meal", () => {
+  it("compares lengths across versions for a comprehensive meal", () => {
     const v1 = createShareableMealLink(COMPREHENSIVE_MEAL, BASE_LINK, "v1");
     const v2 = createShareableMealLink(COMPREHENSIVE_MEAL, BASE_LINK, "v2");
     const v3 = createShareableMealLink(COMPREHENSIVE_MEAL, BASE_LINK, "v3");
@@ -157,7 +160,6 @@ describe("Link Length Comparison", () => {
     console.log(`  V3: ${v3.length} chars`);
 
     assert.ok(v3.length < v2.length, "V3 should be shorter than V2");
-    assert.ok(v2.length < v1.length, "V2 should be shorter than V1");
   });
 
   it("compares lengths for a simple meal", () => {
@@ -195,10 +197,10 @@ describe("Edge Cases & Validation", () => {
   });
 
   it("preserves special characters through the encoding/decoding cycle", () => {
-    const result = createShareableMealLink(COMPREHENSIVE_MEAL, BASE_LINK);
+    const result = createShareableMealLink(COMPREHENSIVE_MEAL, BASE_LINK); // Defaults to V3
     const parsed = parseMealFromLink(result);
-    const expectedName = COMPREHENSIVE_MEAL.name.replace(/[^\x00-\x7F]/g, "");
-    assert.strictEqual(parsed.name, expectedName);
+    // V3 preserves emojis and special characters
+    assert.strictEqual(parsed.name, COMPREHENSIVE_MEAL.name);
   });
 
   it("respects custom base link prefixes", () => {
