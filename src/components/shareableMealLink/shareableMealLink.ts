@@ -4,7 +4,7 @@ import { parsers, v1Parser, v2Parser, v3Parser } from "./parsers";
 export function createShareableMealLink(
   meal: MealEntry,
   baseLink: string,
-  parserVersion: "v1" | "v2" | "v3" = "v3"
+  parserVersion: "v1" | "v2" | "v3" = "v2"
 ): string {
   if (parserVersion === "v1") {
     return v1Parser.create(meal, baseLink);
