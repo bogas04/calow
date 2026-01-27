@@ -245,9 +245,9 @@ https://bogas04.github.io/calow/meal-entry?m=3{key:value;i:[...];n:{...}}
 Rules:
 - No quotes. Use ":" for key:value, ";" as separator.
 - Use "{}" for objects, "[]" for arrays.
-- Try to add individual items as much as possible
 - Replace spaces with "." in strings.
-- Respond with ONLY the final encoded URL as well as a clickable link
+- Add individual items as much as possible
+- Respond with a clickable (markdown link)
 
 Key Map:
 - n (nutrition): {j:cals;c:carbs;p:prot;f:fat}
