@@ -42,7 +42,11 @@ class Helpers {
   }
 
   static createCleanJSON(obj: any): string {
-    return JSON.stringify(obj, (_, value) => (value === null || value === undefined ? undefined : value));
+    return JSON.stringify(obj, (_, value) => {
+      if (value === null || value === undefined) return undefined;
+      if (typeof value === "number") return Math.round(value * 100) / 100;
+      return value;
+    });
   }
 
   static compressMeal(meal: MealEntry): MealEntry {
@@ -79,6 +83,12 @@ class Helpers {
 
   static validateMeal(meal: any): asserts meal is MealEntry {
     if (!meal || typeof meal !== "object") throw new Error("Invalid meal data");
+
+    // Add missing timestamp if not present (common in V2 links)
+    if (meal.timestamp === undefined) {
+      meal.timestamp = Date.now();
+    }
+
     if (!Array.isArray(meal.items) || typeof meal.totalWeight !== "number") {
       throw new Error("Invalid meal data");
     }
@@ -107,7 +117,7 @@ const FIELD_MAP_V2 = {
 
 const FIELD_MAP_V2_REVERSED = Helpers.reverseMap(FIELD_MAP_V2 as unknown as Record<string, string>);
 
-const IGNORED_MICRO_FIELDS = ["calorie delta", "delta > 20"];
+const FIELDS_TO_IGNORE = ["calorie delta", "delta > 20", "timestamp"];
 
 export interface LinkParser {
   isValid(link: string): boolean;
@@ -123,14 +133,16 @@ class LinkParserV1 implements LinkParser {
   }
 
   create(meal: MealEntry, baseLink: string): string {
-    let mealToShare = meal;
-    const makeUrl = (m: MealEntry) =>
-      `${baseLink}meal-entry?${this.PARAM}=${encodeURIComponent(Helpers.createCleanJSON(m))}`;
+    const mealToShare = { ...meal };
+    delete (mealToShare as any).timestamp;
+
+    const makeUrl = (m: any) => `${baseLink}meal-entry?${this.PARAM}=${encodeURIComponent(Helpers.createCleanJSON(m))}`;
 
     let url = makeUrl(mealToShare);
     if (url.length >= 2000) {
-      mealToShare = Helpers.compressMeal(meal);
-      url = makeUrl(mealToShare);
+      const compressed = Helpers.compressMeal(meal);
+      delete (compressed as any).timestamp;
+      url = makeUrl(compressed);
     }
     return url;
   }
@@ -169,7 +181,7 @@ class LinkParserV2 implements LinkParser {
 
   create(meal: MealEntry, baseLink: string): string {
     let mealToShare = meal;
-    const transform = (m: MealEntry) => this.transformKeys(m, FIELD_MAP_V2, (k) => IGNORED_MICRO_FIELDS.includes(k));
+    const transform = (m: MealEntry) => this.transformKeys(m, FIELD_MAP_V2, (k) => FIELDS_TO_IGNORE.includes(k));
 
     let url = `${baseLink}meal-entry?${this.PARAM}=${encodeURIComponent(
       Helpers.createCleanJSON(transform(mealToShare))
