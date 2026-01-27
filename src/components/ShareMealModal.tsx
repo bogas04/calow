@@ -29,7 +29,7 @@ export const ShareModal = memo(function ShareModal({
   meal,
 }: Pick<ModalProps, "isOpen" | "onClose"> & { meal: MealEntry }) {
   const toast = useToast();
-  const [version, setVersion] = useState<"v1" | "v2" | "v3">("v2");
+  const [version, setVersion] = useState<"v1" | "v2" | "v3">("v3");
 
   const link = useMemo(() => {
     // this is to prevent pre-mature calculation
