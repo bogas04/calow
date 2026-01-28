@@ -239,26 +239,20 @@ export default function MealEntryPage() {
     const form = e.currentTarget;
     const mealDescription = (form.elements.namedItem("mealDescription") as HTMLTextAreaElement).value;
 
-    const prompt = `Generate a calorie tracking meal URL
-https://bogas04.github.io/calow/meal-entry?m=3{key:value;i:[...];n:{...}}
+    const prompt = `As a nutrition expert generate a meal URL for: ${mealDescription}
+Format: https://bogas04.github.io/calow/meal-entry?shared_meal=[URI-encoded-JSON]
+JSON: {
+  "name": "string",
+  "items": [{
+    "name": "string", "icon": "emoji", "weight": grams,
+    "nutrition": { "calories": kcal, "carbohydrates": g, "protein": g, "fat": g },
+    "micro": { "fiber": g, "saturated fats": g, "sodium": mg }
+  }],
+  "portionWeight": total_g, "totalWeight": total_g
+}
+Respond with ONLY the clickable markdown link.`;
 
-Rules:
-- No quotes. Use ":" for key:value, ";" as separator.
-- Use "{}" for objects, "[]" for arrays.
-- Replace spaces with "." in strings.
-- Add individual items as much as possible
-- Respond with a clickable (markdown link)
-
-Key Map:
-- n (nutrition): {j:cals;c:carbs;p:prot;f:fat}
-- i (items): [item, item]
-- item: {nm:name;ic:emoji;w:weight;n:nutrition;m:micros}
-- m (micros): {fb:fiber;sf:sat_fat;na:sodium}
-- Root: nm (name), i (items), n (nutrition), pw (portionWeight), tw (totalWeight)
-
-Meal: ${mealDescription}`;
-
-    window.open(`https://chatgpt.com/?q=${encodeURIComponent(prompt)}`, "_blank");
+    window.open(`https://chatgpt.com/?q=${encodeURIComponent}`, "_blank");
   };
 
   function saveAndRedirect({ name, timestamp = Date.now() }: { name: string; timestamp?: number }) {
