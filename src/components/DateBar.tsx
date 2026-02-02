@@ -8,12 +8,12 @@ function DateBar({ date, onChange }: { date: number; onChange: (newDate: number)
   return (
     <>
       <div className="grid grid-cols-3 grid-rows-1 gap-3" key={date}>
-        <button className={commonStyles + "bg-slate-50"} onClick={() => onChange(date - DAY)}>
+        <button className={commonStyles + "bg-slate-50!"} onClick={() => onChange(date - DAY)}>
           {formatShortDate(new Date(date - DAY))}
         </button>
-        <button className={commonStyles + "z-10 bg-slate-200"}>{formatShortDate(new Date(date))}</button>
+        <button className={commonStyles + "z-10 bg-slate-200!"}>{formatShortDate(new Date(date))}</button>
         <button
-          className={commonStyles + `bg-slate-50 ${date + DAY > TODAY ? "invisible" : "visible"}`}
+          className={commonStyles + `bg-slate-50! ${date + DAY > TODAY ? "invisible" : "visible"}`}
           onClick={() => onChange(Math.min(date + DAY, TODAY))}
         >
           {formatShortDate(new Date(date + DAY))}

@@ -6,4 +6,6 @@ const withBundleAnalyzer = require("@next/bundle-analyzer")({
 
 module.exports = withBundleAnalyzer({
   basePath: process.env.NODE_ENV === "production" ? `/${name}` : undefined,
+  output: "export",
+  reactCompiler: true,
 });

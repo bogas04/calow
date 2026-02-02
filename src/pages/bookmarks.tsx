@@ -57,7 +57,7 @@ export default function BookmarksPage() {
       query.trim()
     );
 
-    return bookmarksIds.map((bid) => processedBookmarks[bid]);
+    return (bookmarksIds || []).map((bid) => processedBookmarks[bid]);
   }, [bookmarks, query, logs]);
 
   const handleSearch: React.FormEventHandler<HTMLInputElement> = (e) => {

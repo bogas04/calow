@@ -143,7 +143,7 @@ const NavLink = ({ title, href, children }: { title: string; href: string; child
   };
 
   return (
-    <Link href={href}>
+    <Link href={href} passHref legacyBehavior>
       <Flex
         as="a"
         onClick={() => footerClickHandler(href)}

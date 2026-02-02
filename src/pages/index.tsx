@@ -237,7 +237,7 @@ export default function HomePage() {
                 icon={<WaterGlassIcon size="20" />}
               />
             )}
-            <Link href={{ pathname: "/meal-entry", query: { forDate: getDateKey(date) } }}>
+            <Link href={{ pathname: "/meal-entry", query: { forDate: getDateKey(date) } }} passHref legacyBehavior>
               <ChakraLink {...FABProps} title="Add log item" userSelect="none">
                 +
               </ChakraLink>
@@ -257,7 +257,7 @@ export default function HomePage() {
               justifySelf="center"
               icon={<CgCalendarToday size={"25"} />}
             />
-            <Link href={{ pathname: "/meal-entry", query: { forDate: getDateKey(date) } }}>
+            <Link href={{ pathname: "/meal-entry", query: { forDate: getDateKey(date) } }} passHref legacyBehavior>
               <ChakraLink {...FABProps} title="Add log item" userSelect="none">
                 +
               </ChakraLink>

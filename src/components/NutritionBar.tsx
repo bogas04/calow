@@ -58,7 +58,7 @@ function NutritionBar({
         <div
           className={
             border
-              ? "-mt-5 flex justify-center gap-4 rounded-b-3xl bg-gray-100 pt-7 pb-2"
+              ? "-mt-5 flex justify-center gap-4 rounded-b-3xl bg-gray-100! pt-7 pb-2"
               : "-mt-5 flex gap-2 overflow-x-auto pt-7 pb-2"
           }
         >

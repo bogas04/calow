@@ -29,7 +29,7 @@ function ItemNutrition({ item, size = "lg", ...props }: ItemNutritionProps) {
       >
         <Flex mb={size === "sm" ? 2 : 4} justify="space-between">
           <Heading size={size === "sm" ? "sm" : "md"}>
-            <Link href={`/items?search=${item.name}`}>
+            <Link href={`/items?search=${item.name}`} passHref legacyBehavior>
               <a>
                 <Box as="span" mx={size === "sm" ? 0 : 2}>
                   {item.icon || "🍛"}

@@ -1,4 +1,3 @@
-import { ModalProps } from "@chakra-ui/modal";
 import {
   Text,
   Modal,
@@ -9,6 +8,7 @@ import {
   CloseButton,
   ModalBody,
   Flex,
+  ModalProps,
 } from "@chakra-ui/react";
 import React, { memo } from "react";
 import { ItemEntry } from "../store";
