@@ -51,7 +51,7 @@ export function computeMicroNutritionFromLog(entries: MealEntry[]) {
   const totalMicros: Record<string, number> = {};
 
   for (const meal of entries) {
-    const mealMultiplier = meal.portionWeight / meal.totalWeight;
+    const mealMultiplier = meal.totalWeight === 0 ? 0 : meal.portionWeight / meal.totalWeight;
 
     for (const item of meal.items) {
       // portion of item consumed in the meal
@@ -76,7 +76,7 @@ export function computeMacroNutritionFromLog(entries: MealEntry[]) {
 
     const portionNutrition = mapNutrition(
       totalMealNutrition,
-      (key) => (totalMealNutrition[key] * meal.portionWeight) / meal.totalWeight
+      (key) => (meal.totalWeight === 0 ? 0 : (totalMealNutrition[key] * meal.portionWeight) / meal.totalWeight)
     );
 
     return addNutrition(portionNutrition, totalNutrition);

@@ -149,7 +149,7 @@ export default function MealEntryPage() {
 
   // Compute portion nutrition of current meal
   const portionNutrition = mapNutrition(mealNutrition, (_, value) => {
-    return portionWeight === 0 ? 0 : (value * portionWeight) / totalWeight;
+    return totalWeight === 0 ? 0 : (value * portionWeight) / totalWeight;
   });
 
   const addItem = (item: ItemEntry) => dispatch({ type: ACTIONS.ADD_MEAL_ENTRY_ITEM, payload: item });
@@ -209,13 +209,36 @@ export default function MealEntryPage() {
   function handleItemWeightChange(e: React.FormEvent<HTMLInputElement>) {
     const el = e.currentTarget;
     const index = Number(el.dataset.itemIndex);
-    const weight = Number(el.value) || 1;
+
+    const rawValue = el.value.trim();
+
+    if (rawValue !== "" && !/^[0-9]*\.?[0-9]*$/.test(rawValue)) {
+      return;
+    }
+
+    const parsed = Number(rawValue);
+    if (rawValue !== "" && Number.isNaN(parsed)) {
+      return;
+    }
+
+    const weight = rawValue === "" ? 0 : parsed;
 
     const currentDetails = addedItems[index];
+
+    let nutrition;
+    if (weight === 0) {
+      nutrition = { ...inititalNutrition };
+    } else if (currentDetails.weight > 0) {
+      const per100 = mapNutrition(currentDetails.nutrition, (_, value) => (value * 100) / currentDetails.weight);
+      nutrition = computeWeightedNutrition(per100, weight);
+    } else {
+      nutrition = { ...inititalNutrition };
+    }
+
     const newDetails: ItemEntry = {
       ...currentDetails,
       weight,
-      nutrition: mapNutrition(currentDetails.nutrition, (_, value) => (weight * value) / currentDetails.weight),
+      nutrition,
     };
 
     updateItem(index, newDetails);
@@ -339,7 +362,7 @@ Respond with ONLY the clickable markdown link.`;
           autoComplete="off"
           width={"1.2"}
           textAlign="center"
-          value={item.weight}
+          value={item.weight === 0 ? "" : item.weight}
           placeholder="Weight"
           size="sm"
           data-item-index={i}
