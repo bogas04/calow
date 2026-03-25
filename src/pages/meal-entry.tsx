@@ -33,9 +33,9 @@ import { Page } from "../components/layouts";
 import { IngredientSuggestions, SearchSuggestions } from "../components/MealEntryComponents";
 import MealNameModal from "../components/MealNameModal";
 import NutritionBar from "../components/NutritionBar";
-import { ACTIONS, inititalNutrition, ItemEntry, MealEntry, useItems, useStore } from "../store";
+import { ACTIONS, inititalNutrition, ItemEntry, MealEntry, MicroNutrition, Nutrition, useItems, useStore } from "../store";
 import DinnerArt from "../svg/DinnerArt";
-import { computeMicroNutritionFromLog, computeWeightedNutrition, mapNutrition } from "../util/nutrition";
+import { computeMicroNutritionFromLog, computeWeightedMicro, computeWeightedNutrition, mapNutrition } from "../util/nutrition";
 import { computeArithmeticExpression } from "../util/primitives";
 import { getDateFromDateKey, getDateKey } from "../util/time";
 import { useNumericInputMode } from "../components/useInputMode";
@@ -59,6 +59,7 @@ export default function MealEntryPage() {
     weight: 0,
   });
   const [searchQuery, setSearchQuery] = useState("");
+  const [itemBaseValues, setItemBaseValues] = useState<Map<string, { baseNutrition: Nutrition; baseMicro?: MicroNutrition }>>(new Map());
   const lastFocusedInput = useRef<HTMLInputElement | null>(null);
   const setLastFocusedInput: FocusEventHandler<HTMLInputElement> = (e) => {
     setShouldShowCalculator(false);
@@ -200,6 +201,8 @@ export default function MealEntryPage() {
       nutrition: computeWeightedNutrition(item.nutrition, weight),
     };
 
+    setItemBaseValues(prev => new Map(prev).set(item.name, { baseNutrition: item.nutrition, baseMicro: item.micro }));
+
     addItem(weightedItem);
     setSearchQuery("");
     form.querySelector("input")?.focus();
@@ -224,21 +227,26 @@ export default function MealEntryPage() {
     const weight = rawValue === "" ? 0 : parsed;
 
     const currentDetails = addedItems[index];
+    const baseValues = itemBaseValues.get(currentDetails.name);
 
     let nutrition;
+    let micro;
     if (weight === 0) {
       nutrition = { ...inititalNutrition };
-    } else if (currentDetails.weight > 0) {
-      const per100 = mapNutrition(currentDetails.nutrition, (_, value) => (value * 100) / currentDetails.weight);
-      nutrition = computeWeightedNutrition(per100, weight);
+      micro = {};
+    } else if (baseValues) {
+      nutrition = computeWeightedNutrition(baseValues.baseNutrition, weight);
+      micro = baseValues.baseMicro ? computeWeightedMicro(baseValues.baseMicro, weight) : {};
     } else {
       nutrition = { ...inititalNutrition };
+      micro = {};
     }
 
     const newDetails: ItemEntry = {
       ...currentDetails,
       weight,
       nutrition,
+      micro,
     };
 
     updateItem(index, newDetails);
@@ -251,6 +259,8 @@ export default function MealEntryPage() {
       weight,
       nutrition: computeWeightedNutrition(item.nutrition, weight),
     };
+
+    setItemBaseValues(prev => new Map(prev).set(item.name, { baseNutrition: item.nutrition, baseMicro: item.micro }));
 
     addItem(weightedItem);
     setCustomItemDetails({ name: "", weight: 0 });

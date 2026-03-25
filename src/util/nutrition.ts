@@ -21,6 +21,14 @@ export function computeWeightedNutrition(nutritionPer100Grams: Nutrition, newWei
   return mapNutrition(nutritionPer100Grams, (_, value) => (value * newWeight) / 100);
 }
 
+export function computeWeightedMicro(microPer100Grams: Record<string, number>, newWeight: number) {
+  const result: Record<string, number> = {};
+  for (const [key, value] of Object.entries(microPer100Grams)) {
+    result[key] = (value * newWeight) / 100;
+  }
+  return result;
+}
+
 export function addNutrition(n1: Nutrition, n2: Nutrition) {
   return mapNutrition(n1, (key) => n1[key] + n2[key]);
 }
@@ -74,9 +82,8 @@ export function computeMacroNutritionFromLog(entries: MealEntry[]) {
       inititalNutrition
     );
 
-    const portionNutrition = mapNutrition(
-      totalMealNutrition,
-      (key) => (meal.totalWeight === 0 ? 0 : (totalMealNutrition[key] * meal.portionWeight) / meal.totalWeight)
+    const portionNutrition = mapNutrition(totalMealNutrition, (key) =>
+      meal.totalWeight === 0 ? 0 : (totalMealNutrition[key] * meal.portionWeight) / meal.totalWeight
     );
 
     return addNutrition(portionNutrition, totalNutrition);
