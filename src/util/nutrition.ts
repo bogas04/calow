@@ -51,6 +51,10 @@ export function computeMicroNutritionFromLog(entries: MealEntry[]) {
   const totalMicros: Record<string, number> = {};
 
   for (const meal of entries) {
+    if (meal.totalWeight === 0) {
+      continue;
+    }
+
     const mealMultiplier = meal.portionWeight / meal.totalWeight;
 
     for (const item of meal.items) {
@@ -69,6 +73,10 @@ export function computeMicroNutritionFromLog(entries: MealEntry[]) {
 
 export function computeMacroNutritionFromLog(entries: MealEntry[]) {
   return entries.reduce((totalNutrition, meal) => {
+    if (meal.totalWeight === 0) {
+      return totalNutrition;
+    }
+
     const totalMealNutrition = meal.items.reduce(
       (mealNutrition, item) => addNutrition(mealNutrition, item.nutrition),
       inititalNutrition

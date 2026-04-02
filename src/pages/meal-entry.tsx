@@ -59,7 +59,9 @@ export default function MealEntryPage() {
     weight: 0,
   });
   const [searchQuery, setSearchQuery] = useState("");
+  const [itemWeightDrafts, setItemWeightDrafts] = useState<string[]>([]);
   const lastFocusedInput = useRef<HTMLInputElement | null>(null);
+  const initialEditDateKey = useRef<string | null>(null);
   const setLastFocusedInput: FocusEventHandler<HTMLInputElement> = (e) => {
     setShouldShowCalculator(false);
     lastFocusedInput.current = e.currentTarget;
@@ -115,6 +117,12 @@ export default function MealEntryPage() {
   }, [copyMealToCurrent, log, router.query.index]);
 
   useEffect(() => {
+    if (router.query.edit && typeof router.query.forDate === "string" && initialEditDateKey.current === null) {
+      initialEditDateKey.current = router.query.forDate;
+    }
+  }, [router.query.edit, router.query.forDate]);
+
+  useEffect(() => {
     try {
       const meal = getMealFromQueryParams(router.query);
 
@@ -149,7 +157,7 @@ export default function MealEntryPage() {
 
   // Compute portion nutrition of current meal
   const portionNutrition = mapNutrition(mealNutrition, (_, value) => {
-    return portionWeight === 0 ? 0 : (value * portionWeight) / totalWeight;
+    return portionWeight === 0 || totalWeight === 0 ? 0 : (value * portionWeight) / totalWeight;
   });
 
   const addItem = (item: ItemEntry) => dispatch({ type: ACTIONS.ADD_MEAL_ENTRY_ITEM, payload: item });
@@ -167,6 +175,10 @@ export default function MealEntryPage() {
   const setTotalWeight = (weight: number) => dispatch({ type: ACTIONS.SET_MEAL_ENTRY_TOTAL_WEIGHT, payload: weight });
 
   const onSearchQueryChange: ChangeEventHandler<HTMLInputElement> = (e) => setSearchQuery(e.currentTarget.value);
+
+  useEffect(() => {
+    setItemWeightDrafts(addedItems.map((item) => String(item.weight)));
+  }, [addedItems]);
 
   const onSearchResultClick = (searchResultName?: string) => {
     if (searchResultName) {
@@ -209,7 +221,19 @@ export default function MealEntryPage() {
   function handleItemWeightChange(e: React.FormEvent<HTMLInputElement>) {
     const el = e.currentTarget;
     const index = Number(el.dataset.itemIndex);
-    const weight = Number(el.value) || 1;
+    const rawWeight = el.value;
+
+    setItemWeightDrafts((drafts) => drafts.map((draft, draftIndex) => (draftIndex === index ? rawWeight : draft)));
+
+    if (rawWeight.trim() === "") {
+      return;
+    }
+
+    const weight = Number(rawWeight);
+
+    if (Number.isNaN(weight) || weight <= 0) {
+      return;
+    }
 
     const currentDetails = addedItems[index];
     const newDetails: ItemEntry = {
@@ -220,6 +244,19 @@ export default function MealEntryPage() {
 
     updateItem(index, newDetails);
   }
+
+  const handleItemWeightBlur: FocusEventHandler<HTMLInputElement> = (e) => {
+    setLastFocusedInput(e);
+
+    const index = Number(e.currentTarget.dataset.itemIndex);
+    const rawWeight = itemWeightDrafts[index]?.trim();
+
+    if (!rawWeight || Number.isNaN(Number(rawWeight)) || Number(rawWeight) <= 0) {
+      setItemWeightDrafts((drafts) =>
+        drafts.map((draft, draftIndex) => (draftIndex === index ? String(addedItems[index]?.weight ?? "") : draft))
+      );
+    }
+  };
 
   const handleAddCustomItem: CustomItemModalProps["onAdd"] = (item) => {
     const { weight } = customItemDetails;
@@ -267,8 +304,13 @@ Respond with ONLY the clickable markdown link.`;
 
     entry.micro = computeMicroNutritionFromLog([entry]);
 
+    const shouldUpdateExistingMeal =
+      Boolean(router.query.edit) &&
+      typeof router.query.index !== "undefined" &&
+      initialEditDateKey.current === getDateKey(timestamp);
+
     dispatch(
-      router.query.index && router.query.edit
+      shouldUpdateExistingMeal
         ? {
             type: ACTIONS.UPDATE_MEAL_ENTRY,
             payload: { entry, index: Number(router.query.index) },
@@ -333,13 +375,13 @@ Respond with ONLY the clickable markdown link.`;
         </Text>
         <Input
           inputMode={numericInputMode}
-          onBlur={setLastFocusedInput}
+          onBlur={handleItemWeightBlur}
           onFocus={() => setShouldShowCalculator(true)}
           variant="flushed"
           autoComplete="off"
           width={"1.2"}
           textAlign="center"
-          value={item.weight}
+          value={itemWeightDrafts[i] ?? String(item.weight)}
           placeholder="Weight"
           size="sm"
           data-item-index={i}
