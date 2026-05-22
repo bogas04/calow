@@ -57,6 +57,48 @@ class Helpers {
       throw new Error("Invalid meal data");
     }
   }
+
+  static normalizeItemMicros(meal: MealEntry): MealEntry {
+    if (!meal.micro || meal.items.length === 0) {
+      return meal;
+    }
+
+    const microTotalsFromItems: Record<string, number> = {};
+    for (const item of meal.items) {
+      for (const [microName, value] of Object.entries(item.micro || {})) {
+        microTotalsFromItems[microName] ??= 0;
+        microTotalsFromItems[microName] += value;
+      }
+    }
+
+    const mealMicros = Object.entries(meal.micro);
+    const itemMicrosLookLikeTotals =
+      mealMicros.length > 0 &&
+      mealMicros.every(([microName, mealValue]) => {
+        const itemValue = microTotalsFromItems[microName];
+        return itemValue !== undefined && Math.abs(itemValue - mealValue) < 0.01;
+      });
+
+    if (!itemMicrosLookLikeTotals) {
+      return meal;
+    }
+
+    return {
+      ...meal,
+      items: meal.items.map((item) => ({
+        ...item,
+        micro:
+          item.weight === 0
+            ? item.micro
+            : Object.fromEntries(
+                Object.entries(item.micro || {}).map(([microName, value]) => [
+                  microName,
+                  (value * 100) / item.weight,
+                ])
+              ),
+      })),
+    };
+  }
 }
 
 interface LinkParser {
@@ -92,7 +134,7 @@ class LinkParserV1 implements LinkParser {
     if (!data) throw new Error("No meal data found in URL");
     const meal = JSON.parse(decodeURIComponent(data));
     Helpers.validateMeal(meal);
-    return meal;
+    return Helpers.normalizeItemMicros(meal);
   }
 }
 
@@ -142,7 +184,7 @@ class LinkParserV2 implements LinkParser {
     const meal = JSON.parse(decodeURIComponent(data));
     const transformed = this.transformKeys(meal, FIELD_MAP_V2_REVERSED);
     Helpers.validateMeal(transformed);
-    return transformed;
+    return Helpers.normalizeItemMicros(transformed);
   }
 }
 
@@ -276,7 +318,7 @@ class LinkParserV3 extends LinkParserV2 {
     const meal = parseValue(content).val;
     const transformed = this.transformKeys(meal, FIELD_MAP_V2_REVERSED);
     Helpers.validateMeal(transformed);
-    return transformed;
+    return Helpers.normalizeItemMicros(transformed);
   }
 }
 

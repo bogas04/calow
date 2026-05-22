@@ -148,6 +148,21 @@ describe("V3: Human Readable & Safe", () => {
     assert.strictEqual(parsed.name, COMPREHENSIVE_MEAL.name);
     assert.strictEqual(parsed.nutrition.calories, 133.25);
   });
+
+  it("normalizes item micros when V3 links encode them as item totals", () => {
+    const url = createShareableMealLink(MEAL_WITH_ITEM_MICRO_TOTALS, BASE_LINK, "v3");
+    const parsed = parseMealFromLink(url);
+    const computedMicro = parsed.items.reduce<Record<string, number>>((total, item) => {
+      for (const [microName, valuePer100] of Object.entries(item.micro || {})) {
+        total[microName] ??= 0;
+        total[microName] += (valuePer100 * item.weight) / 100;
+      }
+      return total;
+    }, {});
+
+    assert.strictEqual(Number(computedMicro.fiber.toFixed(2)), 48.7);
+    assert.strictEqual(Number(computedMicro["saturated fats"].toFixed(2)), 11.9);
+  });
 });
 
 describe("Link Length Comparison", () => {
@@ -303,4 +318,81 @@ const MASSIVE_MEAL: MealEntry = {
   portionWeight: 6000,
   nutrition: { calories: 6000, carbohydrates: 600, fat: 120, protein: 120 },
   micro: { fiber: 60, sodium: 600 },
+};
+
+const MEAL_WITH_ITEM_MICRO_TOTALS: MealEntry = {
+  name: "Full Day High Protein",
+  timestamp: 123456789,
+  items: [
+    {
+      name: "Paper Masala Dosa (No Oil)",
+      weight: 240,
+      nutrition: { calories: 410, carbohydrates: 74, fat: 7, protein: 9.5 },
+      micro: { fiber: 5.2, "saturated fats": 1 },
+    },
+    {
+      name: "Sambar and Chutney Sides",
+      weight: 180,
+      nutrition: { calories: 130, carbohydrates: 14, fat: 6, protein: 4.5 },
+      micro: { fiber: 5, "saturated fats": 3 },
+    },
+    {
+      name: "Homemade Besan Tofu Chilla",
+      weight: 250,
+      nutrition: { calories: 320, carbohydrates: 35, fat: 11, protein: 20 },
+      micro: { fiber: 7, "saturated fats": 1.5 },
+    },
+    {
+      name: "Soy Milk Coffee",
+      weight: 250,
+      nutrition: { calories: 80, carbohydrates: 3, fat: 4, protein: 7.5 },
+      micro: { fiber: 1, "saturated fats": 0.5 },
+    },
+    {
+      name: "Roasted Urad Papad (3pc)",
+      weight: 45,
+      nutrition: { calories: 140, carbohydrates: 22, fat: 1, protein: 9 },
+      micro: { fiber: 3.5, "saturated fats": 0.2 },
+    },
+    {
+      name: "KP Tandoori Roti (2pc)",
+      weight: 90,
+      nutrition: { calories: 240, carbohydrates: 48, fat: 2, protein: 8 },
+      micro: { fiber: 6, "saturated fats": 0.4 },
+    },
+    {
+      name: "KP Dal Tadka",
+      weight: 250,
+      nutrition: { calories: 330, carbohydrates: 36, fat: 15, protein: 13 },
+      micro: { fiber: 10, "saturated fats": 2.2 },
+    },
+    {
+      name: "KP Aloo Matar",
+      weight: 200,
+      nutrition: { calories: 240, carbohydrates: 30, fat: 11, protein: 5 },
+      micro: { fiber: 5, "saturated fats": 1.8 },
+    },
+    {
+      name: "Sourdough Bread (2 slices)",
+      weight: 70,
+      nutrition: { calories: 185, carbohydrates: 37, fat: 1, protein: 7 },
+      micro: { fiber: 2, "saturated fats": 0.2 },
+    },
+    {
+      name: "Homemade Low-Oil Hummus",
+      weight: 60,
+      nutrition: { calories: 110, carbohydrates: 12, fat: 5, protein: 4.5 },
+      micro: { fiber: 3.5, "saturated fats": 0.6 },
+    },
+    {
+      name: "Pan-Seared Tofu",
+      weight: 50,
+      nutrition: { calories: 70, carbohydrates: 2, fat: 4, protein: 7 },
+      micro: { fiber: 0.5, "saturated fats": 0.5 },
+    },
+  ],
+  totalWeight: 1685,
+  portionWeight: 1685,
+  nutrition: { calories: 2255, carbohydrates: 313, fat: 67, protein: 95 },
+  micro: { fiber: 48.7, "saturated fats": 11.9 },
 };
