@@ -301,7 +301,6 @@ Respond with ONLY the clickable markdown link.`;
       portionWeight,
       totalWeight,
     };
-
     entry.micro = computeMicroNutritionFromLog([entry]);
 
     const shouldUpdateExistingMeal =
