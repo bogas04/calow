@@ -21,17 +21,146 @@ export const roundToTens = (n: number) => Math.floor(n / 10) * 10;
  * Step 4: 16                // add all items of array
  * Output: 16
  */
-export const computeArithmeticExpression = (expression: string) => {
-  if (!expression.match(/[/+/-]/gi)) {
-    return Number(expression.replaceAll(" ", ""));
+const isDigit = (character: string) => /[0-9]/.test(character);
+
+const parseNumber = (input: string, index: number) => {
+  let current = index;
+  let value = 0;
+  let hasDecimal = false;
+  let decimalFactor = 0.1;
+
+  if (input[current] === "+" || input[current] === "-") {
+    current += 1;
   }
 
-  return expression
-    .replaceAll(" ", "")
-    .replaceAll("+", "!+")
-    .replaceAll("-", "!-")
-    .split("!")
-    .reduce((total, x) => total + Number(x), 0);
+  while (current < input.length) {
+    const char = input[current];
+
+    if (char === ".") {
+      if (hasDecimal) {
+        break;
+      }
+      hasDecimal = true;
+      current += 1;
+      continue;
+    }
+
+    if (!isDigit(char)) {
+      break;
+    }
+
+    if (!hasDecimal) {
+      value = value * 10 + Number(char);
+    } else {
+      value += Number(char) * decimalFactor;
+      decimalFactor *= 0.1;
+    }
+
+    current += 1;
+  }
+
+  const raw = input.slice(index, current);
+  const numericValue = Number(raw);
+  return { value: numericValue, nextIndex: current };
+};
+
+const evaluateExpression = (input: string) => {
+  let index = 0;
+
+  const parseFactor = () => {
+    const start = input[index];
+    if (start === "+" || start === "-") {
+      const sign = start === "-" ? -1 : 1;
+      index += 1;
+      const number = parseNumber(input, index);
+      if (Number.isNaN(number.value)) {
+        return NaN;
+      }
+      index = number.nextIndex;
+      return sign * number.value;
+    }
+
+    const number = parseNumber(input, index);
+    if (Number.isNaN(number.value)) {
+      return NaN;
+    }
+    index = number.nextIndex;
+    return number.value;
+  };
+
+  const parseTerm = () => {
+    let value = parseFactor();
+    if (Number.isNaN(value)) {
+      return NaN;
+    }
+
+    while (index < input.length) {
+      const operator = input[index];
+      if (operator !== "*" && operator !== "/") {
+        break;
+      }
+      index += 1;
+      const nextValue = parseFactor();
+      if (Number.isNaN(nextValue)) {
+        return NaN;
+      }
+
+      if (operator === "*") {
+        value *= nextValue;
+      } else {
+        if (nextValue === 0) {
+          return NaN;
+        }
+        value /= nextValue;
+      }
+    }
+
+    return value;
+  };
+
+  let result = parseTerm();
+  if (Number.isNaN(result)) {
+    return NaN;
+  }
+
+  while (index < input.length) {
+    const operator = input[index];
+    if (operator !== "+" && operator !== "-") {
+      break;
+    }
+    index += 1;
+    const nextTerm = parseTerm();
+    if (Number.isNaN(nextTerm)) {
+      return NaN;
+    }
+
+    if (operator === "+") {
+      result += nextTerm;
+    } else {
+      result -= nextTerm;
+    }
+  }
+
+  return result;
+};
+
+export const computeArithmeticExpression = (expression: string) => {
+  const normalized = expression.replaceAll(" ", "");
+  if (normalized === "") {
+    return NaN;
+  }
+
+  const validExpression = /^[0-9.+\-*/]+$/;
+  if (!validExpression.test(normalized)) {
+    return NaN;
+  }
+
+  if (/[+\-*/]{2,}/.test(normalized.replace(/^[+\-]/, ""))) {
+    return NaN;
+  }
+
+  const result = evaluateExpression(normalized);
+  return Number.isFinite(result) ? result : NaN;
 };
 
 /**

@@ -37,7 +37,7 @@ export const CalculatorModal = memo(function CalculatorModal({
     }
   };
 
-  function handleSymbol(symbol: "+" | "-", e: React.MouseEvent<HTMLButtonElement>) {
+  function handleSymbol(symbol: "+" | "-" | "*" | "/", e: React.MouseEvent<HTMLButtonElement>) {
     const form = e.currentTarget.form;
     const input = form?.expression as HTMLInputElement;
 
@@ -65,7 +65,7 @@ export const CalculatorModal = memo(function CalculatorModal({
                 type="text"
                 defaultValue={getDefaultValue()}
                 inputMode="tel"
-                placeholder="Eg: 101 + 25"
+                placeholder="Eg: 1*1 + 2/2 + 3*3"
                 autoFocus
                 autoComplete="off"
               />
@@ -84,6 +84,20 @@ export const CalculatorModal = memo(function CalculatorModal({
                 }}
               >
                 -
+              </Button>
+              <Button
+                onClick={(e) => {
+                  handleSymbol("*", e);
+                }}
+              >
+                ×
+              </Button>
+              <Button
+                onClick={(e) => {
+                  handleSymbol("/", e);
+                }}
+              >
+                ÷
               </Button>
             </FormControl>
             <Button w="full" type="submit" bg="blue.500" color="white" size="lg">
