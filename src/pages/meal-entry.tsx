@@ -10,7 +10,6 @@ import {
   IconButton,
   Input,
   Text,
-  Textarea,
   useToast,
 } from "@chakra-ui/react";
 import Fuse from "fuse.js";
@@ -34,11 +33,13 @@ import { IngredientSuggestions, SearchSuggestions } from "../components/MealEntr
 import MealNameModal from "../components/MealNameModal";
 import NutritionBar from "../components/NutritionBar";
 import { ACTIONS, inititalNutrition, ItemEntry, MealEntry, useItems, useStore } from "../store";
+import AIMealParserSheet, { ParsedMeal } from "../components/AIMealParser";
 import DinnerArt from "../svg/DinnerArt";
 import { computeMicroNutritionFromLog, computeWeightedNutrition, mapNutrition } from "../util/nutrition";
 import { computeArithmeticExpression } from "../util/primitives";
 import { getDateFromDateKey, getDateKey } from "../util/time";
 import { useNumericInputMode } from "../components/useInputMode";
+import { useGeminiApiKey } from "../components/useGeminiApiKey";
 
 export default function MealEntryPage() {
   const {
@@ -50,9 +51,12 @@ export default function MealEntryPage() {
   const { items } = useItems();
   const toast = useToast();
   const router = useRouter();
+  const { apiKey, hasApiKey: hasGeminiKey } = useGeminiApiKey();
   const [showMealNameModal, setShowMealModal] = useState(false);
   const [showCalculatorModal, setShowCalculatorModal] = useState(false);
   const [showCustomItemModal, setShowCustomItemModal] = useState(false);
+  const [showCreateMealParser, setShowCreateMealParser] = useState(false);
+  const [showAdjustMealParser, setShowAdjustMealParser] = useState(false);
   const [shouldShowCalculator, setShouldShowCalculator] = useState(false);
   const [customItemDetails, setCustomItemDetails] = useState({
     name: "",
@@ -62,6 +66,7 @@ export default function MealEntryPage() {
   const [itemWeightDrafts, setItemWeightDrafts] = useState<string[]>([]);
   const lastFocusedInput = useRef<HTMLInputElement | null>(null);
   const initialEditDateKey = useRef<string | null>(null);
+  const didOpenGeminiModeFromQuery = useRef(false);
   const setLastFocusedInput: FocusEventHandler<HTMLInputElement> = (e) => {
     setShouldShowCalculator(false);
     lastFocusedInput.current = e.currentTarget;
@@ -84,6 +89,22 @@ export default function MealEntryPage() {
   const forDate = getDateFromDateKey(forDateKey);
 
   const resetItems = useCallback(() => dispatch({ type: ACTIONS.RESET_MEAL_ENTRY_ITEMS }), [dispatch]);
+  const handleParsedMealConfirm = useCallback(
+    (meal: ParsedMeal) => {
+      dispatch({
+        type: ACTIONS.SET_MEAL_ENTRY_ITEMS,
+        payload: {
+          name: meal.name,
+          addedItems: meal.items,
+          totalWeight: meal.totalWeight,
+          portionWeight: meal.portionWeight,
+        },
+      });
+      setShowCreateMealParser(false);
+      setShowAdjustMealParser(false);
+    },
+    [dispatch]
+  );
 
   const copyMealToCurrent = useCallback(
     (meal: MealEntry) => {
@@ -108,6 +129,24 @@ export default function MealEntryPage() {
       resetItems();
     };
   }, [resetItems]);
+
+  useEffect(() => {
+    if (!router.isReady || !hasGeminiKey || didOpenGeminiModeFromQuery.current) {
+      return;
+    }
+
+    if (!Object.prototype.hasOwnProperty.call(router.query, "gemini-mode")) {
+      return;
+    }
+
+    didOpenGeminiModeFromQuery.current = true;
+    if (addedItems.length === 0) {
+      setShowCreateMealParser(true);
+      return;
+    }
+
+    setShowAdjustMealParser(true);
+  }, [addedItems.length, hasGeminiKey, router.isReady, router.query]);
 
   useEffect(() => {
     const index = Number(router.query.index);
@@ -159,6 +198,16 @@ export default function MealEntryPage() {
   const portionNutrition = mapNutrition(mealNutrition, (_, value) => {
     return portionWeight === 0 || totalWeight === 0 ? 0 : (value * portionWeight) / totalWeight;
   });
+  const currentMealEstimate = useMemo<ParsedMeal>(
+    () => ({
+      name,
+      items: addedItems,
+      totalWeight,
+      portionWeight,
+      nutrition: mealNutrition,
+    }),
+    [addedItems, mealNutrition, name, portionWeight, totalWeight]
+  );
 
   const addItem = (item: ItemEntry) => dispatch({ type: ACTIONS.ADD_MEAL_ENTRY_ITEM, payload: item });
   const updateItem = (index: number, item: ItemEntry) =>
@@ -271,27 +320,6 @@ export default function MealEntryPage() {
     setShowCustomItemModal(false);
   };
 
-  const handleAskChatGPT = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const form = e.currentTarget;
-    const mealDescription = (form.elements.namedItem("mealDescription") as HTMLTextAreaElement).value;
-
-    const prompt = `As a nutrition expert generate a meal URL for: ${mealDescription}
-Format: https://bogas04.github.io/calow/meal-entry?shared_meal=[URI-encoded-JSON]
-JSON: {
-  "name": "string",
-  "items": [{
-    "name": "string", "icon": "emoji", "weight": grams,
-    "nutrition": { "calories": kcal, "carbohydrates": g, "protein": g, "fat": g },
-    "micro": { "fiber": g, "saturated fats": g, "sodium": mg }
-  }],
-  "portionWeight": total_g, "totalWeight": total_g
-}
-Respond with ONLY the clickable markdown link.`;
-
-    window.open(`https://chatgpt.com/?q=${encodeURIComponent}`, "_blank");
-  };
-
   function saveAndRedirect({ name, timestamp = Date.now() }: { name: string; timestamp?: number }) {
     const entry: MealEntry = {
       nutrition: portionNutrition,
@@ -337,10 +365,10 @@ Respond with ONLY the clickable markdown link.`;
       setShowMealModal(true);
       return;
     }
-    const { icon, name } = addedItems[0];
+    const { icon, name: itemName } = addedItems[0];
 
     saveAndRedirect({
-      name: icon ? `${icon} ${name}` : name,
+      name: name || (icon ? `${icon} ${itemName}` : itemName),
       timestamp: forDate?.getTime() || Date.now(),
     });
   }
@@ -513,34 +541,42 @@ Respond with ONLY the clickable markdown link.`;
   );
 
   const emptyArt = (
-    <Flex p="6" flex="1" direction="column" justify="center" align="center">
-      <FormControl>
-        <FormHelperText textAlign="center">Add Items of your meal by using the form below.</FormHelperText>
-      </FormControl>
-      <Box my="6" h={["100%", "20vh"]}>
-        <DinnerArt />
+    <Flex p="0" flex="1" direction="column" justify="center" align="stretch">
+      <Box px="6">
+        <FormControl>
+          <FormHelperText textAlign="center">Add Items of your meal by using the form below.</FormHelperText>
+        </FormControl>
+        <Box my="6" w="100%" maxW="720px" mx="auto">
+          <DinnerArt style={{ display: "block", height: "auto", width: "100%" }} />
+        </Box>
       </Box>
-
-      <form onSubmit={handleAskChatGPT} style={{ width: "100%" }}>
-        <Flex direction="column" w="100%" gap={2}>
-          <Textarea
-            isRequired
-            name="mealDescription"
-            placeholder="Describe your meal (e.g., 1 oat milk tea, 1 vada pav and half portion poha"
-            size="sm"
-            variant="filled"
-          />
-          <Button size="sm" colorScheme="gray" type="submit" leftIcon={<BsStars />}>
-            Ask ChatGPT
-          </Button>
-        </Flex>
-      </form>
     </Flex>
   );
 
   return (
     <Flex h="100%" direction="column">
-      <Page heading={<MealEntryHeading />} display="flex" flex="1" flexDirection="column" overflow="auto">
+      <Page
+        heading={
+          <MealEntryHeading
+            showGeminiButton={hasGeminiKey}
+            isGeminiButtonActive={showCreateMealParser || showAdjustMealParser}
+            onGeminiButtonClick={() => {
+              if (addedItems.length === 0) {
+                setShowCreateMealParser((value) => !value);
+                setShowAdjustMealParser(false);
+                return;
+              }
+
+              setShowAdjustMealParser((value) => !value);
+              setShowCreateMealParser(false);
+            }}
+          />
+        }
+        display="flex"
+        flex="1"
+        flexDirection="column"
+        overflow="auto"
+      >
         <Flex justify="center" mb="2">
           <NutritionBar
             nutrition={portionNutrition}
@@ -621,6 +657,25 @@ Respond with ONLY the clickable markdown link.`;
           }
         }}
       />
+      {apiKey && (
+        <>
+          <AIMealParserSheet
+            apiKey={apiKey}
+            isOpen={showCreateMealParser}
+            mode="create"
+            onClose={() => setShowCreateMealParser(false)}
+            onConfirm={handleParsedMealConfirm}
+          />
+          <AIMealParserSheet
+            apiKey={apiKey}
+            isOpen={showAdjustMealParser}
+            mode="adjust"
+            mealToAdjust={currentMealEstimate}
+            onClose={() => setShowAdjustMealParser(false)}
+            onConfirm={handleParsedMealConfirm}
+          />
+        </>
+      )}
     </Flex>
   );
 }
@@ -628,36 +683,66 @@ Respond with ONLY the clickable markdown link.`;
 MealEntryPage.pageTitle = "Add Entry";
 MealEntryPage.hideFooter = true;
 
-const MealEntryHeading = memo(function MealEntryHeading() {
+const MealEntryHeading = memo(function MealEntryHeading({
+  showGeminiButton,
+  isGeminiButtonActive,
+  onGeminiButtonClick,
+}: {
+  showGeminiButton: boolean;
+  isGeminiButtonActive: boolean;
+  onGeminiButtonClick(): void;
+}) {
   const router = useRouter();
   const forDateKey = router.query.forDate as string;
   const forDate = getDateFromDateKey(forDateKey);
 
   return (
-    <div className="my-6 flex justify-between">
+    <div className="my-6 flex justify-between gap-3">
       <h1 className="text-3xl font-bold">Add Entry</h1>
-      <input
-        className="rounded-lg bg-gray-200 px-2"
-        type="date"
-        defaultValue={(forDate === null ? getDateKey(Date.now()) : forDateKey)
-          .split("/")
-          .reverse()
-          // input[type=date] expects yyyy-mm-dd but we use dd/mm/yyyy
-          .join("-")}
-        onChange={(e) => {
-          router.push({
-            pathname: router.pathname,
-            query: {
-              ...router.query,
-              forDate: e.target.value
-                // input[type=date] provides yyyy-mm-dd but we use dd/mm/yyyy
-                .split("-")
-                .reverse()
-                .join("/"),
-            },
-          });
-        }}
-      />
+      <Flex align="center" gap={2}>
+        {showGeminiButton && (
+          <IconButton
+            aria-label="Use Gemini estimate"
+            icon={<BsStars />}
+            isRound
+            size="sm"
+            bg={isGeminiButtonActive ? "green.500" : "gray.200"}
+            border="1px solid"
+            borderColor={isGeminiButtonActive ? "green.500" : "gray.300"}
+            color={isGeminiButtonActive ? "white" : "gray.700"}
+            _hover={{
+              bg: isGeminiButtonActive ? "green.600" : "gray.300",
+              borderColor: isGeminiButtonActive ? "green.600" : "gray.400",
+            }}
+            _active={{
+              bg: isGeminiButtonActive ? "green.700" : "gray.300",
+            }}
+            onClick={onGeminiButtonClick}
+          />
+        )}
+        <input
+          className="rounded-lg bg-gray-200 px-2"
+          type="date"
+          defaultValue={(forDate === null ? getDateKey(Date.now()) : forDateKey)
+            .split("/")
+            .reverse()
+            // input[type=date] expects yyyy-mm-dd but we use dd/mm/yyyy
+            .join("-")}
+          onChange={(e) => {
+            router.push({
+              pathname: router.pathname,
+              query: {
+                ...router.query,
+                forDate: e.target.value
+                  // input[type=date] provides yyyy-mm-dd but we use dd/mm/yyyy
+                  .split("-")
+                  .reverse()
+                  .join("/"),
+              },
+            });
+          }}
+        />
+      </Flex>
     </div>
   );
 });

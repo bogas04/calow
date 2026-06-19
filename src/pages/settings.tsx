@@ -1,6 +1,7 @@
 import { ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons";
 import {
   Text,
+  Link,
   Flex,
   Box,
   Button,
@@ -19,11 +20,12 @@ import {
   Code,
   Select,
 } from "@chakra-ui/react";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { ImSpoonKnife } from "react-icons/im";
 import BodyMetricsForm from "../components/BodyMetricsForm";
 import { Page } from "../components/layouts";
 import NutritionBar from "../components/NutritionBar";
+import { useGeminiApiKey } from "../components/useGeminiApiKey";
 import { Store, ACTIONS, useStore } from "../store";
 import { readFile } from "../util/dom";
 import { computeCaloricNeeds, computeMacroFromCalories, macroCombination } from "../util/nutrition";
@@ -34,9 +36,13 @@ export default function SettingsPage() {
   const { dispatch, ...store } = useStore();
   const [expand, setExpand] = useState(false);
   const [showDataOptions, setShowDataOptions] = useState(false);
+  const [showGeminiOptions, setShowGeminiOptions] = useState(false);
   const [goalCalories, setGoalCalories] = useState<number>();
   const [goalType, setGoalType] = useState<GoalTypes>();
   const [isSliderDisabled, setIsSliderDisabled] = useState(true);
+  const [geminiKeyDraft, setGeminiKeyDraft] = useState("");
+  const [geminiKeyError, setGeminiKeyError] = useState<string | null>(null);
+  const { apiKey: geminiKey, clearApiKey, saveApiKey } = useGeminiApiKey();
 
   const { body, goal, logs } = store;
   const { bmr, caloricNeeds } = useMemo(() => computeCaloricNeeds(body), [body]);
@@ -58,6 +64,24 @@ export default function SettingsPage() {
   const goalDiet = goalType || goal.diet;
 
   const hasComputedCaloricNeeds = caloricNeeds.calories !== 0 || !!body.height || !!body.weight;
+
+  const saveGeminiKey = useCallback(() => {
+    const key = geminiKeyDraft.trim();
+    if (!key) {
+      setGeminiKeyError("Enter your Gemini API key.");
+      return;
+    }
+
+    saveApiKey(key);
+    setGeminiKeyDraft("");
+    setGeminiKeyError(null);
+  }, [geminiKeyDraft, saveApiKey]);
+
+  const clearGeminiKey = useCallback(() => {
+    clearApiKey();
+    setGeminiKeyDraft("");
+    setGeminiKeyError(null);
+  }, [clearApiKey]);
 
   return (
     <Page heading="Settings">
@@ -187,6 +211,68 @@ export default function SettingsPage() {
           </Collapse>
         </Box>
       )}
+      <Box mb="12" as="section">
+        <Heading size="lg" display="flex" my="4" justifyContent="space-between" alignItems="center">
+          Gemini API Key
+          <IconButton
+            isRound
+            variant="ghost"
+            aria-label={showGeminiOptions ? "Collapse" : "Expand"}
+            onClick={() => setShowGeminiOptions(!showGeminiOptions)}
+            icon={showGeminiOptions ? <ChevronUpIcon /> : <ChevronDownIcon />}
+          />
+        </Heading>
+        <FormControl>
+          <FormHelperText mb="6">
+            {geminiKey ? "Gemini meal estimates are enabled." : "Add a Gemini key to enable meal estimates."}
+          </FormHelperText>
+        </FormControl>
+        <Collapse in={showGeminiOptions}>
+          <Box mb={4} color="gray.600" fontSize="sm">
+            <Text>
+              1. Create a new API key in{" "}
+              <Link href="https://aistudio.google.com/app/apikey" color="blue.500" isExternal>
+                Google AI Studio
+              </Link>
+              .
+            </Text>
+            <Text>2. Open this Settings page.</Text>
+            <Text>3. Paste the new API key below.</Text>
+          </Box>
+          <FormControl mb={4}>
+            <FormLabel>Enter your Gemini API key</FormLabel>
+            <Input
+              type="password"
+              value={geminiKeyDraft}
+              onChange={(e) => setGeminiKeyDraft(e.currentTarget.value)}
+              placeholder={geminiKey ? "Replace your Gemini key" : "Enter your Gemini key"}
+              autoComplete="new-password"
+            />
+            <FormHelperText>
+              Your Gemini API key is stored locally in browser storage only. If you don’t have one yet, get it from{" "}
+              <Link href="https://aistudio.google.com/app/apikey" color="blue.500" isExternal>
+                Google AI Studio
+              </Link>
+              .
+            </FormHelperText>
+          </FormControl>
+          {geminiKeyError && (
+            <Text color="red.500" mb={4}>
+              {geminiKeyError}
+            </Text>
+          )}
+          <Flex gap={3} flexWrap="wrap">
+            <Button colorScheme="green" onClick={saveGeminiKey}>
+              Save Key
+            </Button>
+            {geminiKey && (
+              <Button variant="outline" colorScheme="red" onClick={clearGeminiKey}>
+                Clear / Change Key
+              </Button>
+            )}
+          </Flex>
+        </Collapse>
+      </Box>
       <Box mb="12" as="section">
         <Heading size="lg" display="flex" my="4" justifyContent="space-between" alignItems="center">
           Your Data
