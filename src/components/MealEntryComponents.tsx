@@ -1,6 +1,6 @@
 import { Button, Flex, Heading, HStack, ListItem, Text, UnorderedList } from "./ui";
 import { motion } from "framer-motion";
-import { memo, MouseEventHandler, useMemo } from "react";
+import { memo, useMemo } from "react";
 import { BiHistory } from "react-icons/bi";
 import { ItemEntry, MealEntry, useStore } from "../store";
 import { sortByKey } from "../util/primitives";
@@ -9,7 +9,7 @@ import NutritionBar from "./NutritionBar";
 
 const FramerHStack = motion(HStack);
 
-export const IngredientSuggestions = memo(function IngredientSuggestions({ onAdd }: { onAdd(item: ItemEntry): void }) {
+export const IngredientSuggestions = memo(function IngredientSuggestions({ onAdd }: { onAdd(name?: string): void }) {
   const {
     logs,
     mealEntry: { addedItems },
@@ -41,13 +41,6 @@ export const IngredientSuggestions = memo(function IngredientSuggestions({ onAdd
 
     return Array.from(map.values());
   }, [addedItems, logs]);
-
-  const handleClick: MouseEventHandler<HTMLButtonElement> = (e) => {
-    const index = Number(e.currentTarget?.dataset.index);
-    if (typeof index === "number" && !isNaN(index)) {
-      onAdd(recentlyUsedIngredients[index]);
-    }
-  };
 
   if (recentlyUsedIngredients.length === 0) {
     return null;
@@ -83,11 +76,10 @@ export const IngredientSuggestions = memo(function IngredientSuggestions({ onAdd
             fontWeight="normal"
             variant="outline"
             size="sm"
-            data-index={i}
-            onClick={handleClick}
+            onClick={() => onAdd(item.name)}
             whiteSpace="nowrap"
           >
-            {item.icon || "🍛"} {item.name} ({item.weight}g)
+            {item.icon || "🍛"} {item.name}
           </Button>
         </ListItem>
       ))}
@@ -102,9 +94,6 @@ export const SearchSuggestions = memo(function SearchSuggestions({
   results: ItemEntry[];
   onAdd(name?: string): void;
 }) {
-  const handleClick: MouseEventHandler<HTMLButtonElement> = (e) => {
-    onAdd(e.currentTarget?.dataset.name);
-  };
   return (
     <FramerHStack
       as={UnorderedList}
@@ -130,8 +119,7 @@ export const SearchSuggestions = memo(function SearchSuggestions({
             fontWeight="normal"
             variant="outline"
             size="sm"
-            onClick={handleClick}
-            data-name={s.name}
+            onClick={() => onAdd(s.name)}
             whiteSpace="nowrap"
           >
             {s.icon} {s.name}
@@ -167,12 +155,6 @@ export const RecentMeals = memo(function RecentMeals({ onAdd }: { onAdd(meal: Me
     return Array.from(map.values());
   }, [logs]);
 
-  const handleClick: MouseEventHandler<HTMLButtonElement> = (e) => {
-    if (e.currentTarget) {
-      const meal = recentlyAddedMeals[Number(e.currentTarget.dataset.index)];
-      onAdd(meal);
-    }
-  };
   return (
     <Flex width="full" justify="flex-start" flexDir="column">
       <Heading size="md" px="5">
@@ -182,8 +164,7 @@ export const RecentMeals = memo(function RecentMeals({ onAdd }: { onAdd(meal: Me
         {recentlyAddedMeals.map((meal, i) => (
           <ListItem key={i} mt="4">
             <Button
-              data-index={i}
-              onClick={handleClick}
+              onClick={() => onAdd(meal)}
               display="flex"
               flexDir="column"
               height={24}

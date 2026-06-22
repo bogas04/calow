@@ -409,7 +409,7 @@ export default function MealEntryPage() {
           onFocus={() => setShouldShowCalculator(true)}
           variant="flushed"
           autoComplete="off"
-          width={"1.2"}
+          width="64px"
           textAlign="center"
           value={itemWeightDrafts[i] ?? String(item.weight)}
           placeholder="Weight"
@@ -624,7 +624,7 @@ export default function MealEntryPage() {
         borderTopColor="gray.200"
       >
         {shouldShowSearchResults && <SearchSuggestions results={searchResults} onAdd={onSearchResultClick} />}
-        {shouldShowIngredientsSuggestions && <IngredientSuggestions onAdd={addItem} />}
+        {shouldShowIngredientsSuggestions && <IngredientSuggestions onAdd={onSearchResultClick} />}
         <Box my="3" w="100%" px="4">
           {form}
         </Box>
