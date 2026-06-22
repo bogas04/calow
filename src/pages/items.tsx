@@ -1,4 +1,4 @@
-import { CheckIcon, ChevronDownIcon, InfoIcon } from "@chakra-ui/icons";
+import { CheckIcon, ChevronDownIcon, InfoIcon } from "../components/icons";
 import {
   Flex,
   Grid,
@@ -15,7 +15,7 @@ import {
   MenuList,
   Skeleton,
   Text,
-} from "@chakra-ui/react";
+} from "../components/ui";
 import Fuse from "fuse.js";
 import { useEffect, useMemo, useState, useDeferredValue } from "react";
 import ItemNutrition from "../components/ItemNutrition";
@@ -115,7 +115,7 @@ export default function ItemsPage() {
 
   return (
     <Page heading="Your Items">
-      <Grid as="form" templateColumns="auto 100px" gap={2} alignItems="end" onSubmit={(e) => e.preventDefault()}>
+      <Grid as="form" templateColumns="auto 100px" gap={2} alignItems="end" onSubmit={(e: React.FormEvent<HTMLFormElement>) => e.preventDefault()}>
         <FormControl>
           <FormLabel htmlFor="search">Search for items.</FormLabel>
 

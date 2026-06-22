@@ -15,7 +15,7 @@ import {
   Text,
   Textarea,
   VStack,
-} from "@chakra-ui/react";
+} from "./ui";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ItemEntry, Nutrition } from "../store";
 import { addNutrition, createNutrition } from "../util/nutrition";
@@ -417,7 +417,7 @@ export function AIMealParser({ apiKey, dietPreference, mode, onClose, onConfirm,
           </FormLabel>
           <Textarea
             value={description}
-            onChange={(event) => {
+            onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => {
               setDescription(event.currentTarget.value);
               setErrorMessage(null);
               setShouldShowKeyLink(false);
@@ -425,7 +425,7 @@ export function AIMealParser({ apiKey, dietPreference, mode, onClose, onConfirm,
             minH="112px"
             bg="gray.50"
             borderColor="gray.200"
-            _focus={{ borderColor: "green.400", boxShadow: "0 0 0 1px var(--chakra-colors-green-400)" }}
+            _focus={{ borderColor: "green.400", boxShadow: "0 0 0 1px #48BB78" }}
             placeholder={
               isAdjustingMeal
                 ? "e.g. make this half portion, add extra chutney"

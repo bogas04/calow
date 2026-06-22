@@ -1,18 +1,24 @@
-import { theme } from "@chakra-ui/react";
 import { Nutrition } from "./types";
 
+const colors = {
+  purple: { "400": "#9F7AEA", "500": "#805AD5", "600": "#6B46C1" },
+  green: { "400": "#48BB78", "500": "#38A169", "600": "#2F855A" },
+  red: { "400": "#F56565", "500": "#E53E3E", "600": "#C53030" },
+  blue: { "400": "#4299e1", "500": "#3182ce", "600": "#2b6cb0" },
+};
+
 export const nutritionColors = {
-  carbohydrates: theme.colors.purple["400"],
-  calories: theme.colors.green["400"],
-  protein: theme.colors.red["400"],
-  fat: theme.colors.blue["400"],
+  carbohydrates: colors.purple["400"],
+  calories: colors.green["400"],
+  protein: colors.red["400"],
+  fat: colors.blue["400"],
 };
 
 export const nutritionColorsRaw = {
-  carbohydrates: theme.colors.purple,
-  calories: theme.colors.green,
-  protein: theme.colors.red,
-  fat: theme.colors.blue,
+  carbohydrates: colors.purple,
+  calories: colors.green,
+  protein: colors.red,
+  fat: colors.blue,
 };
 
 export const nutritionUnits = {

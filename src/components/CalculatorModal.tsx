@@ -11,7 +11,7 @@ import {
   FormControl,
   FormHelperText,
   Button,
-} from "@chakra-ui/react";
+} from "./ui";
 import { FormEventHandler, memo } from "react";
 import { computeArithmeticExpression } from "../util/primitives";
 
@@ -72,28 +72,28 @@ export const CalculatorModal = memo(function CalculatorModal({
             </FormControl>
             <FormControl mb="5" display="flex" justifyContent="space-between" gap={4} px="4">
               <Button
-                onClick={(e) => {
+                onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                   handleSymbol("+", e);
                 }}
               >
                 +
               </Button>
               <Button
-                onClick={(e) => {
+                onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                   handleSymbol("-", e);
                 }}
               >
                 -
               </Button>
               <Button
-                onClick={(e) => {
+                onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                   handleSymbol("*", e);
                 }}
               >
                 ×
               </Button>
               <Button
-                onClick={(e) => {
+                onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                   handleSymbol("/", e);
                 }}
               >

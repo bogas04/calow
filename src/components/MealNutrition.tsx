@@ -5,7 +5,7 @@ import {
   EditIcon,
   LinkIcon as ShareIcon,
   RepeatClockIcon,
-} from "@chakra-ui/icons";
+} from "./icons";
 import {
   Box,
   Collapse,
@@ -18,7 +18,7 @@ import {
   MenuItem,
   MenuList,
   Text,
-} from "@chakra-ui/react";
+} from "./ui";
 import { memo, useCallback, useState } from "react";
 import { BiBookmarkMinus as RemoveBookmarkIcon, BiBookmarkPlus as AddBookmarkIcon } from "react-icons/bi";
 import { BsThreeDots, BsThreeDotsVertical as ThreeDotsIcon } from "react-icons/bs";

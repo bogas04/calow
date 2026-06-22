@@ -12,7 +12,7 @@ import {
   ModalFooter,
   Button,
   Text,
-} from "@chakra-ui/react";
+} from "./ui";
 import { FormEvent, memo } from "react";
 import { ItemEntry, nutritionKeys, nutritionUnits } from "../store";
 import { mapNutrition } from "../util/nutrition";
@@ -68,7 +68,14 @@ function CustomItemModal({ name, isOpen, onClose, onAdd }: CustomItemModalProps)
     <Modal isOpen={isOpen} onClose={onClose} size="lg">
       <ModalOverlay />
       <form onSubmit={handleSubmit}>
-        <ModalContent>
+        <ModalContent
+          position="fixed"
+          bottom="0px"
+          mb="0"
+          borderRadius="1.75rem 1.75rem 0px 0px"
+          minW={["100vw", "lg"]}
+          maxH="85vh"
+        >
           <ModalHeader>
             Add details for{" "}
             <Text display="inline" textDecoration="underline">

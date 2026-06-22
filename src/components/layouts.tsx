@@ -1,4 +1,4 @@
-import { Box, BoxProps, Heading } from "@chakra-ui/react";
+import { Box, BoxProps, Heading } from "./ui";
 
 export const Page = ({ heading, children, ...props }: BoxProps & { heading?: React.ReactNode }) => (
   <Box py={["2", "6", "12"]} px={["4", "16", "32"]} {...props}>

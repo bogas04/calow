@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Text } from "../components/ui";
 import Link from "next/link";
 import { memo, useMemo, useReducer, useState } from "react";
 import { Page } from "../components/layouts";

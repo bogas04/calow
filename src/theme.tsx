@@ -1,18 +1,11 @@
-import { theme as chakraTheme, Theme } from "@chakra-ui/react";
-const fonts = { ...chakraTheme.fonts, mono: `'Menlo', monospace` };
-
-const theme: Theme = {
-  ...chakraTheme,
+const theme = {
   colors: {
-    ...chakraTheme.colors,
-  },
-  fonts,
-  styles: {
-    global: {
-      body: { height: "100%" },
-      html: { height: "100%" },
-      "#__next": { height: "100%" },
+    gray: {
+      "200": "#E2E8F0",
     },
+  },
+  fontSizes: {
+    xs: "0.75rem",
   },
 };
 

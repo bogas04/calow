@@ -8,7 +8,7 @@ import {
   Icon,
   IconButton,
   Link as ChakraLink,
-} from "@chakra-ui/react";
+} from "../components/ui";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { MouseEvent, MouseEventHandler, useDeferredValue, useMemo, useState } from "react";
@@ -19,7 +19,7 @@ import EmptyArt from "../svg/EmptyArt";
 import { getClosestDatasetKey } from "../util/dom";
 import { getDateFromDateKey, getDateKey } from "../util/time";
 
-import { InfoIcon } from "@chakra-ui/icons";
+import { InfoIcon } from "../components/icons";
 import { BiStats } from "react-icons/bi";
 import { BsDropletFill, BsDropletHalf, BsStars } from "react-icons/bs";
 import AIDayInsightsSheet from "../components/AIDayInsights";

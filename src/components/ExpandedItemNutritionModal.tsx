@@ -1,4 +1,4 @@
-import { ModalProps } from "@chakra-ui/modal";
+import { ModalProps } from "./ui";
 import {
   Text,
   Modal,
@@ -6,10 +6,9 @@ import {
   ModalContent,
   ModalHeader,
   IconButton,
-  CloseButton,
   ModalBody,
   Flex,
-} from "@chakra-ui/react";
+} from "./ui";
 import React, { memo } from "react";
 import { ItemEntry } from "../store";
 import NutritionBar from "./NutritionBar";
@@ -24,11 +23,19 @@ function ExpandedItemNutritionModal({
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="full" scrollBehavior="inside">
       <ModalOverlay />
-      <ModalContent pb={5}>
+      <ModalContent
+        position="fixed"
+        bottom="0px"
+        mb="0"
+        borderRadius="1.75rem 1.75rem 0px 0px"
+        minW={["100vw", "lg"]}
+        maxH="85vh"
+        pb={5}
+      >
         <ModalHeader>
           <Flex align="center" justify="space-between">
             {item.name} {hideWeight ? "" : `(${item.weight}g)`}
-            <IconButton aria-label="close" rounded="full" icon={<CloseButton />} variant="ghost" onClick={onClose} />
+            <IconButton aria-label="close" rounded="full" icon={<span aria-hidden="true">×</span>} variant="ghost" onClick={onClose} />
           </Flex>
         </ModalHeader>
         <ModalBody>

@@ -1,4 +1,4 @@
-import { Flex } from "@chakra-ui/react";
+import { Flex } from "./ui";
 import { Fragment, useEffect, useState } from "react";
 
 import { Nutrition, nutritionColors, nutritionColorsRaw, nutritionKeys } from "../store";

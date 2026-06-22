@@ -1,4 +1,4 @@
-import { Box, Grid, FormControl, FormLabel, Input } from "@chakra-ui/react";
+import { Box, Grid, FormControl, FormLabel, Input } from "../components/ui";
 import { MouseEvent, MouseEventHandler, useMemo, useState } from "react";
 import { Page } from "../components/layouts";
 import MealNutrition from "../components/MealNutrition";
@@ -66,7 +66,7 @@ export default function BookmarksPage() {
 
   return (
     <Page heading="Your Bookmarks">
-      <Grid as="form" templateColumns="auto" gap={2} alignItems="end" onSubmit={(e) => e.preventDefault()}>
+      <Grid as="form" templateColumns="auto" gap={2} alignItems="end" onSubmit={(e: React.FormEvent<HTMLFormElement>) => e.preventDefault()}>
         <FormControl>
           <FormLabel htmlFor="search">Search bookmarks</FormLabel>
 

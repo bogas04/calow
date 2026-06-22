@@ -1,4 +1,4 @@
-import { Box, BoxProps } from "@chakra-ui/react";
+import { Box, BoxProps } from "./ui";
 import React, { memo } from "react";
 
 // TODO: Figure out how to accept `as` prop while keeping TypeScript happy

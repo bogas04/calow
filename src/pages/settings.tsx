@@ -1,4 +1,4 @@
-import { ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons";
+import { ChevronDownIcon, ChevronUpIcon } from "../components/icons";
 import {
   Text,
   Link,
@@ -19,7 +19,7 @@ import {
   Input,
   Code,
   Select,
-} from "@chakra-ui/react";
+} from "../components/ui";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { ImSpoonKnife } from "react-icons/im";
 import BodyMetricsForm from "../components/BodyMetricsForm";
@@ -144,7 +144,7 @@ export default function SettingsPage() {
                 size="sm"
                 variant="flushed"
                 width="auto"
-                onChange={(e) => setGoalType(e.currentTarget.value as GoalTypes)}
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setGoalType(e.currentTarget.value as GoalTypes)}
                 defaultValue={goalDiet}
               >
                 {(Object.keys(macroCombination) as GoalTypes[]).map((k) => (
@@ -222,7 +222,7 @@ export default function SettingsPage() {
           </FormLabel>
           <Select
             value={preferences.diet.type}
-            onChange={(e) =>
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
               dispatch({
                 type: ACTIONS.SET_PREFERENCES,
                 payload: {
@@ -250,7 +250,7 @@ export default function SettingsPage() {
             </FormLabel>
             <Input
               value={preferences.diet.custom}
-              onChange={(e) =>
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 dispatch({
                   type: ACTIONS.SET_PREFERENCES,
                   payload: {
@@ -304,7 +304,7 @@ export default function SettingsPage() {
             <Input
               type="password"
               value={geminiKeyDraft}
-              onChange={(e) => setGeminiKeyDraft(e.currentTarget.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setGeminiKeyDraft(e.currentTarget.value)}
               placeholder={geminiKey ? "Replace your Gemini key" : "Enter your Gemini key"}
               autoComplete="new-password"
             />
@@ -382,7 +382,7 @@ export default function SettingsPage() {
               id="import-file-input"
               type="file"
               accept=".json"
-              onChange={async (e) => {
+              onChange={async (e: React.ChangeEvent<HTMLInputElement>) => {
                 try {
                   if (e.target && e.target.files) {
                     const content = await readFile(e.target?.files?.[0]);

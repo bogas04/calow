@@ -1,4 +1,4 @@
-import { CopyIcon } from "@chakra-ui/icons";
+import { CopyIcon } from "./icons";
 import {
   ModalProps,
   useToast,
@@ -18,7 +18,7 @@ import {
   Stack,
   Radio,
   FormLabel,
-} from "@chakra-ui/react";
+} from "./ui";
 import { useMemo, useCallback, memo, useState } from "react";
 import { MealEntry } from "../store";
 import { createShareableMealLink } from "./shareableMealLink/shareableMealLink";
@@ -109,7 +109,7 @@ export const ShareModal = memo(function ShareModal({
         <ModalBody pb="5">
           <Text>Here&apos;s a link you can share with your buddy who wants to add this meal to their log.</Text>
 
-          <RadioGroup onChange={(v) => setVersion(v as any)} value={version} my="4">
+          <RadioGroup onChange={(v: string) => setVersion(v as any)} value={version} my="4">
             <FormLabel fontSize="sm" color="gray.600">
               Link Version
             </FormLabel>

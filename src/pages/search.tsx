@@ -1,4 +1,4 @@
-import { Box, Heading, Grid, FormControl, FormLabel, Input } from "@chakra-ui/react";
+import { Box, Heading, Grid, FormControl, FormLabel, Input } from "../components/ui";
 import Fuse from "fuse.js";
 import { useRouter } from "next/router";
 import { MouseEvent, MouseEventHandler, useEffect, useMemo, useState } from "react";
@@ -63,7 +63,7 @@ export default function SearchPage() {
 
   return (
     <Page heading="Search Meals">
-      <Grid as="form" templateColumns="auto" gap={2} alignItems="end" onSubmit={(e) => e.preventDefault()} mb={6}>
+      <Grid as="form" templateColumns="auto" gap={2} alignItems="end" onSubmit={(e: React.FormEvent<HTMLFormElement>) => e.preventDefault()} mb={6}>
         <FormControl width="full">
           <FormLabel htmlFor="search">Search for meals</FormLabel>
 

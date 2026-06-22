@@ -12,7 +12,7 @@ import {
   ModalOverlay,
   Text,
   VStack,
-} from "@chakra-ui/react";
+} from "./ui";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { BodyMetrics, MealEntry, MicroNutrition, Nutrition, Store } from "../store";
 import { computeMacroNutritionFromLog, computeMicroNutritionFromLog } from "../util/nutrition";

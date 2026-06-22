@@ -1,5 +1,5 @@
-import { Flex, Grid, Text } from "@chakra-ui/react";
-import { memo } from "react";
+import { Flex, Grid, Text } from "./ui";
+import { Fragment, memo } from "react";
 import {
   MicroNutrition,
   Nutrition,
@@ -70,13 +70,13 @@ function NutritionBar({
 
               if (value) {
                 return (
-                  <>
+                  <Fragment key={x}>
                     <div className="flex items-center gap-1 text-xs">
                       <p className="text-center text-gray-800">{value.toFixed(2)}g</p>
                       <p className="capitalize text-gray-500">{x}</p>
                     </div>
                     {!border ? (isLast ? "" : "/") : null}
-                  </>
+                  </Fragment>
                 );
               }
               return undefined;

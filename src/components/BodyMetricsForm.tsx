@@ -1,4 +1,4 @@
-import { FormControl, FormLabel, RadioGroup, Radio, Input, Box, Grid, Select, Button } from "@chakra-ui/react";
+import { FormControl, FormLabel, RadioGroup, Radio, Input, Box, Grid, Select, Button } from "./ui";
 import React, { memo } from "react";
 
 import { BodyMetrics } from "../store";

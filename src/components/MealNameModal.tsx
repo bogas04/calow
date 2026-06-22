@@ -10,7 +10,7 @@ import {
   ModalFooter,
   Button,
   FormLabel,
-} from "@chakra-ui/react";
+} from "./ui";
 import { FormEvent, memo, useState } from "react";
 
 const foodIcons = [

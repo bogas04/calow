@@ -1,3 +1,128 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+html,
+body,
+#__next {
+  height: 100%;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 180ms;
+  animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+.view-transition-menu {
+  view-transition-name: calow-menu;
+}
+
+.view-transition-sheet {
+  view-transition-name: calow-sheet;
+}
+
+.view-transition-overlay {
+  view-transition-name: calow-overlay;
+}
+
+@keyframes menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes menu-out {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.96);
+  }
+}
+
+@keyframes sheet-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes overlay-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes collapse-down {
+  from {
+    height: 0;
+    opacity: 0;
+  }
+  to {
+    height: var(--radix-collapsible-content-height);
+    opacity: 1;
+  }
+}
+
+@keyframes collapse-up {
+  from {
+    height: var(--radix-collapsible-content-height);
+    opacity: 1;
+  }
+  to {
+    height: 0;
+    opacity: 0;
+  }
+}
+
+.animate-menu-in {
+  animation: menu-in 140ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+.animate-menu-out {
+  animation: menu-out 100ms ease-in;
+}
+
+.animate-sheet-in {
+  animation: sheet-in 180ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+.animate-overlay-in {
+  animation: overlay-in 140ms ease-out;
+}
+
+.animate-collapse-down {
+  animation: collapse-down 180ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+.animate-collapse-up {
+  animation: collapse-up 140ms ease-in;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root),
+  .animate-menu-in,
+  .animate-menu-out,
+  .animate-sheet-in,
+  .animate-overlay-in,
+  .animate-collapse-down,
+  .animate-collapse-up {
+    animation-duration: 1ms;
+  }
+}

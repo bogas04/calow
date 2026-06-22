@@ -1,4 +1,4 @@
-import { Button, Flex, Heading, HStack, ListItem, Text, UnorderedList } from "@chakra-ui/react";
+import { Button, Flex, Heading, HStack, ListItem, Text, UnorderedList } from "./ui";
 import { motion } from "framer-motion";
 import { memo, MouseEventHandler, useMemo } from "react";
 import { BiHistory } from "react-icons/bi";
@@ -77,7 +77,7 @@ export const IngredientSuggestions = memo(function IngredientSuggestions({ onAdd
         </Text>
       </ListItem>
       {recentlyUsedIngredients.map((item, i) => (
-        <ListItem key={item.name}>
+        <ListItem key={item.name} flexShrink={0}>
           <Button
             colorScheme="gray"
             fontWeight="normal"
@@ -85,6 +85,7 @@ export const IngredientSuggestions = memo(function IngredientSuggestions({ onAdd
             size="sm"
             data-index={i}
             onClick={handleClick}
+            whiteSpace="nowrap"
           >
             {item.icon || "🍛"} {item.name} ({item.weight}g)
           </Button>
@@ -123,7 +124,7 @@ export const SearchSuggestions = memo(function SearchSuggestions({
       transition={{ duration: 0.1 }}
     >
       {results.map((s, i) => (
-        <ListItem key={i}>
+        <ListItem key={i} flexShrink={0}>
           <Button
             colorScheme="gray"
             fontWeight="normal"
@@ -131,6 +132,7 @@ export const SearchSuggestions = memo(function SearchSuggestions({
             size="sm"
             onClick={handleClick}
             data-name={s.name}
+            whiteSpace="nowrap"
           >
             {s.icon} {s.name}
           </Button>

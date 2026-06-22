@@ -1,6 +1,6 @@
 import "../global.css";
 import "core-js/features/object/from-entries";
-import { ChakraProvider, Flex, Box } from "@chakra-ui/react";
+import { ChakraProvider, Flex, Box } from "../components/ui";
 import { AppProps } from "next/app";
 import Head from "next/head";
 import Link from "next/link";
@@ -15,7 +15,6 @@ import {
   BiListUl as ItemsIcon,
 } from "react-icons/bi";
 import "focus-visible/dist/focus-visible";
-import theme from "../theme";
 
 function App({
   Component,
@@ -36,7 +35,7 @@ function App({
   useServiceWorker();
 
   return (
-    <ChakraProvider theme={theme}>
+    <ChakraProvider>
       <StoreContext.Provider value={value}>
         <Head>
           <title>{title}</title>

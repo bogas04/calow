@@ -1,4 +1,4 @@
-import { AddIcon, CloseIcon } from "@chakra-ui/icons";
+import { AddIcon, CloseIcon } from "../components/icons";
 import {
   Box,
   Button,
@@ -11,7 +11,7 @@ import {
   Input,
   Text,
   useToast,
-} from "@chakra-ui/react";
+} from "../components/ui";
 import Fuse from "fuse.js";
 import { useRouter } from "next/router";
 import React, {
@@ -443,7 +443,7 @@ export default function MealEntryPage() {
 
   const form = (
     <form onSubmit={handleAddItem} style={{ justifyContent: "space-between", flex: 1 }}>
-      <Grid templateColumns="1fr 1fr 0.4fr" gap={2}>
+      <Grid templateColumns="minmax(0, 1.25fr) minmax(0, 1fr) auto" gap={2} alignItems="center">
         <Input
           isRequired
           autoFocus
@@ -474,8 +474,13 @@ export default function MealEntryPage() {
             size="sm"
             variant="outline"
             icon={<BsCalculator />}
-            onClick={(e) => setShowCalculatorModal(true)}
-            colorScheme={shouldShowCalculator ? "blue" : "blackAlpha"}
+            onClick={(e: React.MouseEvent<HTMLButtonElement>) => setShowCalculatorModal(true)}
+            color="blue.600"
+            border="1px solid"
+            borderColor="blue.500"
+            bg={shouldShowCalculator ? "blue.50" : "white"}
+            height="10"
+            width="10"
           />
           <IconButton
             aria-label="Add item"
@@ -483,7 +488,12 @@ export default function MealEntryPage() {
             type="submit"
             icon={<AddIcon />}
             variant="outline"
-            colorScheme="green"
+            color="green.600"
+            border="1px solid"
+            borderColor="green.500"
+            bg="green.50"
+            height="10"
+            width="10"
           />
         </Flex>
       </Grid>
@@ -496,6 +506,7 @@ export default function MealEntryPage() {
         <Flex align="center">
           <Input
             variant="flushed"
+            bg="transparent"
             w="30%"
             fontSize="xs"
             inputMode={numericInputMode}
@@ -519,6 +530,7 @@ export default function MealEntryPage() {
             fontSize="xs"
             textAlign="center"
             variant="flushed"
+            bg="transparent"
             inputMode={numericInputMode}
             onBlur={setLastFocusedInput}
             onFocus={() => setShouldShowCalculator(true)}
