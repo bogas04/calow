@@ -12,7 +12,7 @@ import {
   FormHelperText,
   Button,
 } from "./ui";
-import { FormEventHandler, memo } from "react";
+import { FormEventHandler, memo, useRef } from "react";
 import { computeArithmeticExpression } from "../util/primitives";
 
 export interface CalculatorModalProps extends Pick<ModalProps, "isOpen" | "onClose"> {
@@ -28,21 +28,20 @@ export const CalculatorModal = memo(function CalculatorModal({
   onClose,
   onSubmit,
 }: CalculatorModalProps) {
+  const expressionInputRef = useRef<HTMLInputElement | null>(null);
   const handleSubmit: FormEventHandler = (e) => {
     e.preventDefault();
-    const value = e.currentTarget.querySelector("input")?.value;
+    const value = expressionInputRef.current?.value;
     if (typeof value === "string") {
       onSubmit(String(computeArithmeticExpression(value)));
       onClose();
     }
   };
 
-  function handleSymbol(symbol: "+" | "-" | "*" | "/", e: React.MouseEvent<HTMLButtonElement>) {
-    const form = e.currentTarget.form;
-    const input = form?.expression as HTMLInputElement;
-
+  function handleSymbol(symbol: "+" | "-" | "*" | "/") {
+    const input = expressionInputRef.current;
     if (input) {
-      input.value += symbol;
+      input.setRangeText(symbol, input.selectionStart ?? input.value.length, input.selectionEnd ?? input.value.length, "end");
       input.focus?.();
     }
   }
@@ -61,6 +60,7 @@ export const CalculatorModal = memo(function CalculatorModal({
                 do so by entering the expression below. This way you need not switch back and forth from Calculator app.
               </FormHelperText>
               <Input
+                ref={expressionInputRef}
                 name="expression"
                 type="text"
                 defaultValue={getDefaultValue()}
@@ -72,29 +72,29 @@ export const CalculatorModal = memo(function CalculatorModal({
             </FormControl>
             <FormControl mb="5" display="flex" justifyContent="space-between" gap={4} px="4">
               <Button
-                onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                  handleSymbol("+", e);
+                onClick={() => {
+                  handleSymbol("+");
                 }}
               >
                 +
               </Button>
               <Button
-                onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                  handleSymbol("-", e);
+                onClick={() => {
+                  handleSymbol("-");
                 }}
               >
                 -
               </Button>
               <Button
-                onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                  handleSymbol("*", e);
+                onClick={() => {
+                  handleSymbol("*");
                 }}
               >
                 ×
               </Button>
               <Button
-                onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                  handleSymbol("/", e);
+                onClick={() => {
+                  handleSymbol("/");
                 }}
               >
                 ÷
