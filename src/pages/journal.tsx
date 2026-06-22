@@ -213,7 +213,7 @@ const BarGraph = memo(function BarGraph({
   selectedMacro: keyof Nutrition;
 }) {
   return (
-    <Flex justify="space-between" align="flex-end" height={200} width="95%">
+    <Flex justify="space-between" align="flex-end" height="200px" width="95%">
       {macrosForLogs.map(({ nutrition, micro, dateKey }) => {
         let multiplier = nutrition[selectedMacro] / goal.nutrition[selectedMacro];
 
@@ -221,6 +221,7 @@ const BarGraph = memo(function BarGraph({
           // @ts-expect-error need to change selectedMacro to selected key or somethingyy
           multiplier = micro[selectedMacro] / microGoals[selectedMacro];
         }
+        const barHeight = Number.isFinite(multiplier) ? Math.max(0, Math.min(multiplier * 200, 200)) : 0;
         const mealDate = getDateFromDateKey(dateKey);
         const isToday = mealDate ? getDateKey(mealDate.getTime()) === getDateKey(Date.now()) : false;
 
@@ -232,7 +233,7 @@ const BarGraph = memo(function BarGraph({
                 key={dateKey}
                 bg={nutritionColors[selectedMacro] ?? "brown"}
                 w="3"
-                h={Math.min(multiplier * 200, 250)}
+                h={`${barHeight}px`}
               />
               {dateString ? (
                 <Text fontSize="xs" position="absolute" bottom={-5} left={-2} fontWeight={isToday ? "bold" : undefined}>

@@ -75,28 +75,36 @@ export function Meter({ nutrition, goal }: { nutrition: Nutrition; goal: Nutriti
                     strokeDasharray={strokeDashArray[k].completed}
                     stroke={nutritionColorsRaw[k]["600"]}
                   />
-                  <circle
-                    // This is a circle shown at the end of the line
-                    {...common}
-                    cx={circlePoint[k].x}
-                    cy={circlePoint[k].y}
-                    r={1.5}
-                    strokeWidth={3}
-                    stroke={nutritionColorsRaw[k]["500"]}
-                  />
-                  <path
-                    // This is a tick mark contained within the circle shown at end of the line
-                    d={`M ${circlePoint[k].x - 0.5},${circlePoint[k].y + 0.8} l -0.8,-0.8 m 0.8,0.8 l 1.8,-1.5`}
-                    stroke="white"
-                    strokeLinejoin="round"
-                    strokeLinecap="round"
-                    strokeWidth={0.5}
-                    style={{ transition: common.style.transition }}
-                  />
                 </>
               )}
             </Fragment>
           );
+        })}
+        {nutritionKeys.map((k) => {
+          const goalMet = nutrition[k] > goal[k];
+
+          return goalMet ? (
+            <Fragment key={`${k}-marker`}>
+              <circle
+                // This is a circle shown at the end of the line
+                {...common}
+                cx={circlePoint[k].x}
+                cy={circlePoint[k].y}
+                r={1.5}
+                strokeWidth={3}
+                stroke={nutritionColorsRaw[k]["500"]}
+              />
+              <path
+                // This is a tick mark contained within the circle shown at end of the line
+                d={`M ${circlePoint[k].x - 0.5},${circlePoint[k].y + 0.8} l -0.8,-0.8 m 0.8,0.8 l 1.8,-1.5`}
+                stroke="white"
+                strokeLinejoin="round"
+                strokeLinecap="round"
+                strokeWidth={0.5}
+                style={{ transition: common.style.transition }}
+              />
+            </Fragment>
+          ) : null;
         })}
         <text
           x={common.cx - 6}
