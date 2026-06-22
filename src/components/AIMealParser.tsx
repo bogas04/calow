@@ -20,7 +20,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ItemEntry, Nutrition } from "../store";
 import { addNutrition, createNutrition } from "../util/nutrition";
 
-const GEMINI_MODELS = ["gemini-3.5-flash", "gemini-2.5-flash", "gemini-2.5-flash-lite"];
+const GEMINI_MODELS = ["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-2.0-flash"];
 const RETRYABLE_GEMINI_STATUSES = new Set([429, 500, 502, 503, 504]);
 const GEMINI_API_KEY_URL = "https://aistudio.google.com/app/apikey";
 const LOADING_MESSAGES = [
@@ -55,6 +55,12 @@ class InvalidGeminiKeyError extends Error {
   }
 }
 
+class GeminiRequestError extends Error {
+  constructor(message: string) {
+    super(message);
+  }
+}
+
 export interface ParsedMeal {
   name: string;
   items: ItemEntry[];
@@ -65,6 +71,7 @@ export interface ParsedMeal {
 
 export interface AIMealParserProps {
   apiKey: string;
+  dietPreference?: string;
   mode: "create" | "adjust";
   onConfirm(parsedMeal: ParsedMeal): void;
   mealToAdjust?: ParsedMeal;
@@ -168,7 +175,10 @@ function toParsedMeal(payload: { name: string; items: GeminiParsedMealItem[]; po
   };
 }
 
-function createGeminiMealRequest(description: string, mealToAdjust?: ParsedMeal) {
+function createGeminiMealRequest(description: string, mealToAdjust?: ParsedMeal, dietPreference?: string) {
+  const dietContext = dietPreference?.trim()
+    ? `\n\nUser diet preference/context: ${dietPreference.trim()}. Use this context when assumptions are needed, but do not contradict foods explicitly mentioned by the user.`
+    : "";
   const currentMealContext = mealToAdjust
     ? `\n\nCurrent estimate to adjust:\n${JSON.stringify({
         name: mealToAdjust.name,
@@ -193,7 +203,7 @@ function createGeminiMealRequest(description: string, mealToAdjust?: ParsedMeal)
       {
         parts: [
           {
-            text: `Estimate this meal for a calorie tracking app. Break complex dishes into practical logged items when useful, and use realistic consumed gram weights. For restaurant or commercial food, account for likely hidden oils, butter, sugar, or sauces without overcorrecting. Keep calories broadly consistent with macros using calories ~= protein*4 + carbohydrates*4 + fat*9, allowing normal rounding. Return realistic calories, protein, carbohydrates, fat, fiber, and saturatedFats for each item. Use grams for all nutrients except calories. Use short food names and one relevant emoji icon per item.${currentMealContext}`,
+            text: `Estimate this meal for a calorie tracking app. Break complex dishes into practical logged items when useful, and use realistic consumed gram weights. For restaurant or commercial food, account for likely hidden oils, butter, sugar, or sauces without overcorrecting. Keep calories broadly consistent with macros using calories ~= protein*4 + carbohydrates*4 + fat*9, allowing normal rounding. Return realistic calories, protein, carbohydrates, fat, fiber, and saturatedFats for each item. Use grams for all nutrients except calories. Use short food names and one relevant emoji icon per item.${dietContext}${currentMealContext}`,
           },
         ],
       },
@@ -234,10 +244,12 @@ function createGeminiMealRequest(description: string, mealToAdjust?: ParsedMeal)
 async function parseMealWithGemini({
   apiKey,
   description,
+  dietPreference,
   mealToAdjust,
 }: {
   apiKey: string;
   description: string;
+  dietPreference?: string;
   mealToAdjust?: ParsedMeal;
 }) {
   let lastRetryableStatus: number | null = null;
@@ -249,20 +261,34 @@ async function parseMealWithGemini({
         "Content-Type": "application/json",
         "x-goog-api-key": apiKey,
       },
-      body: JSON.stringify(createGeminiMealRequest(description, mealToAdjust)),
+      body: JSON.stringify(createGeminiMealRequest(description, mealToAdjust, dietPreference)),
     });
 
     if (response.ok) {
       return response.json();
     }
 
-    if (!RETRYABLE_GEMINI_STATUSES.has(response.status)) {
+    const errorPayload = await response.json().catch(() => null);
+    const geminiMessage = typeof errorPayload?.error?.message === "string" ? errorPayload.error.message : "";
+    const normalizedGeminiMessage = geminiMessage.toLowerCase();
+    const shouldTryNextModel =
+      response.status === 400 &&
+      (normalizedGeminiMessage.includes("model") ||
+        normalizedGeminiMessage.includes("not found") ||
+        normalizedGeminiMessage.includes("not supported") ||
+        normalizedGeminiMessage.includes("not available"));
+
+    if (!RETRYABLE_GEMINI_STATUSES.has(response.status) && !shouldTryNextModel) {
       if (response.status === 401 || response.status === 403) {
         throw new InvalidGeminiKeyError();
       }
 
       if (response.status === 400) {
-        throw new Error("Gemini could not use this request. Try saving a fresh Gemini key in Settings.");
+        throw new GeminiRequestError(
+          geminiMessage
+            ? `Gemini could not use this request: ${geminiMessage}`
+            : "Gemini could not use this request. Try again in a bit."
+        );
       }
 
       throw new Error("I could not estimate this meal. Add a little more detail and try again.");
@@ -278,7 +304,7 @@ async function parseMealWithGemini({
   );
 }
 
-export function AIMealParser({ apiKey, mode, onClose, onConfirm, mealToAdjust }: AIMealParserProps) {
+export function AIMealParser({ apiKey, dietPreference, mode, onClose, onConfirm, mealToAdjust }: AIMealParserProps) {
   const [description, setDescription] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [loadingMessageIndex, setLoadingMessageIndex] = useState(0);
@@ -343,7 +369,7 @@ export function AIMealParser({ apiKey, mode, onClose, onConfirm, mealToAdjust }:
     setIsLoading(true);
 
     try {
-      const result = await parseMealWithGemini({ apiKey, description, mealToAdjust });
+      const result = await parseMealWithGemini({ apiKey, description, dietPreference, mealToAdjust });
       const payload = parseGeminiJson(result);
 
       if (!validateGeminiMeal(payload)) {
@@ -359,7 +385,7 @@ export function AIMealParser({ apiKey, mode, onClose, onConfirm, mealToAdjust }:
     } finally {
       setIsLoading(false);
     }
-  }, [apiKey, description, isAdjustingMeal, mealToAdjust]);
+  }, [apiKey, description, dietPreference, isAdjustingMeal, mealToAdjust]);
 
   const handlePrimaryAction = useCallback(() => {
     if (parsedResult && !hasDescriptionChanged) {

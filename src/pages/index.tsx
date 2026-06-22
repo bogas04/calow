@@ -21,7 +21,8 @@ import { getDateFromDateKey, getDateKey } from "../util/time";
 
 import { InfoIcon } from "@chakra-ui/icons";
 import { BiStats } from "react-icons/bi";
-import { BsDropletFill, BsDropletHalf } from "react-icons/bs";
+import { BsDropletFill, BsDropletHalf, BsStars } from "react-icons/bs";
+import AIDayInsightsSheet from "../components/AIDayInsights";
 import DateBar from "../components/DateBar";
 import ExpandedItemNutritionModal from "../components/ExpandedItemNutritionModal";
 import { Page } from "../components/layouts";
@@ -29,7 +30,9 @@ import { LoadingContainer } from "../components/LoadingContainer";
 import MealNutrition from "../components/MealNutrition";
 import { Meter } from "../components/Meter";
 import NutritionBar from "../components/NutritionBar";
+import { useGeminiApiKey } from "../components/useGeminiApiKey";
 import { DAY, TODAY } from "../constants/date";
+import { getDietPreferenceLabel } from "../util/preferences";
 
 // Disabled due to low usage.
 const isWaterEnabled = false;
@@ -46,7 +49,9 @@ export default function HomePage() {
   };
 
   const [isInfoModalOpen, setInfoModalOpen] = useState(false);
-  const { dispatch, bookmarks, goal, nutrition, micro, water, log: actualLog } = useStore(date);
+  const [isDayInsightsOpen, setDayInsightsOpen] = useState(false);
+  const { dispatch, body, bookmarks, goal, nutrition, micro, preferences, water, log: actualLog } = useStore(date);
+  const { apiKey: geminiApiKey, hasApiKey: hasGeminiKey } = useGeminiApiKey();
   const isSelectedDateToday = date > TODAY - DAY;
 
   /**
@@ -157,22 +162,24 @@ export default function HomePage() {
         <Box borderRightWidth={[0, 1]} borderRightColor="gray.300" pr={[0, "8"]} flex="0.3" mr={[0, "16"]} mb="2">
           <Meter nutrition={nutrition} goal={goal.nutrition} />
           <Flex justify="flex-end" mt="-10" mb="-2" w="90%">
-            <IconButton
-              aria-label="Micronutrient information"
-              color="gray.400"
-              variant="ghost"
-              rounded="full"
-              icon={<InfoIcon />}
-              onClick={onInfoClick}
-            />
-            <IconButton
-              aria-label="Micronutrient information"
-              color="gray.400"
-              variant="ghost"
-              rounded="full"
-              icon={<BiStats />}
-              onClick={() => router.push("/journal")}
-            />
+            <Flex justify="flex-end">
+              <IconButton
+                aria-label="Micronutrient information"
+                color="gray.400"
+                variant="ghost"
+                rounded="full"
+                icon={<InfoIcon />}
+                onClick={onInfoClick}
+              />
+              <IconButton
+                aria-label="Micronutrient information"
+                color="gray.400"
+                variant="ghost"
+                rounded="full"
+                icon={<BiStats />}
+                onClick={() => router.push("/journal")}
+              />
+            </Flex>
           </Flex>
 
           <Flex fontWeight="bold" justify="center" align="center" mb="6">
@@ -223,6 +230,14 @@ export default function HomePage() {
 
         {isSelectedDateToday ? (
           <Grid {...FABContainerProps} autoFlow="row" gap={2}>
+            {hasGeminiKey && log.length > 0 && (
+              <IconButton
+                {...AIInsightsFABProps}
+                aria-label="Get AI day insights"
+                icon={<BsStars size="22" />}
+                onClick={() => setDayInsightsOpen(true)}
+              />
+            )}
             {isWaterEnabled && (
               <IconButton
                 variant="ghost"
@@ -245,6 +260,14 @@ export default function HomePage() {
           </Grid>
         ) : (
           <Grid {...FABContainerProps} autoFlow="row" gap={2}>
+            {hasGeminiKey && log.length > 0 && (
+              <IconButton
+                {...AIInsightsFABProps}
+                aria-label="Get AI day insights"
+                icon={<BsStars size="22" />}
+                onClick={() => setDayInsightsOpen(true)}
+              />
+            )}
             <IconButton
               variant="ghost"
               {...FABProps}
@@ -278,6 +301,21 @@ export default function HomePage() {
         onClose={onInfoModalClose}
         isOpen={isInfoModalOpen}
       />
+
+      {geminiApiKey && (
+        <AIDayInsightsSheet
+          apiKey={geminiApiKey}
+          body={body}
+          dietPreference={getDietPreferenceLabel(preferences.diet)}
+          goal={goal}
+          goalNutrition={goal.nutrition}
+          isOpen={isDayInsightsOpen}
+          log={log}
+          micro={micro}
+          nutrition={nutrition}
+          onClose={() => setDayInsightsOpen(false)}
+        />
+      )}
     </Page>
   );
 }
@@ -305,6 +343,26 @@ const FABProps: ChakraProps = {
   borderRadius: "50%",
   bg: "green.400",
   color: "white",
+};
+
+const AIInsightsFABProps: ChakraProps = {
+  height: "12",
+  width: "12",
+  justifySelf: "center",
+  borderRadius: "50%",
+  bg: "white",
+  color: "green.500",
+  border: "1px solid",
+  borderColor: "green.100",
+  boxShadow: "0 10px 24px rgba(72, 187, 120, 0.24)",
+  _hover: {
+    bg: "green.50",
+    color: "green.600",
+    boxShadow: "0 12px 28px rgba(72, 187, 120, 0.3)",
+  },
+  _active: {
+    bg: "green.100",
+  },
 };
 
 function getMealIndexFromMenuButton(e: MouseEvent<HTMLButtonElement>) {

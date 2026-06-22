@@ -20,11 +20,18 @@ export function useStoreReducer() {
   useEffect(() => {
     const bootstrap = async () => {
       try {
-        const [body, goal, logs, bookmarks = []] = (await getMany(["body", "goal", "logs", "bookmarks"])) as [
+        const [body, goal, logs, bookmarks = [], preferences] = (await getMany([
+          "body",
+          "goal",
+          "logs",
+          "bookmarks",
+          "preferences",
+        ])) as [
           Store["body"],
           Store["goal"],
           Store["logs"],
-          Store["bookmarks"]
+          Store["bookmarks"],
+          Store["preferences"] | undefined
         ];
 
         hasLoadedFromDataBase.current = true;
@@ -32,7 +39,7 @@ export function useStoreReducer() {
         if (body && goal && logs) {
           dispatch({
             type: ACTIONS.SET,
-            payload: { body, goal, logs, bookmarks },
+            payload: { body, goal, logs, bookmarks, preferences: preferences || defaultState.preferences },
           });
         }
       } catch (err) {
@@ -51,6 +58,7 @@ export function useStoreReducer() {
           goal: defaultState.goal,
           logs: defaultState.logs,
           bookmarks: defaultState.bookmarks,
+          preferences: defaultState.preferences,
         },
       });
 
@@ -64,6 +72,7 @@ export function useStoreReducer() {
   useSyncedKey("body", store.body, hasLoadedFromDataBase.current);
   useSyncedKey("goal", store.goal, hasLoadedFromDataBase.current);
   useSyncedKey("logs", store.logs, hasLoadedFromDataBase.current);
+  useSyncedKey("preferences", store.preferences, hasLoadedFromDataBase.current);
 
   return {
     ...store,
@@ -228,7 +237,7 @@ declare global {
 /**
  * All the keys that are saved in idb-keyval database
  */
-type SavedKeys = Extract<keyof Store, "goal" | "logs" | "body" | "bookmarks">;
+type SavedKeys = Extract<keyof Store, "goal" | "logs" | "body" | "bookmarks" | "preferences">;
 
 /**
  * Confirmation message in case user wishes to delete any of the saved keys
@@ -238,6 +247,7 @@ const deletionMessages: Record<SavedKeys, string> = {
   bookmarks: "Are you sure you want to delete your bookmarks?",
   logs: "Are you sure you want to delete your logs?",
   goal: "Are you sure you want to delete your goal data?",
+  preferences: "Are you sure you want to delete your preferences?",
 };
 
 /**
@@ -249,4 +259,7 @@ const isEmpty: { [key in SavedKeys]: (v?: Store[key]) => boolean } = {
     (goal || defaultState.goal).nutrition.calories === defaultState.goal.nutrition.calories,
   logs: (logs?: Store["logs"]) => Object.keys(logs || {}).length === 0,
   bookmarks: (bookmarks?: Store["bookmarks"]) => bookmarks?.length == -0,
+  preferences: (preferences?: Store["preferences"]) =>
+    (preferences || defaultState.preferences).diet.type === defaultState.preferences.diet.type &&
+    (preferences || defaultState.preferences).diet.custom === defaultState.preferences.diet.custom,
 };

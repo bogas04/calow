@@ -1,5 +1,6 @@
 import { Reducer } from "react";
 import { computeMacroFromCalories, macroCombination } from "../util/nutrition";
+import { DietPreferenceType } from "../util/preferences";
 import { getDateKey } from "../util/time";
 import { BodyMetrics, ItemEntry, MealEntry, Nutrition } from "./types";
 
@@ -17,6 +18,13 @@ export const defaultState = {
     nutrition: computeMacroFromCalories(0),
     diet: "neutral" as keyof typeof macroCombination,
     water: 0,
+  },
+  /** preferences */
+  preferences: {
+    diet: {
+      type: "none" as DietPreferenceType,
+      custom: "",
+    },
   },
   /** logs of all days */
   logs: {} as { [dateKey: string]: MealEntry[] },
@@ -48,6 +56,8 @@ export enum ACTIONS {
   SET_GOAL,
   /** Set body metrics */
   SET_BODY,
+  /** Set user preferences */
+  SET_PREFERENCES,
   /** Add new item to meal entry's state */
   ADD_MEAL_ENTRY_ITEM,
   /** Set meal entry data to meal entry's state */
@@ -104,6 +114,12 @@ export type Action =
       type: ACTIONS.SET_BODY;
       payload: BodyMetrics;
     }
+  | {
+      type: ACTIONS.SET_PREFERENCES;
+      payload: Partial<Omit<Store["preferences"], "diet">> & {
+        diet?: Partial<Store["preferences"]["diet"]>;
+      };
+    }
   | { type: ACTIONS.ADD_MEAL_ENTRY_ITEM; payload: ItemEntry }
   | { type: ACTIONS.SET_MEAL_ENTRY_ITEMS; payload: Store["mealEntry"] }
   | { type: ACTIONS.DELETE_MEAL_ENTRY_ITEM; payload: number }
@@ -130,6 +146,19 @@ export const reducer: Reducer<Store, Action> = (state, action) => {
     }
     case ACTIONS.SET_BODY: {
       return { ...state, body: { ...state.body, ...action.payload } };
+    }
+    case ACTIONS.SET_PREFERENCES: {
+      return {
+        ...state,
+        preferences: {
+          ...state.preferences,
+          ...action.payload,
+          diet: {
+            ...state.preferences.diet,
+            ...action.payload.diet,
+          },
+        },
+      };
     }
     case ACTIONS.SET_GOAL: {
       const water = state.body.gender === "male" ? 3000 : 2000;

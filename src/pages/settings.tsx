@@ -26,9 +26,10 @@ import BodyMetricsForm from "../components/BodyMetricsForm";
 import { Page } from "../components/layouts";
 import NutritionBar from "../components/NutritionBar";
 import { useGeminiApiKey } from "../components/useGeminiApiKey";
-import { Store, ACTIONS, useStore } from "../store";
+import { Store, ACTIONS, defaultState, useStore } from "../store";
 import { readFile } from "../util/dom";
 import { computeCaloricNeeds, computeMacroFromCalories, macroCombination } from "../util/nutrition";
+import { DietPreferenceType, dietPreferenceOptions, getDietPreferenceLabel } from "../util/preferences";
 import { capitalize, roundToTens } from "../util/primitives";
 
 type GoalTypes = keyof typeof macroCombination;
@@ -44,7 +45,7 @@ export default function SettingsPage() {
   const [geminiKeyError, setGeminiKeyError] = useState<string | null>(null);
   const { apiKey: geminiKey, clearApiKey, saveApiKey } = useGeminiApiKey();
 
-  const { body, goal, logs } = store;
+  const { body, goal, logs, preferences } = store;
   const { bmr, caloricNeeds } = useMemo(() => computeCaloricNeeds(body), [body]);
   const daysOfData = Object.keys(logs).length;
 
@@ -137,7 +138,7 @@ export default function SettingsPage() {
           <FormControl my={4}>
             <Flex justify="space-between" align="center">
               <FormLabel fontSize="md" mt="2" flex={0.4} fontWeight="bold">
-                Diet
+                Macro split
               </FormLabel>
               <Select
                 size="sm"
@@ -211,6 +212,65 @@ export default function SettingsPage() {
           </Collapse>
         </Box>
       )}
+      <Box mb="12" as="section">
+        <Heading size="lg" display="flex" my="4" justifyContent="space-between" alignItems="center">
+          Diet
+        </Heading>
+        <FormControl my={4}>
+          <FormLabel fontSize="md" fontWeight="bold">
+            Food preference
+          </FormLabel>
+          <Select
+            value={preferences.diet.type}
+            onChange={(e) =>
+              dispatch({
+                type: ACTIONS.SET_PREFERENCES,
+                payload: {
+                  diet: {
+                    type: e.currentTarget.value as DietPreferenceType,
+                  },
+                },
+              })
+            }
+          >
+            {dietPreferenceOptions.map((option) => (
+              <Box as="option" value={option.value} key={option.value}>
+                {option.label}
+              </Box>
+            ))}
+          </Select>
+          <FormHelperText>
+            AI estimates and insights will use this as context when suggesting foods or interpreting meals.
+          </FormHelperText>
+        </FormControl>
+        {preferences.diet.type === "other" && (
+          <FormControl my={4}>
+            <FormLabel fontSize="md" fontWeight="bold">
+              Describe your diet
+            </FormLabel>
+            <Input
+              value={preferences.diet.custom}
+              onChange={(e) =>
+                dispatch({
+                  type: ACTIONS.SET_PREFERENCES,
+                  payload: {
+                    diet: {
+                      type: "other",
+                      custom: e.currentTarget.value,
+                    },
+                  },
+                })
+              }
+              placeholder="e.g. Jain vegetarian, egg-free, high-protein Indian veg"
+            />
+          </FormControl>
+        )}
+        {getDietPreferenceLabel(preferences.diet) && (
+          <FormControl>
+            <FormHelperText>Current AI context: {getDietPreferenceLabel(preferences.diet)}</FormHelperText>
+          </FormControl>
+        )}
+      </Box>
       <Box mb="12" as="section">
         <Heading size="lg" display="flex" my="4" justifyContent="space-between" alignItems="center">
           Gemini API Key
@@ -339,6 +399,7 @@ export default function SettingsPage() {
                         logs: json.logs,
                         body: json.body,
                         bookmarks: json.bookmarks,
+                        preferences: json.preferences || defaultState.preferences,
                       },
                     });
                     alert("Successfully imported!");

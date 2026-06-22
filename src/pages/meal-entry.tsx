@@ -36,6 +36,7 @@ import { ACTIONS, inititalNutrition, ItemEntry, MealEntry, useItems, useStore } 
 import AIMealParserSheet, { ParsedMeal } from "../components/AIMealParser";
 import DinnerArt from "../svg/DinnerArt";
 import { computeMicroNutritionFromLog, computeWeightedNutrition, mapNutrition } from "../util/nutrition";
+import { getDietPreferenceLabel } from "../util/preferences";
 import { computeArithmeticExpression } from "../util/primitives";
 import { getDateFromDateKey, getDateKey } from "../util/time";
 import { useNumericInputMode } from "../components/useInputMode";
@@ -45,6 +46,7 @@ export default function MealEntryPage() {
   const {
     dispatch,
     mealEntry: { addedItems, totalWeight, portionWeight, name },
+    preferences,
     log,
   } = useStore();
   const numericInputMode = useNumericInputMode();
@@ -661,6 +663,7 @@ export default function MealEntryPage() {
         <>
           <AIMealParserSheet
             apiKey={apiKey}
+            dietPreference={getDietPreferenceLabel(preferences.diet)}
             isOpen={showCreateMealParser}
             mode="create"
             onClose={() => setShowCreateMealParser(false)}
@@ -668,6 +671,7 @@ export default function MealEntryPage() {
           />
           <AIMealParserSheet
             apiKey={apiKey}
+            dietPreference={getDietPreferenceLabel(preferences.diet)}
             isOpen={showAdjustMealParser}
             mode="adjust"
             mealToAdjust={currentMealEstimate}
