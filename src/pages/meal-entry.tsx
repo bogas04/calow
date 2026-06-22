@@ -30,10 +30,11 @@ import { getMealFromQueryParams } from "../components/shareableMealLink/shareabl
 import CustomItemModal, { CustomItemModalProps } from "../components/CustomItemModal";
 import { Page } from "../components/layouts";
 import { IngredientSuggestions, SearchSuggestions } from "../components/MealEntryComponents";
-import MealNameModal from "../components/MealNameModal";
+import MealNameSheet from "../components/MealNameSheet";
 import NutritionBar from "../components/NutritionBar";
 import { ACTIONS, inititalNutrition, ItemEntry, MealEntry, useItems, useStore } from "../store";
 import AIMealParserSheet, { ParsedMeal } from "../components/AIMealParser";
+import { showAlert, showConfirm } from "../components/appDialogController";
 import DinnerArt from "../svg/DinnerArt";
 import { computeMicroNutritionFromLog, computeWeightedNutrition, mapNutrition } from "../util/nutrition";
 import { getDietPreferenceLabel } from "../util/preferences";
@@ -54,7 +55,7 @@ export default function MealEntryPage() {
   const toast = useToast();
   const router = useRouter();
   const { apiKey, hasApiKey: hasGeminiKey } = useGeminiApiKey();
-  const [showMealNameModal, setShowMealModal] = useState(false);
+  const [showMealNameSheet, setShowMealNameSheet] = useState(false);
   const [showCalculatorModal, setShowCalculatorModal] = useState(false);
   const [showCustomItemModal, setShowCustomItemModal] = useState(false);
   const [showCreateMealParser, setShowCreateMealParser] = useState(false);
@@ -186,7 +187,7 @@ export default function MealEntryPage() {
         status: "error",
         isClosable: true,
       });
-      alert("Oops!. Please add details manually\n" + (err as Error).message);
+      showAlert("Oops!. Please add details manually\n" + (err as Error).message);
     }
   }, [dispatch, router.query, toast]);
 
@@ -351,7 +352,7 @@ export default function MealEntryPage() {
           }
     );
 
-    setShowMealModal(false);
+    setShowMealNameSheet(false);
 
     resetItems();
     // If there's any position left in history, router.back() otherwise redirect to home
@@ -364,7 +365,7 @@ export default function MealEntryPage() {
 
   function handleDone() {
     if (addedItems.length !== 1) {
-      setShowMealModal(true);
+      setShowMealNameSheet(true);
       return;
     }
     const { icon, name: itemName } = addedItems[0];
@@ -427,8 +428,8 @@ export default function MealEntryPage() {
           size="sm"
           color="gray.500"
           rounded="full"
-          onClick={() => {
-            if (window.confirm(`Are you sure you want to remove ${item.name} ${item.weight}g?`)) {
+          onClick={async () => {
+            if (await showConfirm(`Are you sure you want to remove ${item.name} ${item.weight}g?`)) {
               deleteItem(i);
             }
           }}
@@ -634,9 +635,9 @@ export default function MealEntryPage() {
           </Box>
         )}
       </Flex>
-      <MealNameModal
-        isOpen={showMealNameModal}
-        onClose={() => setShowMealModal(false)}
+      <MealNameSheet
+        isOpen={showMealNameSheet}
+        onClose={() => setShowMealNameSheet(false)}
         defaultName={name}
         defaultIcon={"🍛"}
         onSubmit={(data) => saveAndRedirect({ ...data, timestamp: forDate?.getTime() || Date.now() })}

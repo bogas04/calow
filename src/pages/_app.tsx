@@ -1,5 +1,6 @@
 import "../global.css";
 import "core-js/features/object/from-entries";
+import { AppDialogProvider } from "../components/AppDialog";
 import { ChakraProvider, Flex, Box } from "../components/ui";
 import { AppProps } from "next/app";
 import Head from "next/head";
@@ -36,83 +37,85 @@ function App({
 
   return (
     <ChakraProvider>
-      <StoreContext.Provider value={value}>
-        <Head>
-          <title>{title}</title>
-          <meta name="title" content={title} />
-          <meta name="description" content={description} />
+      <AppDialogProvider>
+        <StoreContext.Provider value={value}>
+          <Head>
+            <title>{title}</title>
+            <meta name="title" content={title} />
+            <meta name="description" content={description} />
 
-          <link rel="manifest" href="manifest.json" />
+            <link rel="manifest" href="manifest.json" />
 
-          <meta name="mobile-web-app-capable" content="yes" />
-          <meta name="apple-mobile-web-app-capable" content="yes" />
-          <meta name="application-name" content="calow" />
-          <meta name="apple-mobile-web-app-title" content="calow" />
-          <meta name="theme-color" content="#48bb78" />
-          <meta name="msapplication-navbutton-color" content="#48bb78" />
-          <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-          <meta name="msapplication-starturl" content="/" />
-          <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no"
-          />
+            <meta name="mobile-web-app-capable" content="yes" />
+            <meta name="apple-mobile-web-app-capable" content="yes" />
+            <meta name="application-name" content="calow" />
+            <meta name="apple-mobile-web-app-title" content="calow" />
+            <meta name="theme-color" content="#48bb78" />
+            <meta name="msapplication-navbutton-color" content="#48bb78" />
+            <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+            <meta name="msapplication-starturl" content="/" />
+            <meta
+              name="viewport"
+              content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no"
+            />
 
-          <link rel="apple-touch-icon" sizes="180x180" href={pageUrl + "icon-192-192.png"} />
-          <link rel="icon" type="image/png" sizes="32x32" href={pageUrl + "icon-48-48.png"} />
-          <link rel="icon" type="image/png" sizes="16x16" href={pageUrl + "icon-48-48.png"} />
+            <link rel="apple-touch-icon" sizes="180x180" href={pageUrl + "icon-192-192.png"} />
+            <link rel="icon" type="image/png" sizes="32x32" href={pageUrl + "icon-48-48.png"} />
+            <link rel="icon" type="image/png" sizes="16x16" href={pageUrl + "icon-48-48.png"} />
 
-          <meta property="og:type" content="website" />
-          <meta property="og:url" content={pageUrl} />
-          <meta property="og:title" content={title} />
-          <meta property="og:description" content={description} />
-          <meta property="og:image" content={image} />
+            <meta property="og:type" content="website" />
+            <meta property="og:url" content={pageUrl} />
+            <meta property="og:title" content={title} />
+            <meta property="og:description" content={description} />
+            <meta property="og:image" content={image} />
 
-          <meta property="twitter:card" content="summary_large_image" />
-          <meta property="twitter:url" content={pageUrl} />
-          <meta property="twitter:title" content={title} />
-          <meta property="twitter:description" content={description} />
-          <meta property="twitter:image" content={image} />
-        </Head>
+            <meta property="twitter:card" content="summary_large_image" />
+            <meta property="twitter:url" content={pageUrl} />
+            <meta property="twitter:title" content={title} />
+            <meta property="twitter:description" content={description} />
+            <meta property="twitter:image" content={image} />
+          </Head>
 
-        <Flex direction="column" height="100%">
-          <Box as="main" flex="1" overflow="auto">
-            <Component {...pageProps} />
-          </Box>
-          {!Component.hideFooter && (
-            <Box as="footer" overflow="hidden" id="footer" p="4" bg="rgba(0,0,0,0.1)" color="gray.800">
-              <Box as="nav">
-                <Flex as="ul" listStyleType="none" px="6" justify="space-between">
-                  <li>
-                    <NavLink href="/" title="Open Home">
-                      <HomeIcon size="24" />
-                    </NavLink>
-                  </li>
-                  <li>
-                    <NavLink href="/bookmarks" title="Bookmarks">
-                      <BookmarkIcon size="24" />
-                    </NavLink>
-                  </li>
-                  <li>
-                    <NavLink href="/search" title="Search">
-                      <SearchIcon size="24" />
-                    </NavLink>
-                  </li>
-                  <li>
-                    <NavLink href="/items" title="Open Item Catalog">
-                      <ItemsIcon size="24" />
-                    </NavLink>
-                  </li>
-                  <li>
-                    <NavLink href="/settings" title="Open Settings">
-                      <SettingsIcon size="24" />
-                    </NavLink>
-                  </li>
-                </Flex>
-              </Box>
+          <Flex direction="column" height="100%">
+            <Box as="main" flex="1" overflow="auto">
+              <Component {...pageProps} />
             </Box>
-          )}
-        </Flex>
-      </StoreContext.Provider>
+            {!Component.hideFooter && (
+              <Box as="footer" overflow="hidden" id="footer" p="4" bg="rgba(0,0,0,0.1)" color="gray.800">
+                <Box as="nav">
+                  <Flex as="ul" listStyleType="none" px="6" justify="space-between">
+                    <li>
+                      <NavLink href="/" title="Open Home">
+                        <HomeIcon size="24" />
+                      </NavLink>
+                    </li>
+                    <li>
+                      <NavLink href="/bookmarks" title="Bookmarks">
+                        <BookmarkIcon size="24" />
+                      </NavLink>
+                    </li>
+                    <li>
+                      <NavLink href="/search" title="Search">
+                        <SearchIcon size="24" />
+                      </NavLink>
+                    </li>
+                    <li>
+                      <NavLink href="/items" title="Open Item Catalog">
+                        <ItemsIcon size="24" />
+                      </NavLink>
+                    </li>
+                    <li>
+                      <NavLink href="/settings" title="Open Settings">
+                        <SettingsIcon size="24" />
+                      </NavLink>
+                    </li>
+                  </Flex>
+                </Box>
+              </Box>
+            )}
+          </Flex>
+        </StoreContext.Provider>
+      </AppDialogProvider>
     </ChakraProvider>
   );
 }

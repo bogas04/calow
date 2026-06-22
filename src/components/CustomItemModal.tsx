@@ -17,6 +17,7 @@ import { FormEvent, memo } from "react";
 import { ItemEntry, nutritionKeys, nutritionUnits } from "../store";
 import { mapNutrition } from "../util/nutrition";
 import { useNumericInputMode } from "./useInputMode";
+import { showConfirm } from "./appDialogController";
 
 export interface CustomItemModalProps {
   name: string;
@@ -27,7 +28,7 @@ export interface CustomItemModalProps {
 
 function CustomItemModal({ name, isOpen, onClose, onAdd }: CustomItemModalProps) {
   const numericInputMode = useNumericInputMode();
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = e.currentTarget;
     const calories = Number(form.calories.value);
@@ -41,9 +42,9 @@ function CustomItemModal({ name, isOpen, onClose, onAdd }: CustomItemModalProps)
     const computed = fat * 9 + carbohydrates * 4 + protein * 4;
     if (
       Math.abs(calories - computed) > 10 &&
-      !confirm(
+      !(await showConfirm(
         `It seems the data is incorrect\nFat * 9 + carbs * 4 + protein * 4 = ${computed}\nbut calories = ${calories}\nDo you still want to continue?`
-      )
+      ))
     ) {
       return;
     }

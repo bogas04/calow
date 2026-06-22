@@ -1,10 +1,11 @@
 import { createContext, useContext, useEffect, useReducer, useRef } from "react";
-import { getMany, update } from "idb-keyval";
+import { getMany, set, update } from "idb-keyval";
 import useSWR from "swr";
 
 import { ACTIONS, Action, defaultState, reducer } from "./reducer";
 import { computeMacroNutritionFromLog, computeMicroNutritionFromLog, createNutrition } from "../util/nutrition";
 import { getDateKey } from "../util/time";
+import { showAlert, showConfirm } from "../components/appDialogController";
 
 import { ItemEntry } from "./types";
 import { Store } from ".";
@@ -43,7 +44,7 @@ export function useStoreReducer() {
           });
         }
       } catch (err) {
-        alert("Sorry! We couldn't restore data stored in your phone.");
+        showAlert("Sorry! We couldn't restore data stored in your phone.");
       }
     };
 
@@ -102,10 +103,16 @@ function useSyncedKey<K extends SavedKeys>(key: K, newValue: Store[K], isReady: 
 
       if (
         isNewValueEmpty &&
-        isOldValueNotEmpty &&
-        !confirm(deletionMessages[key]) // ask user for confirmation
+        isOldValueNotEmpty
       ) {
-        window.calowResetStore?.();
+        showConfirm(deletionMessages[key]).then((confirmed) => {
+          if (confirmed) {
+            set(key, newValue);
+            return;
+          }
+
+          window.calowResetStore?.();
+        });
         return oldValue;
       }
       return newValue;

@@ -13,6 +13,7 @@ import React, {
   type ReactNode,
 } from "react";
 import { flushSync } from "react-dom";
+import { showAlert } from "./appDialogController";
 
 type StyleValue = string | number | undefined | null | boolean;
 type ResponsiveValue = StyleValue | StyleValue[];
@@ -777,6 +778,6 @@ export function ColorModeScript() {
 export function useToast() {
   return useCallback((options: { title?: string; description?: string; [key: string]: any }) => {
     const message = [options.title, options.description].filter(Boolean).join("\n");
-    if (message) window.setTimeout(() => alert(message), 0);
+    if (message) window.setTimeout(() => showAlert(message), 0);
   }, []);
 }

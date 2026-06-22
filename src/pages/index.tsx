@@ -20,6 +20,7 @@ import { getClosestDatasetKey } from "../util/dom";
 import { getDateFromDateKey, getDateKey } from "../util/time";
 
 import { InfoIcon } from "../components/icons";
+import { showConfirm } from "../components/appDialogController";
 import { BiStats } from "react-icons/bi";
 import { BsDropletFill, BsDropletHalf, BsStars } from "react-icons/bs";
 import AIDayInsightsSheet from "../components/AIDayInsights";
@@ -82,12 +83,12 @@ export default function HomePage() {
     });
   };
 
-  const onDelete: MouseEventHandler<HTMLButtonElement> = (e) => {
+  const onDelete: MouseEventHandler<HTMLButtonElement> = async (e) => {
     const index = getMealIndexFromMenuButton(e);
     const meal = log[index];
 
     if (
-      window.confirm(
+      await showConfirm(
         `Are you sure you want to delete "${meal.name}" with ${meal.items.length} item${
           meal.items.length === 1 ? "" : "s"
         } and ${meal.nutrition.calories} kCal?`

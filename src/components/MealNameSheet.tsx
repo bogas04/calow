@@ -4,6 +4,7 @@ import {
   ModalOverlay,
   ModalContent,
   ModalHeader,
+  ModalCloseButton,
   ModalBody,
   FormControl,
   Input,
@@ -43,7 +44,7 @@ const foodIcons = [
   "🍚",
 ];
 
-export interface MealNameModalProps {
+export interface MealNameSheetProps {
   isOpen: boolean;
   onSubmit: (info: { name: string; timestamp: number }) => void;
   onClose: ModalProps["onClose"];
@@ -51,7 +52,7 @@ export interface MealNameModalProps {
   defaultIcon: string;
 }
 
-function MealNameModal({ defaultName, defaultIcon, isOpen, onClose, onSubmit }: MealNameModalProps) {
+function MealNameSheet({ defaultName, defaultIcon, isOpen, onClose, onSubmit }: MealNameSheetProps) {
   const [selectedIcon, setSelectedIcon] = useState(defaultIcon);
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -64,15 +65,23 @@ function MealNameModal({ defaultName, defaultIcon, isOpen, onClose, onSubmit }: 
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="xs">
-      <ModalOverlay />
+    <Modal isOpen={isOpen} onClose={onClose} scrollBehavior="inside" motionPreset="slideInBottom">
+      <ModalOverlay height="100vh" />
       <form onSubmit={handleSubmit}>
-        <ModalContent>
-          <ModalHeader>🍛 Give your meal a name</ModalHeader>
+        <ModalContent position="fixed" bottom="0px" mb="0" borderRadius="1.75rem 1.75rem 0px 0px" minW={["100vw", "lg"]}>
+          <ModalHeader mt="2">🍛 Give your meal a name</ModalHeader>
+          <ModalCloseButton mt="2" />
           <ModalBody>
             <FormControl>
               <FormLabel>Meal&apos;s Name</FormLabel>
-              <Input name="mealname" type="text" defaultValue={defaultName} isRequired placeholder="Enter meal name" />
+              <Input
+                autoFocus
+                name="mealname"
+                type="text"
+                defaultValue={defaultName}
+                isRequired
+                placeholder="Enter meal name"
+              />
             </FormControl>
             <FormControl mt={4}>
               <FormLabel>Choose an icon</FormLabel>
@@ -80,6 +89,7 @@ function MealNameModal({ defaultName, defaultIcon, isOpen, onClose, onSubmit }: 
               <div className="grid grid-cols-5 gap-2">
                 {foodIcons.map((icon) => (
                   <button
+                    type="button"
                     onClick={() => setSelectedIcon(icon)}
                     className={`text-4xl ${
                       icon === selectedIcon ? "bg-blue-50 px-2 border border-blue-200 rounded-md" : ""
@@ -106,4 +116,4 @@ function MealNameModal({ defaultName, defaultIcon, isOpen, onClose, onSubmit }: 
   );
 }
 
-export default memo(MealNameModal);
+export default memo(MealNameSheet);

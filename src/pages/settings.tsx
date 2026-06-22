@@ -23,6 +23,7 @@ import {
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { ImSpoonKnife } from "react-icons/im";
 import BodyMetricsForm from "../components/BodyMetricsForm";
+import { showAlert, showConfirm } from "../components/appDialogController";
 import { Page } from "../components/layouts";
 import NutritionBar from "../components/NutritionBar";
 import { useGeminiApiKey } from "../components/useGeminiApiKey";
@@ -402,12 +403,12 @@ export default function SettingsPage() {
                         preferences: json.preferences || defaultState.preferences,
                       },
                     });
-                    alert("Successfully imported!");
+                    showAlert("Successfully imported!");
                   } else {
                     throw new Error("No file selected");
                   }
                 } catch (err) {
-                  alert((err as Error).message);
+                  showAlert((err as Error).message);
                 }
               }}
             />
@@ -416,10 +417,8 @@ export default function SettingsPage() {
               ml={[0, "2"]}
               variant="solid"
               colorScheme="red"
-              onClick={() => {
-                if (
-                  window.confirm(`Are you sure? You'll lose data of ${daysOfData} day${daysOfData === 1 ? "" : "s"}.`)
-                ) {
+              onClick={async () => {
+                if (await showConfirm(`Are you sure? You'll lose data of ${daysOfData} day${daysOfData === 1 ? "" : "s"}.`)) {
                   dispatch({ type: ACTIONS.RESET });
                 }
               }}
