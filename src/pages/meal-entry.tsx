@@ -36,6 +36,7 @@ import { ACTIONS, inititalNutrition, ItemEntry, MealEntry, useItems, useStore } 
 import AIMealParserSheet, { ParsedMeal } from "../components/AIMealParser";
 import { showAlert, showConfirm } from "../components/appDialogController";
 import DinnerArt from "../svg/DinnerArt";
+import { focusInput } from "../util/dom";
 import { computeMicroNutritionFromLog, computeWeightedNutrition, mapNutrition } from "../util/nutrition";
 import { getDietPreferenceLabel } from "../util/preferences";
 import { computeArithmeticExpression } from "../util/primitives";
@@ -67,6 +68,8 @@ export default function MealEntryPage() {
   });
   const [searchQuery, setSearchQuery] = useState("");
   const [itemWeightDrafts, setItemWeightDrafts] = useState<string[]>([]);
+  const searchInputRef = useRef<HTMLInputElement | null>(null);
+  const weightInputRef = useRef<HTMLInputElement | null>(null);
   const lastFocusedInput = useRef<HTMLInputElement | null>(null);
   const initialEditDateKey = useRef<string | null>(null);
   const didOpenGeminiModeFromQuery = useRef(false);
@@ -236,7 +239,7 @@ export default function MealEntryPage() {
     if (searchResultName) {
       setSearchQuery(searchResultName);
     }
-    document.querySelector<HTMLInputElement>('input[name="weight"]')?.focus();
+    focusInput(weightInputRef.current);
   };
 
   function handleAddItem(e: React.FormEvent<HTMLFormElement>) {
@@ -253,7 +256,6 @@ export default function MealEntryPage() {
       });
 
       setShowCustomItemModal(true);
-      form.querySelector("input")?.focus();
       form.reset();
       return;
     }
@@ -266,7 +268,7 @@ export default function MealEntryPage() {
 
     addItem(weightedItem);
     setSearchQuery("");
-    form.querySelector("input")?.focus();
+    focusInput(searchInputRef.current);
     form.reset();
   }
 
@@ -446,6 +448,7 @@ export default function MealEntryPage() {
     <form onSubmit={handleAddItem} style={{ justifyContent: "space-between", flex: 1 }}>
       <Grid templateColumns="minmax(0, 1.25fr) minmax(0, 1fr) auto" gap={2} alignItems="center">
         <Input
+          ref={searchInputRef}
           isRequired
           autoFocus
           type="search"
@@ -458,6 +461,7 @@ export default function MealEntryPage() {
           placeholder="Search item"
         />
         <Input
+          ref={weightInputRef}
           type="text"
           isRequired
           inputMode={numericInputMode}
@@ -475,6 +479,7 @@ export default function MealEntryPage() {
             size="sm"
             variant="outline"
             icon={<BsCalculator />}
+            onPointerDown={(event: React.PointerEvent<HTMLButtonElement>) => event.preventDefault()}
             onClick={(e: React.MouseEvent<HTMLButtonElement>) => setShowCalculatorModal(true)}
             color="blue.600"
             border="1px solid"

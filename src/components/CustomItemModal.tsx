@@ -13,11 +13,12 @@ import {
   Button,
   Text,
 } from "./ui";
-import { FormEvent, memo } from "react";
+import { FormEvent, memo, useEffect, useRef } from "react";
 import { ItemEntry, nutritionKeys, nutritionUnits } from "../store";
 import { mapNutrition } from "../util/nutrition";
 import { useNumericInputMode } from "./useInputMode";
 import { showConfirm } from "./appDialogController";
+import { focusInputAfterViewportSettles } from "../util/dom";
 
 export interface CustomItemModalProps {
   name: string;
@@ -28,6 +29,13 @@ export interface CustomItemModalProps {
 
 function CustomItemModal({ name, isOpen, onClose, onAdd }: CustomItemModalProps) {
   const numericInputMode = useNumericInputMode();
+  const firstNutritionInputRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    return focusInputAfterViewportSettles(firstNutritionInputRef.current);
+  }, [isOpen]);
+
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = e.currentTarget;
@@ -95,6 +103,7 @@ function CustomItemModal({ name, isOpen, onClose, onAdd }: CustomItemModalProps)
                   w="60px"
                   variant="flushed"
                   display="inline"
+                  inputMode={numericInputMode}
                 />{" "}
                 grams.
               </FormHelperText>
@@ -105,6 +114,7 @@ function CustomItemModal({ name, isOpen, onClose, onAdd }: CustomItemModalProps)
                 <FormControl key={k} my="2">
                   <FormLabel textTransform="capitalize">{presentationalKey}</FormLabel>
                   <Input
+                    ref={k === "calories" ? firstNutritionInputRef : undefined}
                     name={k}
                     textTransform="capitalize"
                     placeholder={

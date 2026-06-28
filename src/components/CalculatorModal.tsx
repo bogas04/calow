@@ -12,8 +12,9 @@ import {
   FormHelperText,
   Button,
 } from "./ui";
-import { FormEventHandler, memo, useRef } from "react";
+import { FormEventHandler, PointerEvent, memo, useEffect, useRef } from "react";
 import { computeArithmeticExpression } from "../util/primitives";
+import { focusInput, focusInputAfterViewportSettles } from "../util/dom";
 
 export interface CalculatorModalProps extends Pick<ModalProps, "isOpen" | "onClose"> {
   onSubmit(value: string): void;
@@ -42,9 +43,14 @@ export const CalculatorModal = memo(function CalculatorModal({
     const input = expressionInputRef.current;
     if (input) {
       input.setRangeText(symbol, input.selectionStart ?? input.value.length, input.selectionEnd ?? input.value.length, "end");
-      input.focus?.();
+      focusInput(input);
     }
   }
+
+  useEffect(() => {
+    if (!isOpen) return;
+    return focusInputAfterViewportSettles(expressionInputRef.current, { select: true });
+  }, [isOpen]);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered scrollBehavior="outside" motionPreset="slideInBottom">
@@ -66,12 +72,12 @@ export const CalculatorModal = memo(function CalculatorModal({
                 defaultValue={getDefaultValue()}
                 inputMode="tel"
                 placeholder="Eg: 1*1 + 2/2 + 3*3"
-                autoFocus
                 autoComplete="off"
               />
             </FormControl>
             <FormControl mb="5" display="flex" justifyContent="space-between" gap={4} px="4">
               <Button
+                onPointerDown={(event: PointerEvent<HTMLButtonElement>) => event.preventDefault()}
                 onClick={() => {
                   handleSymbol("+");
                 }}
@@ -79,6 +85,7 @@ export const CalculatorModal = memo(function CalculatorModal({
                 +
               </Button>
               <Button
+                onPointerDown={(event: PointerEvent<HTMLButtonElement>) => event.preventDefault()}
                 onClick={() => {
                   handleSymbol("-");
                 }}
@@ -86,6 +93,7 @@ export const CalculatorModal = memo(function CalculatorModal({
                 -
               </Button>
               <Button
+                onPointerDown={(event: PointerEvent<HTMLButtonElement>) => event.preventDefault()}
                 onClick={() => {
                   handleSymbol("*");
                 }}
@@ -93,6 +101,7 @@ export const CalculatorModal = memo(function CalculatorModal({
                 ×
               </Button>
               <Button
+                onPointerDown={(event: PointerEvent<HTMLButtonElement>) => event.preventDefault()}
                 onClick={() => {
                   handleSymbol("/");
                 }}
