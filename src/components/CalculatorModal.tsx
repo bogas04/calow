@@ -77,6 +77,7 @@ export const CalculatorModal = memo(function CalculatorModal({
             </FormControl>
             <FormControl mb="5" display="flex" justifyContent="space-between" gap={4} px="4">
               <Button
+                skipViewTransition
                 onPointerDown={(event: PointerEvent<HTMLButtonElement>) => event.preventDefault()}
                 onClick={() => {
                   handleSymbol("+");
@@ -85,6 +86,7 @@ export const CalculatorModal = memo(function CalculatorModal({
                 +
               </Button>
               <Button
+                skipViewTransition
                 onPointerDown={(event: PointerEvent<HTMLButtonElement>) => event.preventDefault()}
                 onClick={() => {
                   handleSymbol("-");
@@ -93,6 +95,7 @@ export const CalculatorModal = memo(function CalculatorModal({
                 -
               </Button>
               <Button
+                skipViewTransition
                 onPointerDown={(event: PointerEvent<HTMLButtonElement>) => event.preventDefault()}
                 onClick={() => {
                   handleSymbol("*");
@@ -101,6 +104,7 @@ export const CalculatorModal = memo(function CalculatorModal({
                 ×
               </Button>
               <Button
+                skipViewTransition
                 onPointerDown={(event: PointerEvent<HTMLButtonElement>) => event.preventDefault()}
                 onClick={() => {
                   handleSymbol("/");

@@ -189,6 +189,7 @@ const ignoredProps = new Set([
   "rightIcon",
   "scrollBehavior",
   "size",
+  "skipViewTransition",
   "spacing",
   "templateColumns",
   "variant",
@@ -380,7 +381,7 @@ function buttonClasses({ variant, colorScheme, size }: ChakraProps) {
 
 export const Button = forwardRef<HTMLButtonElement, ChakraProps & React.ButtonHTMLAttributes<HTMLButtonElement>>(
   function Button(props, ref) {
-    const { children, className, icon, rightIcon, isLoading, loadingText, onClick, type = "button" } = props;
+    const { children, className, icon, rightIcon, isLoading, loadingText, onClick, skipViewTransition, type = "button" } = props;
     const { style, pass } = splitProps(props);
     return (
       <button
@@ -391,6 +392,10 @@ export const Button = forwardRef<HTMLButtonElement, ChakraProps & React.ButtonHT
         {...pass}
         onClick={(event) => {
           if (!onClick) return;
+          if (skipViewTransition) {
+            onClick(event);
+            return;
+          }
           withViewTransition(() => onClick(event));
         }}
       >
@@ -402,7 +407,7 @@ export const Button = forwardRef<HTMLButtonElement, ChakraProps & React.ButtonHT
 );
 
 export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(function IconButton(props, ref) {
-  const { icon, className, isRound, onClick, type = "button" } = props;
+  const { icon, className, isRound, onClick, skipViewTransition, type = "button" } = props;
   const { style, pass } = splitProps(props);
   return (
     <button
@@ -417,6 +422,10 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(functio
       {...pass}
       onClick={(event) => {
         if (!onClick) return;
+        if (skipViewTransition) {
+          onClick(event);
+          return;
+        }
         withViewTransition(() => onClick(event));
       }}
     >

@@ -239,7 +239,8 @@ export default function MealEntryPage() {
     if (searchResultName) {
       setSearchQuery(searchResultName);
     }
-    focusInput(weightInputRef.current);
+    weightInputRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    focusInput(weightInputRef.current, { preventScroll: false });
   };
 
   function handleAddItem(e: React.FormEvent<HTMLFormElement>) {
@@ -479,6 +480,7 @@ export default function MealEntryPage() {
             size="sm"
             variant="outline"
             icon={<BsCalculator />}
+            skipViewTransition
             onPointerDown={(event: React.PointerEvent<HTMLButtonElement>) => event.preventDefault()}
             onClick={(e: React.MouseEvent<HTMLButtonElement>) => setShowCalculatorModal(true)}
             color="blue.600"
