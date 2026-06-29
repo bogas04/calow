@@ -73,9 +73,12 @@ export default function MealEntryPage() {
   const lastFocusedInput = useRef<HTMLInputElement | null>(null);
   const initialEditDateKey = useRef<string | null>(null);
   const didOpenGeminiModeFromQuery = useRef(false);
-  const setLastFocusedInput: FocusEventHandler<HTMLInputElement> = (e) => {
-    setShouldShowCalculator(false);
+  const rememberFocusedInput: FocusEventHandler<HTMLInputElement> = (e) => {
+    setShouldShowCalculator(true);
     lastFocusedInput.current = e.currentTarget;
+  };
+  const handleCalculatorInputBlur: FocusEventHandler<HTMLInputElement> = () => {
+    setShouldShowCalculator(false);
   };
 
   const searchResults = useMemo(() => {
@@ -301,7 +304,7 @@ export default function MealEntryPage() {
   }
 
   const handleItemWeightBlur: FocusEventHandler<HTMLInputElement> = (e) => {
-    setLastFocusedInput(e);
+    handleCalculatorInputBlur(e);
 
     const index = Number(e.currentTarget.dataset.itemIndex);
     const rawWeight = itemWeightDrafts[index]?.trim();
@@ -410,7 +413,7 @@ export default function MealEntryPage() {
         <Input
           inputMode={numericInputMode}
           onBlur={handleItemWeightBlur}
-          onFocus={() => setShouldShowCalculator(true)}
+          onFocus={rememberFocusedInput}
           variant="flushed"
           autoComplete="off"
           width="64px"
@@ -466,8 +469,8 @@ export default function MealEntryPage() {
           type="text"
           isRequired
           inputMode={numericInputMode}
-          onBlur={setLastFocusedInput}
-          onFocus={() => setShouldShowCalculator(true)}
+          onBlur={handleCalculatorInputBlur}
+          onFocus={rememberFocusedInput}
           name="weight"
           variant="filled"
           autoComplete="off"
@@ -518,8 +521,8 @@ export default function MealEntryPage() {
             w="30%"
             fontSize="xs"
             inputMode={numericInputMode}
-            onBlur={setLastFocusedInput}
-            onFocus={() => setShouldShowCalculator(true)}
+            onBlur={handleCalculatorInputBlur}
+            onFocus={rememberFocusedInput}
             autoComplete="off"
             textAlign="center"
             value={portionWeight}
@@ -540,8 +543,8 @@ export default function MealEntryPage() {
             variant="flushed"
             bg="transparent"
             inputMode={numericInputMode}
-            onBlur={setLastFocusedInput}
-            onFocus={() => setShouldShowCalculator(true)}
+            onBlur={handleCalculatorInputBlur}
+            onFocus={rememberFocusedInput}
             autoComplete="off"
             value={totalWeight}
             onChange={(e: React.FormEvent<HTMLInputElement>) => setTotalWeight(Number(e.currentTarget.value))}
