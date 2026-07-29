@@ -39,6 +39,7 @@ export default function SettingsPage() {
   const [expand, setExpand] = useState(false);
   const [showDataOptions, setShowDataOptions] = useState(false);
   const [showGeminiOptions, setShowGeminiOptions] = useState(false);
+  const [isIOS, setIsIOS] = useState(false);
   const [goalCalories, setGoalCalories] = useState<number>();
   const [goalType, setGoalType] = useState<GoalTypes>();
   const [isSliderDisabled, setIsSliderDisabled] = useState(true);
@@ -62,6 +63,11 @@ export default function SettingsPage() {
     });
   }, [dispatch, goal.diet, goal.nutrition.calories, goalCalories, goalType]);
 
+  useEffect(() => {
+    // iPadOS can identify as macOS when requesting desktop sites.
+    setIsIOS(/iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1));
+  }, []);
+
   const goalInfo = getGoalInfo(goal.nutrition.calories || caloricNeeds.calories, caloricNeeds.calories);
   const goalDiet = goalType || goal.diet;
 
@@ -84,6 +90,35 @@ export default function SettingsPage() {
     setGeminiKeyDraft("");
     setGeminiKeyError(null);
   }, [clearApiKey]);
+
+  const importData = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    try {
+      if (e.target.files) {
+        const content = await readFile(e.target.files[0]);
+        const json: Store = JSON.parse(content);
+
+        if (!json.goal || !json.body || !json.logs) {
+          throw new Error("Invalid file");
+        }
+
+        dispatch({
+          type: ACTIONS.SET,
+          payload: {
+            goal: json.goal,
+            logs: json.logs,
+            body: json.body,
+            bookmarks: json.bookmarks,
+            preferences: json.preferences || defaultState.preferences,
+          },
+        });
+        showAlert("Successfully imported!");
+      } else {
+        throw new Error("No file selected");
+      }
+    } catch (err) {
+      showAlert((err as Error).message);
+    }
+  };
 
   return (
     <Page heading="Settings">
@@ -372,46 +407,31 @@ export default function SettingsPage() {
             >
               Export as <Code variant="ghost">.json</Code>
             </Button>
-            <Button
-              colorScheme="teal"
-              onClick={() => document.querySelector<HTMLInputElement>("#import-file-input")?.click()}
-            >
-              Import from <Code variant="ghost">.json</Code>
-            </Button>
-            <Input
-              hidden
-              id="import-file-input"
-              type="file"
-              accept=".json"
-              onChange={async (e: React.ChangeEvent<HTMLInputElement>) => {
-                try {
-                  if (e.target && e.target.files) {
-                    const content = await readFile(e.target?.files?.[0]);
-                    const json: Store = JSON.parse(content);
-
-                    if (!json.goal || !json.body || !json.logs) {
-                      throw new Error("Invalid file");
-                    }
-
-                    dispatch({
-                      type: ACTIONS.SET,
-                      payload: {
-                        goal: json.goal,
-                        logs: json.logs,
-                        body: json.body,
-                        bookmarks: json.bookmarks,
-                        preferences: json.preferences || defaultState.preferences,
-                      },
-                    });
-                    showAlert("Successfully imported!");
-                  } else {
-                    throw new Error("No file selected");
-                  }
-                } catch (err) {
-                  showAlert((err as Error).message);
-                }
-              }}
-            />
+            {isIOS ? (
+              <Box pos="relative">
+                <Button colorScheme="teal" tabIndex={-1} aria-hidden style={{ pointerEvents: "none" }}>
+                  Import from <Code variant="ghost">.json</Code>
+                </Button>
+                <Input
+                  aria-label="Import data from JSON file"
+                  id="import-file-input"
+                  type="file"
+                  accept=".json,application/json"
+                  onChange={importData}
+                  style={{ position: "absolute", inset: 0, width: "100%", height: "100%", opacity: 0, cursor: "pointer" }}
+                />
+              </Box>
+            ) : (
+              <>
+                <Button
+                  colorScheme="teal"
+                  onClick={() => document.querySelector<HTMLInputElement>("#import-file-input")?.click()}
+                >
+                  Import from <Code variant="ghost">.json</Code>
+                </Button>
+                <Input hidden id="import-file-input" type="file" accept=".json" onChange={importData} />
+              </>
+            )}
             <Button
               my="2"
               ml={[0, "2"]}
