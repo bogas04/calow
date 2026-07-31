@@ -49,7 +49,7 @@ export const ShareModal = memo(function ShareModal({
     };
 
     const baseLink =
-      document.querySelector('meta[property="og:url"')?.getAttribute("content") || "https://bogas04.github.io/calow/";
+      document.querySelector('meta[property="og:url"')?.getAttribute("content") || "https://bogas04.fyi/calow/";
 
     // create a calow link
     return createShareableMealLink(meal, baseLink, version);

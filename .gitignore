@@ -2,3 +2,4 @@ tsconfig.tsbuildinfo
 .next
 node_modules
 .lighthouseci
+.DS_Store

@@ -8,13 +8,13 @@ Intuitive minimalist calorie logging web app.
 # start app in development mode
 npm run start
 
-# build statically generated app for github pages
+# build the statically generated app
 npm run build
 ```
 
 ## Technology
 
-We use [Next.js](https://nextjs.org) along with [chakra-ui](https://chakra-ui.com) and [typescript](https://typescriptlang.org). We make use of Next.js' [static site generation](https://nextjs.org/docs/advanced-features/static-html-export) to serve the app on [GitHub pages](https://pages.github.com/).
+We use [Next.js](https://nextjs.org) along with [chakra-ui](https://chakra-ui.com) and [typescript](https://typescriptlang.org). We make use of Next.js' [static site generation](https://nextjs.org/docs/advanced-features/static-html-export) to serve the app at [bogas04.fyi/calow](https://bogas04.fyi/calow).
 
 ## Motivation
 

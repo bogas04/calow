@@ -29,7 +29,7 @@ function App({
   const value = useStoreReducer();
   const { pageTitle } = Component;
   const title = pageTitle ? `${pageTitle} | Calow` : "Calow";
-  const pageUrl = "https://bogas04.github.io/calow/";
+  const pageUrl = "https://bogas04.fyi/calow/";
   const description = "Intuitive minimalist calorie logging web app";
   const image = pageUrl + "icon-512-512.png";
 
