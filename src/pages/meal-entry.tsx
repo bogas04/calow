@@ -41,6 +41,7 @@ import { computeMicroNutritionFromLog, computeWeightedNutrition, mapNutrition } 
 import { getDietPreferenceLabel } from "../util/preferences";
 import { computeArithmeticExpression } from "../util/primitives";
 import { getDateFromDateKey, getDateKey } from "../util/time";
+import { getMatchingMealName } from "../util/mealSuggestions";
 import { useNumericInputMode } from "../components/useInputMode";
 import { useGeminiApiKey } from "../components/useGeminiApiKey";
 
@@ -48,6 +49,7 @@ export default function MealEntryPage() {
   const {
     dispatch,
     mealEntry: { addedItems, totalWeight, portionWeight, name },
+    logs,
     preferences,
     log,
   } = useStore();
@@ -217,6 +219,9 @@ export default function MealEntryPage() {
     }),
     [addedItems, mealNutrition, name, portionWeight, totalWeight]
   );
+  const suggestedMealName = useMemo(() => {
+    return getMatchingMealName(logs, addedItems);
+  }, [addedItems, logs]);
 
   const addItem = (item: ItemEntry) => dispatch({ type: ACTIONS.ADD_MEAL_ENTRY_ITEM, payload: item });
   const updateItem = (index: number, item: ItemEntry) =>
@@ -648,7 +653,7 @@ export default function MealEntryPage() {
       <MealNameSheet
         isOpen={showMealNameSheet}
         onClose={() => setShowMealNameSheet(false)}
-        defaultName={name}
+        defaultName={name || suggestedMealName}
         defaultIcon={"🍛"}
         onSubmit={(data) => saveAndRedirect({ ...data, timestamp: forDate?.getTime() || Date.now() })}
       />

@@ -1,10 +1,10 @@
 import { Button, Flex, Heading, HStack, ListItem, Text, UnorderedList } from "./ui";
 import { motion } from "framer-motion";
 import { memo, useMemo } from "react";
-import { BiHistory } from "react-icons/bi";
+import { BiLink } from "react-icons/bi";
 import { ItemEntry, MealEntry, useStore } from "../store";
-import { sortByKey } from "../util/primitives";
 import { compareDate } from "../util/time";
+import { getPairedIngredientSuggestions } from "../util/mealSuggestions";
 import NutritionBar from "./NutritionBar";
 
 const FramerHStack = motion(HStack);
@@ -15,34 +15,11 @@ export const IngredientSuggestions = memo(function IngredientSuggestions({ onAdd
     mealEntry: { addedItems },
   } = useStore();
 
-  const recentlyUsedIngredients = useMemo(() => {
-    const currentlyAddedItemNames = addedItems.map((x) => x.name);
-    const allItems =
-      // get all logs
-      Object.keys(logs)
-        // sort them by date (descending)
-        .sort(compareDate(false))
-        // flat out all items (make sure we make a copy of array)
-        .flatMap((date) => [...logs[date]].reverse().flatMap((log) => log.items))
-        // remove items that are already in current list
-        .filter((item) => !currentlyAddedItemNames.includes(item.name));
-
-    const map = sortByKey(allItems, "name", false)
-      // pick first 10
-      .slice(0, 10)
-      // convert it into a map
-      .reduce((map, item) => {
-        if (map.has(item.name)) {
-          return map;
-        }
-        map.set(item.name, item);
-        return map;
-      }, new Map<string, ItemEntry>());
-
-    return Array.from(map.values());
+  const pairedIngredients = useMemo(() => {
+    return getPairedIngredientSuggestions(logs, addedItems);
   }, [addedItems, logs]);
 
-  if (recentlyUsedIngredients.length === 0) {
+  if (pairedIngredients.length === 0) {
     return null;
   }
 
@@ -65,11 +42,11 @@ export const IngredientSuggestions = memo(function IngredientSuggestions({ onAdd
       transition={{ duration: 0.1 }}
     >
       <ListItem>
-        <Text colorScheme="gray" fontWeight="normal" size="sm" aria-label="Recently added items">
-          <BiHistory />
+        <Text colorScheme="gray" fontWeight="normal" size="sm" aria-label="Ingredients often paired with your current meal">
+          <BiLink />
         </Text>
       </ListItem>
-      {recentlyUsedIngredients.map((item, i) => (
+      {pairedIngredients.map((item) => (
         <ListItem key={item.name} flexShrink={0}>
           <Button
             colorScheme="gray"

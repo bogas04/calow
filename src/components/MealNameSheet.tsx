@@ -78,7 +78,7 @@ function MealNameSheet({ defaultName, defaultIcon, isOpen, onClose, onSubmit }: 
                 autoFocus
                 name="mealname"
                 type="text"
-                defaultValue={defaultName}
+                defaultValue={defaultName?.replace(/^[\u{1F300}-\u{1FAFF}]\uFE0F?\s*/u, "")}
                 isRequired
                 placeholder="Enter meal name"
               />
