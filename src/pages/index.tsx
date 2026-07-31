@@ -11,7 +11,7 @@ import {
 } from "../components/ui";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { MouseEvent, MouseEventHandler, useDeferredValue, useMemo, useState } from "react";
+import { MouseEvent, MouseEventHandler, useDeferredValue, useEffect, useMemo, useState } from "react";
 
 import { CgCalendarToday, CgGlassAlt as WaterGlassIcon } from "react-icons/cg";
 import { ACTIONS, inititalNutrition, Store, useStore } from "../store";
@@ -51,7 +51,7 @@ export default function HomePage() {
 
   const [isInfoModalOpen, setInfoModalOpen] = useState(false);
   const [isDayInsightsOpen, setDayInsightsOpen] = useState(false);
-  const { dispatch, body, bookmarks, goal, nutrition, micro, preferences, water, log: actualLog } = useStore(date);
+  const { dispatch, body, bookmarks, goal, logs, nutrition, micro, preferences, water, log: actualLog } = useStore(date);
   const { apiKey: geminiApiKey, hasApiKey: hasGeminiKey } = useGeminiApiKey();
   const isSelectedDateToday = date > TODAY - DAY;
 
@@ -303,6 +303,8 @@ export default function HomePage() {
         isOpen={isInfoModalOpen}
       />
 
+      <MonthlyBackupReminder hasData={Object.values(logs).some((entries) => entries.length > 0)} />
+
       {geminiApiKey && (
         <AIDayInsightsSheet
           apiKey={geminiApiKey}
@@ -365,6 +367,40 @@ const AIInsightsFABProps: ChakraProps = {
     bg: "green.100",
   },
 };
+
+function MonthlyBackupReminder({ hasData }: { hasData: boolean }) {
+  const [shouldShow, setShouldShow] = useState(false);
+
+  useEffect(() => {
+    setShouldShow(hasData && new Date().getDate() === 1);
+  }, [hasData]);
+
+  if (!shouldShow) return null;
+
+  return (
+    <Box
+      position="fixed"
+      zIndex={20}
+      bottom="20"
+      left={["4", "8"]}
+      maxW={["calc(100% - 7rem)", "24rem"]}
+      bg="white"
+      borderWidth="1"
+      borderColor="green.100"
+      borderRadius="xl"
+      boxShadow="lg"
+      p="4"
+    >
+      <Box fontWeight="bold" color="gray.800">Keep your food history safe</Box>
+      <Box color="gray.600" fontSize="sm" mt="1">Calow stores data on this device. Make a monthly backup to keep a copy.</Box>
+      <Link href="/settings?export=1" passHref>
+        <ChakraLink display="inline-block" mt="3" color="green.600" fontWeight="bold" fontSize="sm">
+          Back up my data →
+        </ChakraLink>
+      </Link>
+    </Box>
+  );
+}
 
 function getMealIndexFromMenuButton(e: MouseEvent<HTMLButtonElement>) {
   const itemIndex = getClosestDatasetKey(e, MEAL_INDEX_DATA_ATTR);

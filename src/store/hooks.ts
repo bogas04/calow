@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useReducer, useRef } from "react";
+import { createContext, useContext, useEffect, useReducer, useRef, useState } from "react";
 import { getMany, set, update } from "idb-keyval";
 import useSWR from "swr";
 
@@ -12,6 +12,7 @@ import { Store } from ".";
 
 export function useStoreReducer() {
   const [store, dispatch] = useReducer(reducer, defaultState);
+  const [isLoaded, setIsLoaded] = useState(false);
   /**
    * A boolean ref to check if we've read from the database
    * doesn't need to be a state variable as it's tied to `store`
@@ -43,8 +44,10 @@ export function useStoreReducer() {
             payload: { body, goal, logs, bookmarks, preferences: preferences || defaultState.preferences },
           });
         }
+        setIsLoaded(true);
       } catch (err) {
         showAlert("Sorry! We couldn't restore data stored in your phone.");
+        setIsLoaded(true);
       }
     };
 
@@ -69,15 +72,16 @@ export function useStoreReducer() {
     };
   }, []);
 
-  useSyncedKey("bookmarks", store.bookmarks, hasLoadedFromDataBase.current);
-  useSyncedKey("body", store.body, hasLoadedFromDataBase.current);
-  useSyncedKey("goal", store.goal, hasLoadedFromDataBase.current);
-  useSyncedKey("logs", store.logs, hasLoadedFromDataBase.current);
-  useSyncedKey("preferences", store.preferences, hasLoadedFromDataBase.current);
+  useSyncedKey("bookmarks", store.bookmarks, isLoaded);
+  useSyncedKey("body", store.body, isLoaded);
+  useSyncedKey("goal", store.goal, isLoaded);
+  useSyncedKey("logs", store.logs, isLoaded);
+  useSyncedKey("preferences", store.preferences, isLoaded);
 
   return {
     ...store,
     dispatch,
+    isLoaded,
   };
 }
 
@@ -120,9 +124,12 @@ function useSyncedKey<K extends SavedKeys>(key: K, newValue: Store[K], isReady: 
   }, [key, newValue, isReady]);
 }
 
-export const StoreContext = createContext({
+type StoreContextValue = Store & { dispatch: (action: Action) => void; isLoaded: boolean };
+
+export const StoreContext = createContext<StoreContextValue>({
   ...defaultState,
-  dispatch: (action: Action) => {},
+  dispatch: () => {},
+  isLoaded: false,
 });
 
 export function useStore(time?: number) {

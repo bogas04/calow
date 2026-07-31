@@ -356,15 +356,21 @@ export const Link = forwardRef<HTMLAnchorElement, BoxProps & React.AnchorHTMLAtt
   }
 );
 
-function buttonClasses({ variant, colorScheme, size }: ChakraProps) {
+function buttonClasses({ variant, colorScheme, isLoading, size }: ChakraProps) {
   const scheme = colorScheme || "gray";
   const solid =
     scheme === "green"
-      ? "bg-green-500 text-white hover:bg-green-600"
+      ? isLoading
+        ? "bg-green-600 text-white"
+        : "bg-green-500 text-white hover:bg-green-600"
       : scheme === "red"
-      ? "bg-red-500 text-white hover:bg-red-600"
+      ? isLoading
+        ? "bg-red-600 text-white"
+        : "bg-red-500 text-white hover:bg-red-600"
       : scheme === "blue"
-      ? "bg-blue-500 text-white hover:bg-blue-600"
+      ? isLoading
+        ? "bg-blue-700 text-white"
+        : "bg-blue-500 text-white hover:bg-blue-600"
       : "bg-gray-100 text-gray-900 hover:bg-gray-200";
   const outline =
     scheme === "red"
@@ -381,7 +387,7 @@ function buttonClasses({ variant, colorScheme, size }: ChakraProps) {
 
 export const Button = forwardRef<HTMLButtonElement, ChakraProps & React.ButtonHTMLAttributes<HTMLButtonElement>>(
   function Button(props, ref) {
-    const { children, className, icon, rightIcon, isLoading, loadingText, onClick, skipViewTransition, type = "button" } = props;
+    const { children, className, icon, rightIcon, isDisabled, isLoading, loadingText, onClick, skipViewTransition, type = "button" } = props;
     const { style, pass } = splitProps(props);
     return (
       <button
@@ -390,6 +396,7 @@ export const Button = forwardRef<HTMLButtonElement, ChakraProps & React.ButtonHT
         className={cx(buttonClasses(props), className)}
         style={style}
         {...pass}
+        disabled={Boolean(isDisabled || isLoading || pass.disabled)}
         onClick={(event) => {
           if (!onClick) return;
           if (skipViewTransition) {

@@ -8,6 +8,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { StoreContext, useStoreReducer } from "../store";
+import Onboarding from "../components/Onboarding";
 import {
   BiHome as HomeIcon,
   BiBookmarks as BookmarkIcon,
@@ -80,6 +81,7 @@ function App({
             <Box as="main" flex="1" overflow="auto">
               <Component {...pageProps} />
             </Box>
+            <Onboarding />
             {!Component.hideFooter && (
               <Box as="footer" overflow="hidden" id="footer" p="4" bg="rgba(0,0,0,0.1)" color="gray.800">
                 <Box as="nav">

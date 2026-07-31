@@ -21,6 +21,7 @@ import {
   Select,
 } from "../components/ui";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/router";
 import { ImSpoonKnife } from "react-icons/im";
 import BodyMetricsForm from "../components/BodyMetricsForm";
 import { showAlert, showConfirm } from "../components/appDialogController";
@@ -35,6 +36,7 @@ import { capitalize, roundToTens } from "../util/primitives";
 
 type GoalTypes = keyof typeof macroCombination;
 export default function SettingsPage() {
+  const router = useRouter();
   const { dispatch, ...store } = useStore();
   const [expand, setExpand] = useState(false);
   const [showDataOptions, setShowDataOptions] = useState(false);
@@ -50,6 +52,12 @@ export default function SettingsPage() {
   const { body, goal, logs, preferences } = store;
   const { bmr, caloricNeeds } = useMemo(() => computeCaloricNeeds(body), [body]);
   const daysOfData = Object.keys(logs).length;
+
+  useEffect(() => {
+    if (router.query.export === "1") {
+      setShowDataOptions(true);
+    }
+  }, [router.query.export]);
 
   useEffect(() => {
     const calories = goalCalories ?? goal.nutrition.calories;
@@ -382,7 +390,7 @@ export default function SettingsPage() {
         </Heading>
 
         <FormControl>
-          <FormHelperText mb="6">All your data is stored locally on your device.</FormHelperText>
+          <FormHelperText mb="6">Your data stays on this device and is not synced to an account. Export a backup regularly to keep a copy of your history.</FormHelperText>
         </FormControl>
         <Collapse in={showDataOptions}>
           <Flex direction={["column", "row"]}>
