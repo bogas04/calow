@@ -20,7 +20,7 @@ import {
   Code,
   Select,
 } from "../components/ui";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { ImSpoonKnife } from "react-icons/im";
 import BodyMetricsForm from "../components/BodyMetricsForm";
@@ -47,6 +47,7 @@ export default function SettingsPage() {
   const [isSliderDisabled, setIsSliderDisabled] = useState(true);
   const [geminiKeyDraft, setGeminiKeyDraft] = useState("");
   const [geminiKeyError, setGeminiKeyError] = useState<string | null>(null);
+  const dataSectionRef = useRef<HTMLDivElement | null>(null);
   const { apiKey: geminiKey, clearApiKey, saveApiKey } = useGeminiApiKey();
 
   const { body, goal, logs, preferences } = store;
@@ -56,6 +57,10 @@ export default function SettingsPage() {
   useEffect(() => {
     if (router.query.export === "1") {
       setShowDataOptions(true);
+      const scrollFrame = window.requestAnimationFrame(() =>
+        window.requestAnimationFrame(() => dataSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }))
+      );
+      return () => window.cancelAnimationFrame(scrollFrame);
     }
   }, [router.query.export]);
 
@@ -377,7 +382,7 @@ export default function SettingsPage() {
           </Flex>
         </Collapse>
       </Box>
-      <Box mb="12" as="section">
+      <Box mb="12" as="section" ref={dataSectionRef}>
         <Heading size="lg" display="flex" my="4" justifyContent="space-between" alignItems="center">
           Your Data
           <IconButton
@@ -398,6 +403,8 @@ export default function SettingsPage() {
               my="2"
               colorScheme="blue"
               mr={[0, "2"]}
+              w="full"
+              flex="1"
               onClick={() => {
                 const downloadLink = URL.createObjectURL(
                   new Blob([JSON.stringify(store)], {
@@ -416,8 +423,8 @@ export default function SettingsPage() {
               Export as <Code variant="ghost">.json</Code>
             </Button>
             {isIOS ? (
-              <Box pos="relative">
-                <Button colorScheme="teal" tabIndex={-1} aria-hidden style={{ pointerEvents: "none" }}>
+              <Box pos="relative" w="full" flex="1">
+                <Button colorScheme="teal" w="full" tabIndex={-1} aria-hidden style={{ pointerEvents: "none" }}>
                   Import from <Code variant="ghost">.json</Code>
                 </Button>
                 <Input
@@ -433,6 +440,8 @@ export default function SettingsPage() {
               <>
                 <Button
                   colorScheme="teal"
+                  w="full"
+                  flex="1"
                   onClick={() => document.querySelector<HTMLInputElement>("#import-file-input")?.click()}
                 >
                   Import from <Code variant="ghost">.json</Code>

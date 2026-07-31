@@ -68,7 +68,7 @@ export default function Journal() {
           return {
             ...mapNutrition(avg, (key, value) => (value + (info.nutrition[key] || goal.nutrition[key])) / 2),
             // @ts-expect-error need to change base type of avg
-            ...Object.fromEntries(importantMicros.map((key) => [key, ((avg?.[key] || 0) + info.micro[key]) / 2])),
+            ...Object.fromEntries(importantMicros.map((key) => [key, ((avg?.[key] || 0) + (info.micro[key] || 0)) / 2])),
           };
         },
         createNutrition(() => 0)
@@ -117,11 +117,12 @@ export default function Journal() {
               border={false}
               // @ts-expect-error
               micro={Object.fromEntries(importantMicros.map((key) => [key, weeklyAverage[key]]))}
+              showAllMicros
             />
           </div>
           <div>
             <p className="text-sm font-semibold">Goal</p>
-            <NutritionBar nutrition={goal.nutrition} showLegend={true} border={false} micro={microGoals} />
+            <NutritionBar nutrition={goal.nutrition} showLegend={true} border={false} micro={microGoals} showAllMicros />
           </div>
         </div>
       </Flex>

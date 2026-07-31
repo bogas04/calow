@@ -15,6 +15,8 @@ export interface NutritionBarProps {
   border?: boolean;
   showLegend?: boolean;
   micro?: MicroNutrition;
+  /** Keep the micronutrient row and both of its slots visible, even when values are zero. */
+  showAllMicros?: boolean;
   transparentBg?: boolean;
 }
 
@@ -23,6 +25,7 @@ function NutritionBar({
   nutrition,
   border = true,
   showLegend = !border,
+  showAllMicros = false,
   transparentBg = false,
 }: NutritionBarProps) {
   return (
@@ -54,7 +57,7 @@ function NutritionBar({
           );
         })}
       </Grid>
-      {micro && importantMicros.some((x) => micro[x]) ? (
+      {micro && (showAllMicros || importantMicros.some((x) => micro[x])) ? (
         <div
           className={
             border
@@ -63,23 +66,20 @@ function NutritionBar({
           }
         >
           {importantMicros
-            .filter((x) => micro[x])
+            .filter((x) => showAllMicros || micro[x])
             .map((x, i, { length }) => {
               const isLast = length - 1 === i;
-              const value = micro[x];
+              const value = micro[x] || 0;
 
-              if (value) {
-                return (
-                  <Fragment key={x}>
-                    <div className="flex items-center gap-1 text-xs">
-                      <p className="text-center text-gray-800">{value.toFixed(2)}g</p>
-                      <p className="capitalize text-gray-500">{x}</p>
-                    </div>
-                    {!border ? (isLast ? "" : "/") : null}
-                  </Fragment>
-                );
-              }
-              return undefined;
+              return (
+                <Fragment key={x}>
+                  <div className="flex items-center gap-1 text-xs">
+                    <p className="text-center text-gray-800">{value.toFixed(2)}g</p>
+                    <p className="capitalize text-gray-500">{x}</p>
+                  </div>
+                  {!border ? (isLast ? "" : "/") : null}
+                </Fragment>
+              );
             })}
         </div>
       ) : null}

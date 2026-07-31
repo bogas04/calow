@@ -19,7 +19,7 @@ import EmptyArt from "../svg/EmptyArt";
 import { getClosestDatasetKey } from "../util/dom";
 import { getDateFromDateKey, getDateKey } from "../util/time";
 
-import { InfoIcon } from "../components/icons";
+import { CloseIcon, InfoIcon } from "../components/icons";
 import { showConfirm } from "../components/appDialogController";
 import { BiStats } from "react-icons/bi";
 import { BsDropletFill, BsDropletHalf, BsStars } from "react-icons/bs";
@@ -368,37 +368,59 @@ const AIInsightsFABProps: ChakraProps = {
   },
 };
 
+const BACKUP_REMINDER_KEY = "calow_last_backup_reminder";
+const BACKUP_REMINDER_INTERVAL = 30 * DAY;
+
 function MonthlyBackupReminder({ hasData }: { hasData: boolean }) {
   const [shouldShow, setShouldShow] = useState(false);
+  const [lastRemindedAt, setLastRemindedAt] = useState<number | null>(null);
 
   useEffect(() => {
-    setShouldShow(hasData && new Date().getDate() === 1);
+    if (!hasData) return;
+
+    const lastReminder = Number(localStorage.getItem(BACKUP_REMINDER_KEY));
+    const isDue = !lastReminder || Date.now() - lastReminder >= BACKUP_REMINDER_INTERVAL;
+    if (isDue) {
+      setLastRemindedAt(lastReminder || null);
+      localStorage.setItem(BACKUP_REMINDER_KEY, String(Date.now()));
+      setShouldShow(true);
+    }
   }, [hasData]);
 
   if (!shouldShow) return null;
 
+  const lastReminderLabel = lastRemindedAt
+    ? new Date(lastRemindedAt).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" })
+    : "Never";
+
   return (
-    <Box
-      position="fixed"
-      zIndex={20}
-      bottom="20"
-      left={["4", "8"]}
-      maxW={["calc(100% - 7rem)", "24rem"]}
-      bg="white"
-      borderWidth="1"
-      borderColor="green.100"
-      borderRadius="xl"
-      boxShadow="lg"
-      p="4"
-    >
-      <Box fontWeight="bold" color="gray.800">Keep your food history safe</Box>
-      <Box color="gray.600" fontSize="sm" mt="1">Calow stores data on this device. Make a monthly backup to keep a copy.</Box>
-      <Link href="/settings?export=1" passHref>
-        <ChakraLink display="inline-block" mt="3" color="green.600" fontWeight="bold" fontSize="sm">
-          Back up my data →
-        </ChakraLink>
-      </Link>
-    </Box>
+    <div className="fixed inset-0 z-20 flex items-end bg-slate-900/30 animate-overlay-in">
+      <section className="w-full rounded-t-[24px] border border-green-100 bg-white p-6 pb-8 shadow-2xl animate-sheet-in sm:mx-auto sm:max-w-[560px]">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <p className="text-[13px] font-bold uppercase tracking-[.07em] text-green-600">Monthly backup</p>
+            <h2 className="mt-1 text-xl font-bold text-slate-900">Keep your food history safe</h2>
+          </div>
+          <IconButton
+            aria-label="Dismiss backup reminder"
+            icon={<CloseIcon />}
+            variant="ghost"
+            onClick={async () => {
+              if (await showConfirm("Hide this reminder? Calow will check in again in about a month. Back up your data first if you have not already.")) {
+                setShouldShow(false);
+              }
+            }}
+          />
+        </div>
+        <p className="mt-3 text-sm leading-relaxed text-slate-600">Your data stays on this device. Export a copy regularly so your history is available if you change or reset your browser.</p>
+        <p className="mt-3 text-xs text-slate-500">Last backup reminder: {lastReminderLabel}</p>
+        <Link href="/settings?export=1" passHref>
+          <ChakraLink className="mt-5 flex min-h-[46px] items-center justify-center rounded-[10px] bg-green-500 px-4 font-bold no-underline hover:bg-green-600 hover:no-underline" style={{ color: "white" }}>
+            Back up my data
+          </ChakraLink>
+        </Link>
+      </section>
+    </div>
   );
 }
 
